@@ -1,5 +1,6 @@
 package net.alexblass.capstoneproject;
 
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,25 +30,26 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- *  A Fragment to display the login screen.
+ * A simple {@link Fragment} subclass.
  */
-public class LoginFragment extends Fragment {
+public class RegistrationFragment extends Fragment {
 
     private FirebaseAuth mAuth;
 
-    @BindView(R.id.login_email_et) EditText mUsernameEt;
-    @BindView(R.id.login_password_et) EditText mPasswordEt;
-    @BindView(R.id.error_tv) TextView mErrorTv;
-    @BindView(R.id.login_parent) ConstraintLayout mParent;
+    @BindView(R.id.registration_name_et) EditText mNameEt;
+    @BindView(R.id.registration_birthday_et) EditText mBirthdayEt;
+    @BindView(R.id.registration_email_et) EditText mUsernameEt;
+    @BindView(R.id.registration_password_et) EditText mPasswordEt;
+    @BindView(R.id.registration_parent) ConstraintLayout mParent;
 
-    public LoginFragment() {
+    public RegistrationFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_registration, container, false);
         ButterKnife.bind(this, rootView);
 
         mAuth = FirebaseAuth.getInstance();
@@ -61,10 +65,26 @@ public class LoginFragment extends Fragment {
         return rootView;
     }
 
-    @OnClick(R.id.login_submit_btn)
-    public void login(View v){
+    @OnClick(R.id.registration_submit_btn)
+    public void register(View v){
 
         clearFocus();
+
+        String name = mNameEt.getText().toString().trim();
+        if (name.isEmpty()){
+            showErrorDialog(getContext().getString(R.string.empty_name));
+            mNameEt.requestFocus();
+
+            return;
+        }
+
+        String birthday = mBirthdayEt.getText().toString().trim();
+        if (birthday.isEmpty()){
+            showErrorDialog(getContext().getString(R.string.invalid_date));
+            mBirthdayEt.requestFocus();
+
+            return;
+        }
 
         String email = mUsernameEt.getText().toString().trim();
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
@@ -82,18 +102,26 @@ public class LoginFragment extends Fragment {
             return;
         }
 
-        mAuth.signInWithEmailAndPassword(email, password)
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
-                            // TODO: Launch mainscreen fragment
+                            user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getActivity(), getContext().getString(R.string.verification_email),
+                                                Toast.LENGTH_SHORT).show();
+                                        getFragmentManager().popBackStack();
+                                    }
+                                }
+                            });
                         } else {
-                            mErrorTv.setVisibility(View.VISIBLE);
-                            mUsernameEt.requestFocus();
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(getActivity(), "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -117,6 +145,8 @@ public class LoginFragment extends Fragment {
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            mNameEt.clearFocus();
+            mBirthdayEt.clearFocus();
             mUsernameEt.clearFocus();
             mPasswordEt.clearFocus();
         }

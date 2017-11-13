@@ -24,15 +24,15 @@
         android:layout_height="wrap_content"
         android:text="@string/invalid_credentials"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/login_username_et"
-        app:layout_constraintStart_toStartOf="@+id/login_username_et" />
+        app:layout_constraintBottom_toTopOf="@+id/login_email_et"
+        app:layout_constraintStart_toStartOf="@+id/login_email_et" />
 
     <EditText
-        android:id="@+id/login_username_et"
+        android:id="@+id/login_email_et"
         android:layout_width="@dimen/credentials_txt_width"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
-        android:hint="@string/username"
+        android:hint="@string/email"
         app:layout_constraintBottom_toTopOf="@+id/login_password_et"
         app:layout_constraintEnd_toEndOf="@+id/login_password_et"
         app:layout_constraintStart_toStartOf="@+id/login_password_et" />

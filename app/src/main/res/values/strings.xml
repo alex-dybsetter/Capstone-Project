@@ -3,12 +3,17 @@
 
     <string name="sign_up">Sign Up</string>
     <string name="login">Login</string>
-    <string name="username">Username</string>
+    <string name="name">Name</string>
+    <string name="birthday">Birthday</string>
+    <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="invalid_entry">Invalid Entry</string>
+    <string name="empty_name">Please enter your name.</string>
+    <string name="invalid_date">Please enter a date mm/dd/yyyy.</string>
     <string name="invalid_email">Please use a valid email address.</string>
     <string name="empty_password">Please enter a password.</string>
     <string name="okay">Okay</string>
     <string name="invalid_credentials">Invalid username or password</string>
+    <string name="verification_email">Verification email sent</string>
 </resources>

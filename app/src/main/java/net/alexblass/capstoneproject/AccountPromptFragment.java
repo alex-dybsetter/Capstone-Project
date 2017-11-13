@@ -45,6 +45,12 @@ public class AccountPromptFragment extends Fragment {
 
     @OnClick(R.id.sign_up_btn)
     public void showSignUpScreen(View v){
-        Toast.makeText(getActivity(), "sign up", Toast.LENGTH_SHORT).show();
+        RegistrationFragment registrationFragment = new RegistrationFragment();
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.login_fragment_container, registrationFragment)
+                .addToBackStack(null)
+                .commit();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }
