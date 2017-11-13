@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="invalid_text">
+        <item name="android:textColor">@color/validation_error</item>
+    </style>
+
 </resources>

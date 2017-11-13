@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">MeetMe!</string>
+
+    <string name="sign_up">Sign Up</string>
+    <string name="login">Login</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="invalid_entry">Invalid Entry</string>
+    <string name="invalid_email">Please use a valid email address.</string>
+    <string name="empty_password">Please enter a password.</string>
+    <string name="okay">Okay</string>
+    <string name="invalid_credentials">Invalid username or password</string>
 </resources>

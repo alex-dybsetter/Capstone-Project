@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/login_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:clickable="true"
+    android:focusableInTouchMode="true">
+
+    <TextView
+        android:id="@+id/login_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        app:layout_constraintBottom_toTopOf="@+id/error_tv"
+        app:layout_constraintStart_toStartOf="@+id/error_tv" />
+
+    <TextView
+        android:id="@+id/error_tv"
+        style="@style/invalid_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/invalid_credentials"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/login_username_et"
+        app:layout_constraintStart_toStartOf="@+id/login_username_et" />
+
+    <EditText
+        android:id="@+id/login_username_et"
+        android:layout_width="@dimen/credentials_txt_width"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:hint="@string/username"
+        app:layout_constraintBottom_toTopOf="@+id/login_password_et"
+        app:layout_constraintEnd_toEndOf="@+id/login_password_et"
+        app:layout_constraintStart_toStartOf="@+id/login_password_et" />
+
+    <EditText
+        android:id="@+id/login_password_et"
+        android:layout_width="@dimen/credentials_txt_width"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:hint="@string/password"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/login_submit_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        app:layout_constraintEnd_toEndOf="@+id/login_password_et"
+        app:layout_constraintTop_toBottomOf="@+id/login_password_et" />
+
+    <TextView
+        android:id="@+id/password_recovery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/forgot_password"
+        app:layout_constraintEnd_toStartOf="@+id/login_submit_btn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/login_password_et"
+        app:layout_constraintTop_toBottomOf="@+id/login_password_et" />
+
+</android.support.constraint.ConstraintLayout>
