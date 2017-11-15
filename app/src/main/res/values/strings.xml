@@ -16,4 +16,15 @@
     <string name="okay">Okay</string>
     <string name="invalid_credentials">Invalid username or password</string>
     <string name="verification_email">Verification email sent</string>
+
+    <string name="editor_instructions">Take a moment to tell us a little bit more about yourself.</string>
+    <string name="editor_title">My Profile</string>
+    <string name="gender">Gender</string>
+    <string name="zipcode">Zipcode</string>
+    <string name="description">Describe yourself!</string>
+    <string name="sexuality">Do you like&#8230;</string>
+    <string name="relationship">Relationship status</string>
+
+    <string name="save">Save</string>
+    <string name="upload">Upload</string>
 </resources>

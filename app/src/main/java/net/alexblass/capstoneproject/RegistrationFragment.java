@@ -102,6 +102,7 @@ public class RegistrationFragment extends Fragment {
             return;
         }
 
+        // TODO: Only create account if email is valid
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override

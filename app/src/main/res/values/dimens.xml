@@ -2,6 +2,8 @@
 <resources>
 
     <dimen name="zero">0dp</dimen>
+    <dimen name="standard_margin">16dp</dimen>
+    <dimen name="small_margin">8dp</dimen>
 
     <dimen name="credentials_txt_width">250dp</dimen>
     <dimen name="credentials_btn_width">250dp</dimen>

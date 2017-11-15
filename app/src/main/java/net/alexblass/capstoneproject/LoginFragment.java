@@ -2,6 +2,7 @@ package net.alexblass.capstoneproject;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -87,10 +88,11 @@ public class LoginFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
-                            // TODO: Launch mainscreen fragment
+                            // TODO: Display editor only when user is new.  Otherwise display the dashboard
+                            Intent editorActivity = new Intent(getActivity(), EditActivity.class);
+                            startActivity(editorActivity);
+
                         } else {
                             mErrorTv.setVisibility(View.VISIBLE);
                             mUsernameEt.requestFocus();
