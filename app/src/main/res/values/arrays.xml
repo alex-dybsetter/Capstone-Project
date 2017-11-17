@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="gender_choices">
+        <item>@string/gender</item>
+        <item>@string/gender_cismale</item>
+        <item>@string/gender_cisfemale</item>
+        <item>@string/gender_ftm</item>
+        <item>@string/gender_mtf</item>
+        <item>@string/gender_neutral</item>
+        <item>@string/gender_other</item>
+    </string-array>
+
+    <string-array name="sexuality_choices">
+        <item>@string/sexuality</item>
+        <item>@string/sexuality_men</item>
+        <item>@string/sexuality_women</item>
+        <item>@string/sexuality_both</item>
+        <item>@string/sexuality_none</item>
+    </string-array>
+
+    <string-array name="relationship_choices">
+        <item>@string/relationship</item>
+        <item>@string/relationship_single_not_searching</item>
+        <item>@string/relationship_single_searching</item>
+        <item>@string/relationship_taken</item>
+        <item>@string/relationship_open</item>
+    </string-array>
+
+</resources>

@@ -19,11 +19,29 @@
 
     <string name="editor_instructions">Take a moment to tell us a little bit more about yourself.</string>
     <string name="editor_title">My Profile</string>
-    <string name="gender">Gender</string>
+
+    <string name="gender">I identify as&#8230;</string>
+    <string name="gender_cismale">Man</string>
+    <string name="gender_cisfemale">Woman</string>
+    <string name="gender_ftm">FTM</string>
+    <string name="gender_mtf">MTF</string>
+    <string name="gender_neutral">Gender Neutral</string>
+    <string name="gender_other">Non-binary or Other</string>
     <string name="zipcode">Zipcode</string>
     <string name="description">Describe yourself!</string>
-    <string name="sexuality">Do you like&#8230;</string>
+
+    <string name="sexuality">I like&#8230;</string>
+    <string name="sexuality_men">Men</string>
+    <string name="sexuality_women">Women</string>
+    <string name="sexuality_both">Men and Women</string>
+    <string name="sexuality_any">Gender isn\'t important.</string>
+    <string name="sexuality_none">I\'m not into that.</string>
+
     <string name="relationship">Relationship status</string>
+    <string name="relationship_single_searching">Single and searching</string>
+    <string name="relationship_single_not_searching">Single and loving it</string>
+    <string name="relationship_taken">In a relationship</string>
+    <string name="relationship_open">In an open relationship</string>
 
     <string name="save">Save</string>
     <string name="upload">Upload</string>
