@@ -18,7 +18,7 @@
     <string name="verification_email">Verification email sent</string>
 
     <string name="editor_instructions">Take a moment to tell us a little bit more about yourself.</string>
-    <string name="editor_title">My Profile</string>
+    <string name="editor_title">Edit Profile</string>
 
     <string name="gender">I identify as&#8230;</string>
     <string name="gender_cismale">Man</string>
@@ -45,4 +45,7 @@
 
     <string name="save">Save</string>
     <string name="upload">Upload</string>
+
+    <string name="my_profile">My Profile</string>
+    <string name="connect">Connect</string>
 </resources>

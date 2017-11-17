@@ -1,5 +1,6 @@
 package net.alexblass.capstoneproject;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -49,5 +50,8 @@ public class EditActivity extends AppCompatActivity {
         DatabaseReference myRef = database.getReference("user");
 
         myRef.setValue(user);
+
+        Intent dashboardActivity = new Intent(this, DashboardActivity.class);
+        startActivity(dashboardActivity);
     }
 }
