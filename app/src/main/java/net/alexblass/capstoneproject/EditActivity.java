@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -14,6 +15,8 @@ import net.alexblass.capstoneproject.models.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -24,13 +27,17 @@ public class EditActivity extends AppCompatActivity {
     @BindView(R.id.edit_sexuality_spinner) Spinner mSexualitySpinner;
     @BindView(R.id.edit_relationship_spinner) Spinner mRelationshipStatusSpinner;
 
-    private User user;
+    private FirebaseAuth mAuth;
+
+    private User mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         ButterKnife.bind(this);
+
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @OnClick(R.id.edit_save_btn)
@@ -43,15 +50,17 @@ public class EditActivity extends AppCompatActivity {
         String sexuality = mSexualitySpinner.getSelectedItem().toString();
         String relationshipStatus = mRelationshipStatusSpinner.getSelectedItem().toString();
 
-        User user = new User(name, zipcode, gender, sexuality, relationshipStatus, description);
+        String email = mAuth.getCurrentUser().getEmail();
 
-        // TODO: Set a unique key to identify each user, since the key overwrites data
+        mUser = new User(email, name, zipcode, gender, sexuality, relationshipStatus, description);
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("user");
+        DatabaseReference myRef = database.getReference(email.replace(".", "(dot)"));
 
-        myRef.setValue(user);
+        myRef.setValue(mUser);
 
         Intent dashboardActivity = new Intent(this, DashboardActivity.class);
+        dashboardActivity.putExtra(USER_KEY, mUser);
         startActivity(dashboardActivity);
     }
 }

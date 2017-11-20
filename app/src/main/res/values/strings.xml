@@ -35,7 +35,7 @@
     <string name="sexuality_women">Women</string>
     <string name="sexuality_both">Men and Women</string>
     <string name="sexuality_any">Gender isn\'t important.</string>
-    <string name="sexuality_none">I\'m not into that.</string>
+    <string name="sexuality_none">I\'m not into that</string>
 
     <string name="relationship">Relationship status</string>
     <string name="relationship_single_searching">Single and searching</string>
