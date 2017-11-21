@@ -8,6 +8,20 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="login_btn">
+        <item name="android:background">@drawable/button_bg</item>
+        <item name="android:textColor">@color/light_text</item>
+        <item name="android:layout_margin">@dimen/small_margin</item>
+    </style>
+
+    <style name="headline">
+        <item name="android:textColor">@color/primary_dark</item>
+        <item name="android:textSize">@dimen/headline_size</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:fontFeatureSettings">smcp</item>
+    </style>
+
     <style name="invalid_text">
         <item name="android:textColor">@color/validation_error</item>
     </style>

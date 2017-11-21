@@ -9,5 +9,9 @@
     <dimen name="credentials_btn_width">250dp</dimen>
 
     <dimen name="edit_btn_size">16dp</dimen>
+    <dimen name="corner_radius">4dp</dimen>
+
+    <dimen name="headline_size">24sp</dimen>
+    <dimen name="headline_gutter">32dp</dimen>
 
 </resources>

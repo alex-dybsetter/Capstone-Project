@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">MeetMe!</string>
 
+    <string name="intro">It\'s the friends we meet along the way that help us appreciate the journey.</string>
+
     <string name="sign_up">Sign Up</string>
     <string name="login">Login</string>
     <string name="name">Name</string>
