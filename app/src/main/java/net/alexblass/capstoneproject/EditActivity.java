@@ -54,10 +54,9 @@ public class EditActivity extends AppCompatActivity {
 
         mUser = new User(email, name, zipcode, gender, sexuality, relationshipStatus, description);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(email.replace(".", "(dot)"));
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference(email.replace(".", "(dot)"));
 
-        myRef.setValue(mUser);
+        database.setValue(mUser);
 
         Intent dashboardActivity = new Intent(this, DashboardActivity.class);
         dashboardActivity.putExtra(USER_KEY, mUser);
