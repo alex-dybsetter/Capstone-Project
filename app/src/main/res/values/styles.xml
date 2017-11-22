@@ -8,18 +8,35 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="login_btn">
+    <style name="LoginBtn">
         <item name="android:background">@drawable/button_bg</item>
         <item name="android:textColor">@color/light_text</item>
         <item name="android:layout_margin">@dimen/small_margin</item>
     </style>
 
-    <style name="headline">
+    <style name="Headline">
         <item name="android:textColor">@color/primary_dark</item>
         <item name="android:textSize">@dimen/headline_size</item>
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">sans-serif-condensed</item>
         <item name="android:fontFeatureSettings">smcp</item>
+    </style>
+
+    <style name="Title" parent="Headline">
+        <item name="android:textColor">@color/primary_dark</item>
+        <item name="android:textSize">@dimen/title_size</item>
+        <item name="android:gravity">start</item>
+    </style>
+
+    <style name="FormLbl">
+        <item name="android:textColor">@color/accent_dark</item>
+        <item name="android:textSize">@dimen/text_size</item>
+    </style>
+
+    <style name="HelperText">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textSize">@dimen/text_size</item>
+        <item name="android:visibility">gone</item>
     </style>
 
     <style name="invalid_text">

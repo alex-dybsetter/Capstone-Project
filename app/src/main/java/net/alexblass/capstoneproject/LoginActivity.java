@@ -17,6 +17,7 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // TODO: If the user is already logged in, set the layout to the home screen
+        // TODO: Add animation to the fragments/back button
         setContentView(R.layout.activity_login);
 
         AccountPromptFragment promptFragment = new AccountPromptFragment();

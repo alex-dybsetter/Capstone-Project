@@ -30,14 +30,14 @@
 
         <Button
             android:id="@+id/sign_up_btn"
-            style="@style/login_btn"
+            style="@style/LoginBtn"
             android:layout_width="@dimen/credentials_btn_width"
             android:layout_height="match_parent"
             android:text="@string/sign_up" />
 
         <Button
             android:id="@+id/login_btn"
-            style="@style/login_btn"
+            style="@style/LoginBtn"
             android:layout_width="@dimen/credentials_btn_width"
             android:layout_height="match_parent"
             android:text="@string/login" />
@@ -74,7 +74,7 @@
 
     <TextView
         android:id="@+id/textView"
-        style="@style/headline"
+        style="@style/Headline"
         android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/headline_gutter"

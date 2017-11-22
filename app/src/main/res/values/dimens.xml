@@ -14,4 +14,7 @@
     <dimen name="headline_size">24sp</dimen>
     <dimen name="headline_gutter">32dp</dimen>
 
+    <dimen name="title_size">16sp</dimen>
+    <dimen name="text_size">14sp</dimen>
+
 </resources>

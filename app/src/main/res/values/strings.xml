@@ -6,16 +6,23 @@
     <string name="sign_up">Sign Up</string>
     <string name="login">Login</string>
     <string name="name">Name</string>
+    <string name="name_helper">How you will appear to others</string>
     <string name="birthday">Birthday</string>
+    <string name="birthday_helper">MM/DD/YYYY</string>
     <string name="email">Email</string>
+    <string name="email_helper">This will not be shared with others</string>
     <string name="password">Password</string>
+    <string name="password_helper">At least 6 characters A&#8211;Z and 0&#8211;9</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="invalid_entry">Invalid Entry</string>
     <string name="empty_name">Please enter your name.</string>
-    <string name="invalid_date">Please enter a date mm/dd/yyyy.</string>
+    <string name="invalid_date">Please enter a date MM/DD/YYYY.</string>
+    <string name="invalid_age">Sorry, you must be at least 18 to use MeetMe! :(</string>
     <string name="invalid_email">Please use a valid email address.</string>
     <string name="empty_password">Please enter a password.</string>
+    <string name="invalid_password">Please make sure your password meets the following criteria: \n * At least 6 characters in length \n * Contains at least one letter A&#8211;Z \n * Contains at least one number 0&#8211;9</string>
     <string name="okay">Okay</string>
+    <string name="required_field">Required field</string>
     <string name="invalid_credentials">Invalid username or password</string>
     <string name="verification_email">Verification email sent</string>
 

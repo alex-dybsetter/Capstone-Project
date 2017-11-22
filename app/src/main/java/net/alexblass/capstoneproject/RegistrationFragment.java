@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,12 +24,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import butterknife.BindColor;
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A Fragment to create a new account.
  */
 public class RegistrationFragment extends Fragment {
 
@@ -38,9 +39,18 @@ public class RegistrationFragment extends Fragment {
 
     @BindView(R.id.registration_name_et) EditText mNameEt;
     @BindView(R.id.registration_birthday_et) EditText mBirthdayEt;
-    @BindView(R.id.registration_email_et) EditText mUsernameEt;
+    @BindView(R.id.registration_email_et) EditText mEmailEt;
     @BindView(R.id.registration_password_et) EditText mPasswordEt;
     @BindView(R.id.registration_parent) ConstraintLayout mParent;
+
+    @BindView(R.id.registration_name_helper) TextView mNameHelperTv;
+    @BindView(R.id.registration_birthday_helper) TextView mBirthdayHelperTv;
+    @BindView(R.id.registration_email_helper) TextView mEmailHelperTv;
+    @BindView(R.id.registration_password_helper) TextView mPasswordHelperTv;
+
+    @BindString(R.string.required_field) String mRequired;
+    @BindColor(R.color.validation_error) int mErrorColor;
+    @BindColor(R.color.colorPrimary) int mHelperColor;
 
     public RegistrationFragment() {
         // Required empty public constructor
@@ -62,6 +72,58 @@ public class RegistrationFragment extends Fragment {
             }
         });
 
+        mNameEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus){
+                    mNameHelperTv.setVisibility(View.VISIBLE);
+                    mNameHelperTv.setTextColor(mHelperColor);
+                    mNameHelperTv.setText(getContext().getString(R.string.name_helper));
+                } else {
+                    mNameHelperTv.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        mBirthdayEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus){
+                    mBirthdayHelperTv.setVisibility(View.VISIBLE);
+                    mBirthdayHelperTv.setTextColor(mHelperColor);
+                    mBirthdayHelperTv.setText(getContext().getString(R.string.birthday_helper));
+                } else {
+                    mBirthdayHelperTv.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        mEmailEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus){
+                    mEmailHelperTv.setVisibility(View.VISIBLE);
+                    mEmailHelperTv.setTextColor(mHelperColor);
+                    mEmailHelperTv.setText(getContext().getString(R.string.email_helper));
+                } else {
+                    mEmailHelperTv.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        mPasswordEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus){
+                    mPasswordHelperTv.setVisibility(View.VISIBLE);
+                    mPasswordHelperTv.setTextColor(mHelperColor);
+                    mPasswordHelperTv.setText(getContext().getString(R.string.password_helper));
+                } else {
+                    mPasswordHelperTv.setVisibility(View.GONE);
+                }
+            }
+        });
+
         return rootView;
     }
 
@@ -74,7 +136,8 @@ public class RegistrationFragment extends Fragment {
         if (name.isEmpty()){
             showErrorDialog(getContext().getString(R.string.empty_name));
             mNameEt.requestFocus();
-
+            mNameHelperTv.setTextColor(mErrorColor);
+            mNameHelperTv.setText(mRequired);
             return;
         }
 
@@ -82,15 +145,17 @@ public class RegistrationFragment extends Fragment {
         if (birthday.isEmpty()){
             showErrorDialog(getContext().getString(R.string.invalid_date));
             mBirthdayEt.requestFocus();
-
+            mBirthdayHelperTv.setTextColor(mErrorColor);
+            mBirthdayHelperTv.setText(mRequired);
             return;
         }
 
-        String email = mUsernameEt.getText().toString().trim();
+        String email = mEmailEt.getText().toString().trim();
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             showErrorDialog(getContext().getString(R.string.invalid_email));
-            mUsernameEt.requestFocus();
-
+            mEmailEt.requestFocus();
+            mEmailHelperTv.setTextColor(mErrorColor);
+            mEmailHelperTv.setText(mRequired);
             return;
         }
 
@@ -98,7 +163,8 @@ public class RegistrationFragment extends Fragment {
         if (password.isEmpty()){
             showErrorDialog(getContext().getString(R.string.empty_password));
             mPasswordEt.requestFocus();
-
+            mPasswordHelperTv.setTextColor(mErrorColor);
+            mPasswordHelperTv.setText(mRequired);
             return;
         }
 
@@ -148,8 +214,13 @@ public class RegistrationFragment extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             mNameEt.clearFocus();
             mBirthdayEt.clearFocus();
-            mUsernameEt.clearFocus();
+            mEmailEt.clearFocus();
             mPasswordEt.clearFocus();
+
+            mNameHelperTv.setVisibility(View.GONE);
+            mBirthdayHelperTv.setVisibility(View.GONE);
+            mEmailHelperTv.setVisibility(View.GONE);
+            mPasswordHelperTv.setVisibility(View.GONE);
         }
     }
 }
