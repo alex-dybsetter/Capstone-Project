@@ -8,7 +8,6 @@
     <string name="name">Name</string>
     <string name="name_helper">How you will appear to others</string>
     <string name="birthday">Birthday</string>
-    <string name="birthday_helper">MM/DD/YYYY</string>
     <string name="email">Email</string>
     <string name="email_helper">This will not be shared with others</string>
     <string name="password">Password</string>

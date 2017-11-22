@@ -1,6 +1,7 @@
 package net.alexblass.capstoneproject;
 
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +25,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindColor;
 import butterknife.BindString;
@@ -34,6 +41,9 @@ import butterknife.OnClick;
  * A Fragment to create a new account.
  */
 public class RegistrationFragment extends Fragment {
+
+    private final int LEGAL_ADULT_AGE = 18;
+    private final int MAX_AGE = 100;
 
     private FirebaseAuth mAuth;
 
@@ -52,6 +62,8 @@ public class RegistrationFragment extends Fragment {
     @BindColor(R.color.validation_error) int mErrorColor;
     @BindColor(R.color.colorPrimary) int mHelperColor;
 
+    private Calendar mBdayCalendar;
+
     public RegistrationFragment() {
         // Required empty public constructor
     }
@@ -63,6 +75,21 @@ public class RegistrationFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         mAuth = FirebaseAuth.getInstance();
+        mBdayCalendar = Calendar.getInstance();
+
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                mBdayCalendar.set(Calendar.YEAR, year);
+                mBdayCalendar.set(Calendar.MONTH, monthOfYear);
+                mBdayCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                setDate();
+            }
+
+        };
+
 
         mParent.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -85,16 +112,24 @@ public class RegistrationFragment extends Fragment {
             }
         });
 
-        mBirthdayEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mBirthdayEt.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (hasFocus){
-                    mBirthdayHelperTv.setVisibility(View.VISIBLE);
-                    mBirthdayHelperTv.setTextColor(mHelperColor);
-                    mBirthdayHelperTv.setText(getContext().getString(R.string.birthday_helper));
-                } else {
-                    mBirthdayHelperTv.setVisibility(View.GONE);
-                }
+            public void onClick(View view) {
+                clearFocus();
+
+                DatePickerDialog dialog = new DatePickerDialog(getContext(), date, mBdayCalendar
+                        .get(Calendar.YEAR), mBdayCalendar.get(Calendar.MONTH),
+                        mBdayCalendar.get(Calendar.DAY_OF_MONTH));
+
+                Calendar timeFrame = Calendar.getInstance();
+                timeFrame.add(Calendar.YEAR, -1 * MAX_AGE);
+                dialog.getDatePicker().setMinDate(timeFrame.getTimeInMillis());
+                timeFrame.add(Calendar.YEAR, MAX_AGE);
+
+                dialog.getDatePicker().setMaxDate(timeFrame.getTimeInMillis());
+                dialog.show();
+                
+                mBirthdayHelperTv.setVisibility(View.GONE);
             }
         });
 
@@ -144,9 +179,14 @@ public class RegistrationFragment extends Fragment {
         String birthday = mBirthdayEt.getText().toString().trim();
         if (birthday.isEmpty()){
             showErrorDialog(getContext().getString(R.string.invalid_date));
-            mBirthdayEt.requestFocus();
-            mBirthdayHelperTv.setTextColor(mErrorColor);
-            mBirthdayHelperTv.setText(mRequired);
+            clearFocus();
+            mBirthdayHelperTv.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        if (!isAdult(mBdayCalendar.getTime())){
+            showErrorDialog(getContext().getString(R.string.invalid_age));
+            clearFocus();
             return;
         }
 
@@ -221,6 +261,23 @@ public class RegistrationFragment extends Fragment {
             mBirthdayHelperTv.setVisibility(View.GONE);
             mEmailHelperTv.setVisibility(View.GONE);
             mPasswordHelperTv.setVisibility(View.GONE);
+        }
+    }
+
+    private void setDate() {
+        String myFormat = "MM/dd/yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        mBirthdayEt.setText(sdf.format(mBdayCalendar.getTime()));
+    }
+
+    private boolean isAdult(Date birthday){
+        Calendar legalAdultCalendar = Calendar.getInstance();
+        legalAdultCalendar.set(Calendar.YEAR, legalAdultCalendar.get(Calendar.YEAR) - LEGAL_ADULT_AGE);
+        if (mBdayCalendar.getTimeInMillis() > legalAdultCalendar.getTimeInMillis()){
+            return false;
+        } else {
+            return true;
         }
     }
 }

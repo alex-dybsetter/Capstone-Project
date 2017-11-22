@@ -60,8 +60,9 @@
                 android:layout_width="@dimen/credentials_txt_width"
                 android:layout_height="wrap_content"
                 android:hint="@string/birthday"
-                android:inputType="date"
-                android:selectAllOnFocus="true" />
+                android:focusable="false"
+                android:longClickable="false"
+                android:inputType="date" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -70,7 +71,8 @@
             style="@style/HelperText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/birthday_helper" />
+            android:text="@string/required_field"
+            android:textColor="@color/validation_error"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="wrap_content"
