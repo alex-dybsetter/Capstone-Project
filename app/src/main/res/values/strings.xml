@@ -24,6 +24,7 @@
     <string name="required_field">Required field</string>
     <string name="invalid_credentials">Invalid username or password</string>
     <string name="verification_email">Verification email sent</string>
+    <string name="email_error">An error occurred. \nPlease try again later</string>
 
     <string name="editor_instructions">Take a moment to tell us a little bit more about yourself.</string>
     <string name="editor_title">Edit Profile</string>

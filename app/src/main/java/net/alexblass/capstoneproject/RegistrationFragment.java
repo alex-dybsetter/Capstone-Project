@@ -208,6 +208,13 @@ public class RegistrationFragment extends Fragment {
             return;
         }
 
+        if (password.length() < 6 || !containsDigitsAndLetters(password)){
+            showErrorDialog(getContext().getString(R.string.invalid_password));
+            mPasswordEt.requestFocus();
+            mPasswordHelperTv.setTextColor(mErrorColor);
+            return;
+        }
+
         // TODO: Only create account if email is valid
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
@@ -226,8 +233,7 @@ public class RegistrationFragment extends Fragment {
                                 }
                             });
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(getActivity(), "Authentication failed.",
+                            Toast.makeText(getActivity(), getContext().getString(R.string.email_error),
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -279,5 +285,22 @@ public class RegistrationFragment extends Fragment {
         } else {
             return true;
         }
+    }
+
+    private boolean containsDigitsAndLetters(String password){
+        boolean containsDigits = false;
+        boolean containsLetters = false;
+        for (char character : password.toCharArray()){
+            if (Character.isLetter(character)){
+                containsLetters = true;
+            }
+            if (Character.isDigit(character)){
+                containsDigits = true;
+            }
+            if (containsLetters && containsDigits){
+                return true;
+            }
+        }
+        return false;
     }
 }
