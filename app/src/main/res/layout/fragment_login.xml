@@ -1,69 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/login_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="true"
     android:clickable="true"
+    android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <TextView
-        android:id="@+id/login_lbl"
+    <LinearLayout
+        android:id="@+id/login_fields_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/login"
-        app:layout_constraintBottom_toTopOf="@+id/error_tv"
-        app:layout_constraintStart_toStartOf="@+id/error_tv" />
-
-    <TextView
-        android:id="@+id/error_tv"
-        style="@style/InvalidText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/invalid_credentials"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/login_email_et"
-        app:layout_constraintStart_toStartOf="@+id/login_email_et" />
-
-    <EditText
-        android:id="@+id/login_email_et"
-        android:layout_width="@dimen/credentials_txt_width"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:hint="@string/email"
-        app:layout_constraintBottom_toTopOf="@+id/login_password_et"
-        app:layout_constraintEnd_toEndOf="@+id/login_password_et"
-        app:layout_constraintStart_toStartOf="@+id/login_password_et" />
-
-    <EditText
-        android:id="@+id/login_password_et"
-        android:layout_width="@dimen/credentials_txt_width"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:hint="@string/password"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.25">
+
+        <TextView
+            android:id="@+id/login_lbl"
+            style="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login"
+            app:layout_constraintBottom_toTopOf="@+id/error_tv"
+            app:layout_constraintStart_toStartOf="@+id/error_tv" />
+
+        <TextView
+            android:id="@+id/error_tv"
+            style="@style/InvalidText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/standard_margin"
+            android:text="@string/invalid_credentials"
+            android:visibility="gone" />
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/standard_margin"
+            app:hintTextAppearance="@style/FormLbl">
+
+            <EditText
+                android:id="@+id/login_email_et"
+                android:layout_width="@dimen/credentials_txt_width"
+                android:layout_height="wrap_content"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/standard_margin"
+            app:hintTextAppearance="@style/FormLbl">
+
+            <EditText
+                android:id="@+id/login_password_et"
+                android:layout_width="@dimen/credentials_txt_width"
+                android:layout_height="wrap_content"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/password_recovery"
+            android:textColor="@color/primary_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forgot_password"
+            android:layout_marginBottom="@dimen/standard_margin"/>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/login_submit_btn"
+        style="@style/LoginBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login"
-        app:layout_constraintEnd_toEndOf="@+id/login_password_et"
-        app:layout_constraintTop_toBottomOf="@+id/login_password_et" />
-
-    <TextView
-        android:id="@+id/password_recovery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/forgot_password"
-        app:layout_constraintEnd_toStartOf="@+id/login_submit_btn"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/login_password_et"
-        app:layout_constraintTop_toBottomOf="@+id/login_password_et" />
+        android:layout_marginTop="@dimen/standard_margin"
+        app:layout_constraintEnd_toEndOf="@+id/login_fields_container"
+        app:layout_constraintTop_toBottomOf="@+id/login_fields_container" />
 
 </android.support.constraint.ConstraintLayout>
