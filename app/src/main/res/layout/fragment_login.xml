@@ -48,7 +48,8 @@
                 android:layout_width="@dimen/credentials_txt_width"
                 android:layout_height="wrap_content"
                 android:hint="@string/email"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:selectAllOnFocus="true"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -63,7 +64,8 @@
                 android:layout_width="@dimen/credentials_txt_width"
                 android:layout_height="wrap_content"
                 android:hint="@string/password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:selectAllOnFocus="true"/>
 
         </android.support.design.widget.TextInputLayout>
 

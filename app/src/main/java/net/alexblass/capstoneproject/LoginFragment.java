@@ -106,49 +106,91 @@ public class LoginFragment extends Fragment {
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-
-                            String userEmail = mAuth.getCurrentUser().getEmail().replace(".", "(dot)");
-
-                            Query query = mDatabase.child(userEmail);
-                            query.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.exists()){
-                                        String name, zipcode, description, gender, sexuality, relationshipStatus, email;
-
-                                        name = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
-                                        zipcode = (String) dataSnapshot.child(USER_ZIPCODE_KEY).getValue();
-                                        description = (String) dataSnapshot.child(USER_DESCRIPTION_KEY).getValue();
-
-                                        gender = (String) dataSnapshot.child(USER_GENDER_KEY).getValue();
-                                        sexuality = (String) dataSnapshot.child(USER_SEXUALITY_KEY).getValue();
-                                        relationshipStatus = (String) dataSnapshot.child(USER_RELATIONSHIP_KEY).getValue();
-
-                                        email = mAuth.getCurrentUser().getEmail();
-
-                                        User user = new User(email, name, zipcode, gender, sexuality, relationshipStatus, description);
-
-                                        Intent dashboardActivity = new Intent(getActivity(), DashboardActivity.class);
-                                        dashboardActivity.putExtra(USER_KEY, user);
-                                        startActivity(dashboardActivity);
-                                    } else {
-                                        launchEditor();
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Toast.makeText(getContext(), "Could not retrieve data", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                        } else {
-                            mErrorTv.setVisibility(View.VISIBLE);
-                            mUsernameEt.requestFocus();
-                        }
+                       logUserIn(task);
                     }
                 });
+    }
+
+    private void logUserIn(Task<AuthResult> task){
+
+        if (task.isSuccessful()) {
+
+            if (!mAuth.getCurrentUser().isEmailVerified()){
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                dialog.setTitle(getContext().getString(R.string.error_title))
+                        .setMessage(getContext().getString(R.string.unverified_email))
+                        .setPositiveButton(getContext().getString(R.string.go_btn), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                Intent intent = new Intent(Intent.ACTION_MAIN);
+                                intent.addCategory(Intent.CATEGORY_APP_EMAIL);
+                                getActivity().startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton(getContext().getString(R.string.resend_btn), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(getContext(),
+                                                    getContext().getString(R.string.email_sent),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                dialog.create().show();
+                return;
+            }
+
+            String userEmail = mAuth.getCurrentUser().getEmail().replace(".", "(dot)");
+
+            Query query = mDatabase.child(userEmail);
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()){
+                        String name, zipcode, description, gender, sexuality, relationshipStatus, email;
+
+                        name = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
+                        zipcode = (String) dataSnapshot.child(USER_ZIPCODE_KEY).getValue();
+                        description = (String) dataSnapshot.child(USER_DESCRIPTION_KEY).getValue();
+
+                        gender = (String) dataSnapshot.child(USER_GENDER_KEY).getValue();
+                        sexuality = (String) dataSnapshot.child(USER_SEXUALITY_KEY).getValue();
+                        relationshipStatus = (String) dataSnapshot.child(USER_RELATIONSHIP_KEY).getValue();
+
+                        email = mAuth.getCurrentUser().getEmail();
+
+                        User user = new User(email, name, zipcode, gender, sexuality, relationshipStatus, description);
+
+                        Intent dashboardActivity = new Intent(getActivity(), DashboardActivity.class);
+                        dashboardActivity.putExtra(USER_KEY, user);
+                        startActivity(dashboardActivity);
+                    } else {
+                        launchEditor();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(getContext(), getContext().getString(R.string.verification_error), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else {
+            mErrorTv.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @OnClick(R.id.password_recovery)
+    public void resetPassword(){
+        //TODO: Reset password
     }
 
     private void showErrorDialog(String body){

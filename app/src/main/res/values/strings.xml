@@ -29,6 +29,10 @@
     <string name="email_error">There was a problem with the email address provided.</string>.
     <string name="user_exists_error">Email is already registered, please use another.</string>
     <string name="error_title">Oops!</string>
+    <string name="unverified_email">Your account is not yet active!  Please verify your email before logging in.</string>
+    <string name="resend_btn">Resend Email</string>
+    <string name="go_btn">Go Now</string>
+    <string name="email_sent">Email sent</string>
 
     <string name="editor_instructions">Take a moment to tell us a little bit more about yourself.</string>
     <string name="editor_title">Edit Profile</string>
