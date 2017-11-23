@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,7 @@ public class RegistrationFragment extends Fragment {
 
     private final int LEGAL_ADULT_AGE = 18;
     private final int MAX_AGE = 100;
+    private final int MIN_PASSWORD_LENGTH = 6;
 
     private FirebaseAuth mAuth;
 
@@ -59,6 +61,7 @@ public class RegistrationFragment extends Fragment {
     @BindView(R.id.registration_password_helper) TextView mPasswordHelperTv;
 
     @BindString(R.string.required_field) String mRequired;
+    @BindString(R.string.invalid_entry) String mErrorTitle;
     @BindColor(R.color.validation_error) int mErrorColor;
     @BindColor(R.color.colorPrimary) int mHelperColor;
 
@@ -169,7 +172,7 @@ public class RegistrationFragment extends Fragment {
 
         String name = mNameEt.getText().toString().trim();
         if (name.isEmpty()){
-            showErrorDialog(getContext().getString(R.string.empty_name));
+            showErrorDialog(mErrorTitle, getContext().getString(R.string.empty_name));
             mNameEt.requestFocus();
             mNameHelperTv.setTextColor(mErrorColor);
             mNameHelperTv.setText(mRequired);
@@ -178,21 +181,21 @@ public class RegistrationFragment extends Fragment {
 
         String birthday = mBirthdayEt.getText().toString().trim();
         if (birthday.isEmpty()){
-            showErrorDialog(getContext().getString(R.string.invalid_date));
+            showErrorDialog(mErrorTitle, getContext().getString(R.string.invalid_date));
             clearFocus();
             mBirthdayHelperTv.setVisibility(View.VISIBLE);
             return;
         }
 
-        if (!isAdult(mBdayCalendar.getTime())){
-            showErrorDialog(getContext().getString(R.string.invalid_age));
+        if (!isAdult()){
+            showErrorDialog(mErrorTitle, getContext().getString(R.string.invalid_age));
             clearFocus();
             return;
         }
 
-        String email = mEmailEt.getText().toString().trim();
+        final String email = mEmailEt.getText().toString().trim();
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            showErrorDialog(getContext().getString(R.string.invalid_email));
+            showErrorDialog(mErrorTitle, getContext().getString(R.string.invalid_email));
             mEmailEt.requestFocus();
             mEmailHelperTv.setTextColor(mErrorColor);
             mEmailHelperTv.setText(mRequired);
@@ -201,15 +204,15 @@ public class RegistrationFragment extends Fragment {
 
         String password = mPasswordEt.getText().toString().trim();
         if (password.isEmpty()){
-            showErrorDialog(getContext().getString(R.string.empty_password));
+            showErrorDialog(mErrorTitle, getContext().getString(R.string.empty_password));
             mPasswordEt.requestFocus();
             mPasswordHelperTv.setTextColor(mErrorColor);
             mPasswordHelperTv.setText(mRequired);
             return;
         }
 
-        if (password.length() < 6 || !containsDigitsAndLetters(password)){
-            showErrorDialog(getContext().getString(R.string.invalid_password));
+        if (password.length() < MIN_PASSWORD_LENGTH || !containsDigitsAndLetters(password)){
+            showErrorDialog(mErrorTitle, getContext().getString(R.string.invalid_password));
             mPasswordEt.requestFocus();
             mPasswordHelperTv.setTextColor(mErrorColor);
             return;
@@ -226,9 +229,8 @@ public class RegistrationFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(getActivity(), getContext().getString(R.string.verification_email),
-                                                Toast.LENGTH_SHORT).show();
-                                        getFragmentManager().popBackStack();
+                                        showErrorDialog(getContext().getString(R.string.registration_complete),
+                                                getContext().getString(R.string.verification_email, email));
                                     }
                                 }
                             });
@@ -240,14 +242,17 @@ public class RegistrationFragment extends Fragment {
                 });
     }
 
-    private void showErrorDialog(String body){
+    private void showErrorDialog(final String title, String body){
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-        dialog.setTitle(getContext().getString(R.string.invalid_entry))
+        dialog.setTitle(title)
                 .setMessage(body)
                 .setPositiveButton(getContext().getString(R.string.okay), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        if (!title.equals(mErrorTitle)){
+                            getFragmentManager().popBackStack();
+                        }
                     }
                 });
         dialog.create().show();
@@ -277,14 +282,10 @@ public class RegistrationFragment extends Fragment {
         mBirthdayEt.setText(sdf.format(mBdayCalendar.getTime()));
     }
 
-    private boolean isAdult(Date birthday){
+    private boolean isAdult(){
         Calendar legalAdultCalendar = Calendar.getInstance();
         legalAdultCalendar.set(Calendar.YEAR, legalAdultCalendar.get(Calendar.YEAR) - LEGAL_ADULT_AGE);
-        if (mBdayCalendar.getTimeInMillis() > legalAdultCalendar.getTimeInMillis()){
-            return false;
-        } else {
-            return true;
-        }
+        return mBdayCalendar.getTimeInMillis() < legalAdultCalendar.getTimeInMillis();
     }
 
     private boolean containsDigitsAndLetters(String password){

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">MeetMe!</string>
 
     <string name="intro">It\'s the friends we meet along the way that help us appreciate the journey.</string>
@@ -23,7 +23,8 @@
     <string name="okay">Okay</string>
     <string name="required_field">Required field</string>
     <string name="invalid_credentials">Invalid username or password</string>
-    <string name="verification_email">Verification email sent</string>
+    <string name="registration_complete">Registration Successful</string>
+    <string name="verification_email">Verification email sent to <xliff:g id="email">%1$s</xliff:g> \n\nPlease verify your account before logging in.</string>
     <string name="email_error">An error occurred. \nPlease try again later</string>
 
     <string name="editor_instructions">Take a moment to tell us a little bit more about yourself.</string>

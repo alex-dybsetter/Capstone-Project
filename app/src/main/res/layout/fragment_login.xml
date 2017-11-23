@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/error_tv"
-        style="@style/invalid_text"
+        style="@style/InvalidText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/invalid_credentials"

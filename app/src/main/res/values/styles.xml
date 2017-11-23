@@ -1,8 +1,6 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -39,7 +37,7 @@
         <item name="android:visibility">gone</item>
     </style>
 
-    <style name="invalid_text">
+    <style name="InvalidText">
         <item name="android:textColor">@color/validation_error</item>
     </style>
 
