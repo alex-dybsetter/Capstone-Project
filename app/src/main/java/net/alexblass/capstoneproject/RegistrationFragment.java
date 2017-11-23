@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,7 +18,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,11 +25,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import butterknife.BindColor;
@@ -42,6 +44,8 @@ import butterknife.OnClick;
  * A Fragment to create a new account.
  */
 public class RegistrationFragment extends Fragment {
+
+    private static final String TAG = "RegistrationFragment";
 
     private final int LEGAL_ADULT_AGE = 18;
     private final int MAX_AGE = 100;
@@ -61,7 +65,8 @@ public class RegistrationFragment extends Fragment {
     @BindView(R.id.registration_password_helper) TextView mPasswordHelperTv;
 
     @BindString(R.string.required_field) String mRequired;
-    @BindString(R.string.invalid_entry) String mErrorTitle;
+    @BindString(R.string.invalid_entry) String mEntryErrorTitle;
+    @BindString(R.string.error_title) String mRegistrationErrorTitle;
     @BindColor(R.color.validation_error) int mErrorColor;
     @BindColor(R.color.colorPrimary) int mHelperColor;
 
@@ -172,7 +177,7 @@ public class RegistrationFragment extends Fragment {
 
         String name = mNameEt.getText().toString().trim();
         if (name.isEmpty()){
-            showErrorDialog(mErrorTitle, getContext().getString(R.string.empty_name));
+            showDialog(mEntryErrorTitle, getContext().getString(R.string.empty_name));
             mNameEt.requestFocus();
             mNameHelperTv.setTextColor(mErrorColor);
             mNameHelperTv.setText(mRequired);
@@ -181,21 +186,21 @@ public class RegistrationFragment extends Fragment {
 
         String birthday = mBirthdayEt.getText().toString().trim();
         if (birthday.isEmpty()){
-            showErrorDialog(mErrorTitle, getContext().getString(R.string.invalid_date));
+            showDialog(mEntryErrorTitle, getContext().getString(R.string.invalid_date));
             clearFocus();
             mBirthdayHelperTv.setVisibility(View.VISIBLE);
             return;
         }
 
         if (!isAdult()){
-            showErrorDialog(mErrorTitle, getContext().getString(R.string.invalid_age));
+            showDialog(mEntryErrorTitle, getContext().getString(R.string.invalid_age));
             clearFocus();
             return;
         }
 
         final String email = mEmailEt.getText().toString().trim();
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            showErrorDialog(mErrorTitle, getContext().getString(R.string.invalid_email));
+            showDialog(mEntryErrorTitle, getContext().getString(R.string.invalid_email));
             mEmailEt.requestFocus();
             mEmailHelperTv.setTextColor(mErrorColor);
             mEmailHelperTv.setText(mRequired);
@@ -204,7 +209,7 @@ public class RegistrationFragment extends Fragment {
 
         String password = mPasswordEt.getText().toString().trim();
         if (password.isEmpty()){
-            showErrorDialog(mErrorTitle, getContext().getString(R.string.empty_password));
+            showDialog(mEntryErrorTitle, getContext().getString(R.string.empty_password));
             mPasswordEt.requestFocus();
             mPasswordHelperTv.setTextColor(mErrorColor);
             mPasswordHelperTv.setText(mRequired);
@@ -212,13 +217,12 @@ public class RegistrationFragment extends Fragment {
         }
 
         if (password.length() < MIN_PASSWORD_LENGTH || !containsDigitsAndLetters(password)){
-            showErrorDialog(mErrorTitle, getContext().getString(R.string.invalid_password));
+            showDialog(mEntryErrorTitle, getContext().getString(R.string.invalid_password));
             mPasswordEt.requestFocus();
             mPasswordHelperTv.setTextColor(mErrorColor);
             return;
         }
 
-        // TODO: Only create account if email is valid
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
@@ -229,20 +233,30 @@ public class RegistrationFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        showErrorDialog(getContext().getString(R.string.registration_complete),
+                                        showDialog(getContext().getString(R.string.registration_complete),
                                                 getContext().getString(R.string.verification_email, email));
                                     }
                                 }
                             });
                         } else {
-                            Toast.makeText(getActivity(), getContext().getString(R.string.email_error),
-                                    Toast.LENGTH_SHORT).show();
+                            try {
+                                throw task.getException();
+                            } catch(FirebaseAuthWeakPasswordException e) {
+                                showDialog(mRegistrationErrorTitle, getContext().getString(R.string.invalid_password));
+                            } catch(FirebaseAuthInvalidCredentialsException e) {
+                                showDialog(mRegistrationErrorTitle, getContext().getString(R.string.email_error));
+                            } catch(FirebaseAuthUserCollisionException e) {
+                                showDialog(mRegistrationErrorTitle, getContext().getString(R.string.user_exists_error));
+                            } catch(Exception e) {
+                                showDialog(mRegistrationErrorTitle, getContext().getString(R.string.verification_error));
+                                Log.e(TAG, e.getMessage());
+                            }
                         }
                     }
                 });
     }
 
-    private void showErrorDialog(final String title, String body){
+    private void showDialog(final String title, String body){
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         dialog.setTitle(title)
                 .setMessage(body)
@@ -250,7 +264,7 @@ public class RegistrationFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        if (!title.equals(mErrorTitle)){
+                        if (!title.equals(mEntryErrorTitle)){
                             getFragmentManager().popBackStack();
                         }
                     }
