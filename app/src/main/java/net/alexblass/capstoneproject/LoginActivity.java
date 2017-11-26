@@ -1,10 +1,27 @@
 package net.alexblass.capstoneproject;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import net.alexblass.capstoneproject.models.User;
+
+import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_GENDER_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_NAME_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_RELATIONSHIP_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_SEXUALITY_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_ZIPCODE_KEY;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -16,15 +33,48 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        // TODO: If the user is already logged in, set the layout to the home screen
         // TODO: Add animation to the fragments/back button
         setContentView(R.layout.activity_login);
 
-        AccountPromptFragment promptFragment = new AccountPromptFragment();
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.login_fragment_container, promptFragment)
-                .commit();
+        if (mAuth.getCurrentUser() == null) {
+            AccountPromptFragment promptFragment = new AccountPromptFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.login_fragment_container, promptFragment)
+                    .commit();
+        } else {
+            Query query = FirebaseDatabase.getInstance().getReference().child(
+                    mAuth.getCurrentUser().getEmail().replace(".", "(dot)"));
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        String name, zipcode, description, gender, sexuality, relationshipStatus, email;
+
+                        name = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
+                        zipcode = (String) dataSnapshot.child(USER_ZIPCODE_KEY).getValue();
+                        description = (String) dataSnapshot.child(USER_DESCRIPTION_KEY).getValue();
+
+                        gender = (String) dataSnapshot.child(USER_GENDER_KEY).getValue();
+                        sexuality = (String) dataSnapshot.child(USER_SEXUALITY_KEY).getValue();
+                        relationshipStatus = (String) dataSnapshot.child(USER_RELATIONSHIP_KEY).getValue();
+
+                        email = mAuth.getCurrentUser().getEmail();
+
+                        User user = new User(email, name, zipcode, gender, sexuality, relationshipStatus, description);
+
+                        Intent dashboardActivity = new Intent(getApplicationContext(), DashboardActivity.class);
+                        dashboardActivity.putExtra(USER_KEY, user);
+                        startActivity(dashboardActivity);
+                    }
+                }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.verification_error), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        }
     }
 
     @Override
