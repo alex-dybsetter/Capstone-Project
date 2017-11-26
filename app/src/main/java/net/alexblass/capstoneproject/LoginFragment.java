@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,7 +52,7 @@ public class LoginFragment extends Fragment {
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
 
-    @BindView(R.id.login_email_et) EditText mUsernameEt;
+    @BindView(R.id.login_email_et) EditText mEmailEt;
     @BindView(R.id.login_password_et) EditText mPasswordEt;
     @BindView(R.id.error_tv) TextView mErrorTv;
     @BindView(R.id.login_parent) ConstraintLayout mParent;
@@ -86,17 +86,19 @@ public class LoginFragment extends Fragment {
 
         clearFocus();
 
-        String email = mUsernameEt.getText().toString().trim();
+        String email = mEmailEt.getText().toString().trim();
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            showErrorDialog(getContext().getString(R.string.invalid_email));
-            mUsernameEt.requestFocus();
+            mErrorTv.setText(getContext().getString(R.string.invalid_email));
+            mErrorTv.setVisibility(View.VISIBLE);
+            mEmailEt.requestFocus();
 
             return;
         }
 
         String password = mPasswordEt.getText().toString().trim();
         if (password.isEmpty()){
-            showErrorDialog(getContext().getString(R.string.empty_password));
+            mErrorTv.setText(getContext().getString(R.string.empty_password));
+            mErrorTv.setVisibility(View.VISIBLE);
             mPasswordEt.requestFocus();
 
             return;
@@ -116,35 +118,7 @@ public class LoginFragment extends Fragment {
         if (task.isSuccessful()) {
 
             if (!mAuth.getCurrentUser().isEmailVerified()){
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-                dialog.setTitle(getContext().getString(R.string.error_title))
-                        .setMessage(getContext().getString(R.string.unverified_email))
-                        .setPositiveButton(getContext().getString(R.string.go_btn), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                Intent intent = new Intent(Intent.ACTION_MAIN);
-                                intent.addCategory(Intent.CATEGORY_APP_EMAIL);
-                                getActivity().startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton(getContext().getString(R.string.resend_btn), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Toast.makeText(getContext(),
-                                                    getContext().getString(R.string.email_sent),
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                dialog.create().show();
+                unverifiedEmailDialog();
                 return;
             }
 
@@ -184,23 +158,70 @@ public class LoginFragment extends Fragment {
             });
 
         } else {
+            mErrorTv.setText(getContext().getString(R.string.invalid_credentials));
             mErrorTv.setVisibility(View.VISIBLE);
         }
     }
 
     @OnClick(R.id.password_recovery)
     public void resetPassword(){
-        //TODO: Reset password
+        mErrorTv.setVisibility(View.GONE);
+        String email = mEmailEt.getText().toString().trim();
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            mErrorTv.setText(getContext().getString(R.string.enter_email_password_reset_error));
+            mErrorTv.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(getContext(), getContext().getString(R.string.reset_email_sent),
+                                    Toast.LENGTH_SHORT).show();
+                        }else{
+                            mErrorTv.setText(getContext().getString(R.string.no_account_found));
+                            mErrorTv.setVisibility(View.VISIBLE);
+                            Toast.makeText(getContext(), getContext().getString(R.string.reset_failure),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
-    private void showErrorDialog(String body){
+    private void unverifiedEmailDialog(){
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-        dialog.setTitle(getContext().getString(R.string.invalid_entry))
-                .setMessage(body)
-                .setPositiveButton(getContext().getString(R.string.okay), new DialogInterface.OnClickListener() {
+        dialog.setTitle(getContext().getString(R.string.error_title))
+                .setMessage(getContext().getString(R.string.unverified_email))
+                .setPositiveButton(getContext().getString(R.string.go_btn), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_APP_EMAIL);
+                        getActivity().startActivity(intent);
+                    }
+                })
+                .setNegativeButton(getContext().getString(R.string.resend_btn), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getContext(),
+                                            getContext().getString(R.string.email_sent),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                     }
                 });
         dialog.create().show();
@@ -211,7 +232,7 @@ public class LoginFragment extends Fragment {
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            mUsernameEt.clearFocus();
+            mEmailEt.clearFocus();
             mPasswordEt.clearFocus();
         }
     }
