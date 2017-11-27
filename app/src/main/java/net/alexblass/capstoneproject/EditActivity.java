@@ -46,7 +46,7 @@ public class EditActivity extends AppCompatActivity {
         String zipcode = mZipcodeEt.getText().toString().trim();
         String description = mDescriptionEt.getText().toString().trim();
 
-        String gender = mGenderSpinnner.getSelectedItem().toString();
+        long gender = mGenderSpinnner.getSelectedItemId();
         String sexuality = mSexualitySpinner.getSelectedItem().toString();
         String relationshipStatus = mRelationshipStatusSpinner.getSelectedItem().toString();
 

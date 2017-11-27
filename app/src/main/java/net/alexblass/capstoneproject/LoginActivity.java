@@ -49,13 +49,14 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        String name, zipcode, description, gender, sexuality, relationshipStatus, email;
+                        String name, zipcode, description, sexuality, relationshipStatus, email;
+                        long gender;
 
                         name = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
                         zipcode = (String) dataSnapshot.child(USER_ZIPCODE_KEY).getValue();
                         description = (String) dataSnapshot.child(USER_DESCRIPTION_KEY).getValue();
 
-                        gender = (String) dataSnapshot.child(USER_GENDER_KEY).getValue();
+                        gender = (long) dataSnapshot.child(USER_GENDER_KEY).getValue();
                         sexuality = (String) dataSnapshot.child(USER_SEXUALITY_KEY).getValue();
                         relationshipStatus = (String) dataSnapshot.child(USER_RELATIONSHIP_KEY).getValue();
 

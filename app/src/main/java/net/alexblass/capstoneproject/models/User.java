@@ -13,18 +13,22 @@ import android.os.Parcelable;
 public class User implements Parcelable {
     private String mEmail;
     private String mName;
+//    private Date mBirthday;
+//    private int mAge;
     private String mZipcode;
-    private String mGender;
+    private long mGenderCode;
     private String mSexuality;
     private String mRelationshipStatus;
     private String mDescription;
 
-    public User(String email, String name, String zipcode, String gender, String sexuality,
-                String relationshipStatus, String description){
+    public User(String email, String name, String zipcode, long genderCode,
+                String sexuality, String relationshipStatus, String description){
         this.mEmail = email;
         this.mName = name;
+//        this.mBirthday = birthday;
+//        this.mAge = getAge(birthday);
         this.mZipcode = zipcode;
-        this.mGender = gender;
+        this.mGenderCode = genderCode;
         this.mSexuality = sexuality;
         this.mRelationshipStatus = relationshipStatus;
         this.mDescription = description;
@@ -33,8 +37,10 @@ public class User implements Parcelable {
     protected User(Parcel in) {
         this.mEmail = in.readString();
         this.mName = in.readString();
+//        this.mBirthday = new Date(in.readLong());
+//        this.mAge = in.readInt();
         this.mZipcode = in.readString();
-        this.mGender = in.readString();
+        this.mGenderCode = in.readLong();
         this.mSexuality = in.readString();
         this.mRelationshipStatus = in.readString();
         this.mDescription = in.readString();
@@ -56,6 +62,15 @@ public class User implements Parcelable {
         this.mName = name;
     }
 
+//    public Date getBirthday() { return mBirthday; }
+//
+//    public void setBirthday(Date birthday) { this.mBirthday = birthday; }
+//
+//    private int getAge(Date birthday){
+//        // TODO - calculate age
+//        return 0;
+//    }
+
     public String getZipcode() {
         return mZipcode;
     }
@@ -64,12 +79,12 @@ public class User implements Parcelable {
         this.mZipcode = zipcode;
     }
 
-    public String getGender() {
-        return mGender;
+    public long getGenderCode() {
+        return mGenderCode;
     }
 
-    public void setGender(String gender) {
-        this.mGender = gender;
+    public void setGenderCode(int gender) {
+        this.mGenderCode = gender;
     }
 
     public String getSexuality() {
@@ -105,8 +120,9 @@ public class User implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(mEmail);
         parcel.writeString(mName);
+//        parcel.writeLong(mBirthday.getTime());
         parcel.writeString(mZipcode);
-        parcel.writeString(mGender);
+        parcel.writeLong(mGenderCode);
         parcel.writeString(mSexuality);
         parcel.writeString(mRelationshipStatus);
         parcel.writeString(mDescription);
