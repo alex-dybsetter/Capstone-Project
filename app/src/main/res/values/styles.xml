@@ -41,4 +41,34 @@
         <item name="android:textColor">@color/validation_error</item>
     </style>
 
+    <style name="ProfileNameDisplay">
+        <item name="android:textColor">@color/primary_dark</item>
+        <item name="android:textSize">@dimen/name_display_size</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:fontFeatureSettings">smcp</item>
+    </style>
+
+    <style name="StatsSubtitle">
+        <item name="android:textColor">@color/primary_dark</item>
+        <item name="android:alpha">.5</item>
+        <item name="android:textSize">@dimen/title_size</item>
+    </style>
+
+    <style name="EditBtn">
+        <item name="android:tint">@color/primary_light</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:layout_width">@dimen/edit_btn_size</item>
+        <item name="android:layout_height">@dimen/edit_btn_size</item>
+        <item name="android:layout_margin">@dimen/small_margin</item>
+    </style>
+
+    <style name="ProfileSubtitle">
+        <item name="android:textSize">@dimen/title_size</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:fontFeatureSettings">smcp</item>
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:layout_marginBottom">@dimen/small_margin</item>
+    </style>
+
 </resources>

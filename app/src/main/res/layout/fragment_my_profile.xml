@@ -1,78 +1,124 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="net.alexblass.capstoneproject.MyProfileFragment">
 
-
-    <ImageView
-        android:id="@+id/user_profile_banner"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_background" />
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/user_profile_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.25" />
+        <ImageView
+            android:id="@+id/user_profile_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background" />
 
-    <TextView
-        android:id="@+id/user_profile_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_profile_image"
-        tools:text="Alex" />
+        <ImageView
+            android:id="@+id/user_profile_image"
+            android:layout_width="@dimen/profile_picture_size"
+            android:layout_height="@dimen/profile_picture_size"
+            android:background="@color/divider"
+            android:src="@drawable/ic_person_white_48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.25" />
 
-    <TextView
-        android:id="@+id/user_profile_stats"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/user_profile_image"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/user_profile_name"
-        app:layout_constraintTop_toTopOf="@+id/user_profile_name"
-        tools:text="23 / F / CA" />
+        <TextView
+            android:id="@+id/user_profile_name"
+            style="@style/ProfileNameDisplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_profile_image"
+            tools:text="Alex" />
 
-    <TextView
-        android:id="@+id/user_profile_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_profile_edit_description"
-        tools:text="Hi, I'm Alex and I'm an Android developer!" />
+        <TextView
+            android:id="@+id/user_profile_stats"
+            style="@style/StatsSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            app:layout_constraintBottom_toBottomOf="@+id/user_profile_name"
+            app:layout_constraintEnd_toEndOf="@+id/user_profile_image"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/user_profile_name"
+            app:layout_constraintTop_toTopOf="@+id/user_profile_name"
+            tools:text="23 / F / CA" />
 
-    <ImageButton
-        android:id="@+id/user_profile_edit_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_edit_white_24dp"
-        app:layout_constraintStart_toEndOf="@+id/user_profile_description"
-        app:layout_constraintTop_toBottomOf="@+id/user_profile_stats" />
+        <TextView
+            android:id="@+id/description_lbl"
+            style="@style/ProfileSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/description_title"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_profile_name" />
 
-    <TextView
-        android:id="@+id/user_profile_relationship_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_profile_edit_relationship"
-        tools:text="Relationship status: In a relationship" />
+        <TextView
+            android:id="@+id/user_profile_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_marginRight="@dimen/standard_margin"
+            android:layout_marginEnd="@dimen/standard_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/description_lbl"
+            app:layout_constraintTop_toBottomOf="@+id/user_profile_edit_description"
+            tools:text="Hi, I'm Alex and I'm an Android developer!" />
 
-    <ImageButton
-        android:id="@+id/user_profile_edit_relationship"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_edit_white_24dp"
-        app:layout_constraintStart_toEndOf="@+id/user_profile_relationship_status"
-        app:layout_constraintTop_toBottomOf="@+id/user_profile_description" />
+        <ImageButton
+            android:id="@+id/user_profile_edit_description"
+            style="@style/EditBtn"
+            android:contentDescription="@string/cd_edit_description"
+            android:src="@drawable/ic_edit_white_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/description_lbl"
+            app:layout_constraintTop_toTopOf="@+id/description_lbl"
+            app:layout_constraintStart_toEndOf="@id/description_lbl" />
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/relationship_lbl"
+            style="@style/ProfileSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/relationship_title"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_profile_description" />
+
+        <TextView
+            android:id="@+id/user_profile_relationship_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="@id/relationship_lbl"
+            app:layout_constraintTop_toBottomOf="@+id/user_profile_edit_relationship"
+            tools:text="Relationship status: In a relationship" />
+
+        <ImageButton
+            android:id="@+id/user_profile_edit_relationship"
+            style="@style/EditBtn"
+            android:contentDescription="@string/cd_edit_relationship"
+            android:src="@drawable/ic_edit_white_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/relationship_lbl"
+            app:layout_constraintTop_toTopOf="@+id/relationship_lbl"
+            app:layout_constraintStart_toEndOf="@id/relationship_lbl"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
