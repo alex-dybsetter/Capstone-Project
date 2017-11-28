@@ -15,6 +15,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import net.alexblass.capstoneproject.models.User;
 
+import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_GENDER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
@@ -53,6 +54,9 @@ public class LoginActivity extends AppCompatActivity {
                         long gender;
 
                         name = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
+
+                        long birthdayInMillis = (long) dataSnapshot.child(USER_BIRTHDAY_KEY).getValue();
+
                         zipcode = (String) dataSnapshot.child(USER_ZIPCODE_KEY).getValue();
                         description = (String) dataSnapshot.child(USER_DESCRIPTION_KEY).getValue();
 
@@ -62,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         email = mAuth.getCurrentUser().getEmail();
 
-                        User user = new User(email, name, zipcode, gender, sexuality, relationshipStatus, description);
+                        User user = new User(email, name, birthdayInMillis, zipcode, gender, sexuality, relationshipStatus, description);
 
                         Intent dashboardActivity = new Intent(getApplicationContext(), DashboardActivity.class);
                         dashboardActivity.putExtra(USER_KEY, user);

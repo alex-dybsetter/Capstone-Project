@@ -36,6 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_GENDER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
@@ -128,11 +129,14 @@ public class LoginFragment extends Fragment {
             query.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()){
+                    if (dataSnapshot.exists() && dataSnapshot.child(USER_ZIPCODE_KEY).exists()){
                         String name, zipcode, description, sexuality, relationshipStatus, email;
                         long gender;
 
                         name = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
+
+                        long birthdayInMillis = (long) dataSnapshot.child(USER_BIRTHDAY_KEY).getValue();
+
                         zipcode = (String) dataSnapshot.child(USER_ZIPCODE_KEY).getValue();
                         description = (String) dataSnapshot.child(USER_DESCRIPTION_KEY).getValue();
 
@@ -142,7 +146,8 @@ public class LoginFragment extends Fragment {
 
                         email = mAuth.getCurrentUser().getEmail();
 
-                        User user = new User(email, name, zipcode, gender, sexuality, relationshipStatus, description);
+                        User user = new User(email, name, birthdayInMillis,
+                                zipcode, gender, sexuality, relationshipStatus, description);
 
                         Intent dashboardActivity = new Intent(getActivity(), DashboardActivity.class);
                         dashboardActivity.putExtra(USER_KEY, user);

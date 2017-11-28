@@ -48,6 +48,18 @@
     <string name="gender_mtf">MTF</string>
     <string name="gender_neutral">Gender Neutral</string>
     <string name="gender_other">Non-binary or Other</string>
+
+    <string name="default_selection">No selection made</string>
+
+    <string name="gender_cismale_abbreviation">M</string>
+    <string name="gender_cisfemale_abbreviation">F</string>
+    <string name="gender_ftm_abbreviation">FTM</string>
+    <string name="gender_mtf_abbreviation">MTF</string>
+    <string name="gender_neutral_abbreviation">Neutral</string>
+    <string name="gender_other_abbreviation">Other</string>
+
+    <string name="default_selection_abbreviation">N/A</string>
+
     <string name="zipcode">Zipcode</string>
     <string name="description">Describe yourself!</string>
 
@@ -68,5 +80,8 @@
     <string name="upload">Upload</string>
 
     <string name="my_profile">My Profile</string>
+    <string name="cd_edit_description">Edit my profile description</string>
+    <string name="cd_edit_relationship">Edit my relationship status</string>
+
     <string name="connect">Connect</string>
 </resources>

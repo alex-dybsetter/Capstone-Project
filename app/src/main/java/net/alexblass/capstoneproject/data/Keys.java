@@ -10,6 +10,7 @@ public class Keys {
     public static final String USER_KEY = "user_id";
     public static final String USER_EMAIL_KEY = "email";
     public static final String USER_NAME_KEY = "name";
+    public static final String USER_BIRTHDAY_KEY = "birthday";
     public static final String USER_ZIPCODE_KEY = "zipcode";
     public static final String USER_GENDER_KEY = "genderCode";
     public static final String USER_SEXUALITY_KEY = "sexuality";

@@ -1,6 +1,5 @@
 package net.alexblass.capstoneproject;
 
-
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,7 +18,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,6 +27,11 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import net.alexblass.capstoneproject.data.UserDataUtils;
+import net.alexblass.capstoneproject.models.User;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,16 +43,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static net.alexblass.capstoneproject.data.Constants.LEGAL_ADULT_AGE;
+import static net.alexblass.capstoneproject.data.Constants.MAX_AGE;
+import static net.alexblass.capstoneproject.data.Constants.MIN_PASSWORD_LENGTH;
+
 /**
  * A Fragment to create a new account.
  */
 public class RegistrationFragment extends Fragment {
 
     private static final String TAG = "RegistrationFragment";
-
-    private final int LEGAL_ADULT_AGE = 18;
-    private final int MAX_AGE = 100;
-    private final int MIN_PASSWORD_LENGTH = 6;
 
     private FirebaseAuth mAuth;
 
@@ -175,7 +178,7 @@ public class RegistrationFragment extends Fragment {
 
         clearFocus();
 
-        String name = mNameEt.getText().toString().trim();
+        final String name = mNameEt.getText().toString().trim();
         if (name.isEmpty()){
             showDialog(mEntryErrorTitle, getContext().getString(R.string.empty_name));
             mNameEt.requestFocus();
@@ -235,6 +238,11 @@ public class RegistrationFragment extends Fragment {
                                     if (task.isSuccessful()) {
                                         showDialog(getContext().getString(R.string.registration_complete),
                                                 getContext().getString(R.string.verification_email, email));
+
+                                        User user = new User(email, name, mBdayCalendar.getTimeInMillis());
+                                        DatabaseReference database = FirebaseDatabase.getInstance().getReference(email.replace(".", "(dot)"));
+
+                                        database.setValue(user);
                                     }
                                 }
                             });
@@ -297,9 +305,7 @@ public class RegistrationFragment extends Fragment {
     }
 
     private boolean isAdult(){
-        Calendar legalAdultCalendar = Calendar.getInstance();
-        legalAdultCalendar.set(Calendar.YEAR, legalAdultCalendar.get(Calendar.YEAR) - LEGAL_ADULT_AGE);
-        return mBdayCalendar.getTimeInMillis() < legalAdultCalendar.getTimeInMillis();
+        return UserDataUtils.calculateAge(mBdayCalendar) >= LEGAL_ADULT_AGE;
     }
 
     private boolean containsDigitsAndLetters(String password){

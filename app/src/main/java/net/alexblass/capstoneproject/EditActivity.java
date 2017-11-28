@@ -5,18 +5,33 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import net.alexblass.capstoneproject.models.User;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_GENDER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_NAME_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_RELATIONSHIP_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_SEXUALITY_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_ZIPCODE_KEY;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -42,24 +57,41 @@ public class EditActivity extends AppCompatActivity {
 
     @OnClick(R.id.edit_save_btn)
     public void saveData(){
-        String name = mNameEt.getText().toString().trim();
-        String zipcode = mZipcodeEt.getText().toString().trim();
-        String description = mDescriptionEt.getText().toString().trim();
+        final String name = mNameEt.getText().toString().trim();
+        final String zipcode = mZipcodeEt.getText().toString().trim();
+        final String description = mDescriptionEt.getText().toString().trim();
 
-        long gender = mGenderSpinnner.getSelectedItemId();
-        String sexuality = mSexualitySpinner.getSelectedItem().toString();
-        String relationshipStatus = mRelationshipStatusSpinner.getSelectedItem().toString();
+        final long gender = mGenderSpinnner.getSelectedItemId();
+        final String sexuality = mSexualitySpinner.getSelectedItem().toString();
+        final String relationshipStatus = mRelationshipStatusSpinner.getSelectedItem().toString();
 
-        String email = mAuth.getCurrentUser().getEmail();
+        final String email = mAuth.getCurrentUser().getEmail();
 
-        mUser = new User(email, name, zipcode, gender, sexuality, relationshipStatus, description);
+        Query query = FirebaseDatabase.getInstance().getReference().child(
+                mAuth.getCurrentUser().getEmail().replace(".", "(dot)"));
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long birthday = 0;
+                if (dataSnapshot.exists()) {
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference(email.replace(".", "(dot)"));
+                    birthday = (long) dataSnapshot.child(USER_BIRTHDAY_KEY).getValue();
+                }
 
-        database.setValue(mUser);
+                mUser = new User(email, name, birthday, zipcode, gender, sexuality, relationshipStatus, description);
 
-        Intent dashboardActivity = new Intent(this, DashboardActivity.class);
-        dashboardActivity.putExtra(USER_KEY, mUser);
-        startActivity(dashboardActivity);
+                DatabaseReference database = FirebaseDatabase.getInstance().getReference(email.replace(".", "(dot)"));
+                database.setValue(mUser);
+
+                Intent dashboardActivity = new Intent(getApplicationContext(), DashboardActivity.class);
+                dashboardActivity.putExtra(USER_KEY, mUser);
+                startActivity(dashboardActivity);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.verification_error), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
