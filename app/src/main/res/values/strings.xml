@@ -86,6 +86,7 @@
 
     <string name="cd_edit_description">Edit my profile description</string>
     <string name="cd_edit_relationship">Edit my relationship status</string>
+    <string name="cd_profile_picture"><xliff:g id="user_name">%1$s</xliff:g>\'s profile picture</string>
 
     <string name="connect">Connect</string>
 </resources>

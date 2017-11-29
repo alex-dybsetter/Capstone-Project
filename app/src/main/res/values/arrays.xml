@@ -16,6 +16,7 @@
         <item>@string/sexuality_men</item>
         <item>@string/sexuality_women</item>
         <item>@string/sexuality_both</item>
+        <item>@string/sexuality_any</item>
         <item>@string/sexuality_none</item>
     </string-array>
 

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.alexblass.capstoneproject.data.UserDataUtils;
@@ -29,9 +30,11 @@ import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
  */
 public class MyProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<String> {
 
+    @BindView(R.id.user_profile_image) ImageView mProfilePic;
     @BindView(R.id.user_profile_name) TextView mNameTv;
     @BindView(R.id.user_profile_stats) TextView mStats;
     @BindView(R.id.user_profile_description) TextView mDescription;
+    @BindView(R.id.user_profile_sexuality) TextView mSexuality;
     @BindView(R.id.user_profile_relationship_status) TextView mRelationshipStatus;
 
     private String mZipcode;
@@ -57,7 +60,10 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
 
             mNameTv.setText(user.getName());
             mDescription.setText(user.getDescription());
+            mSexuality.setText(user.getSexuality());
             mRelationshipStatus.setText(user.getRelationshipStatus());
+
+            mProfilePic.setContentDescription(getString(R.string.cd_profile_picture, user.getName()));
 
             Calendar birthday = new GregorianCalendar();
             birthday.setTimeInMillis(user.getBirthday());
