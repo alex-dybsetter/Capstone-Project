@@ -6,14 +6,13 @@ import android.content.Intent;
 import android.support.v4.content.Loader;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import net.alexblass.capstoneproject.data.UserDataUtils;
+import net.alexblass.capstoneproject.utils.UserDataUtils;
 import net.alexblass.capstoneproject.models.User;
 
 import java.util.Calendar;
@@ -62,8 +61,6 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
             mDescription.setText(user.getDescription());
             mSexuality.setText(user.getSexuality());
             mRelationshipStatus.setText(user.getRelationshipStatus());
-
-            mProfilePic.setContentDescription(getString(R.string.cd_profile_picture, user.getName()));
 
             Calendar birthday = new GregorianCalendar();
             birthday.setTimeInMillis(user.getBirthday());

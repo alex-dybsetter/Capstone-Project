@@ -1,4 +1,4 @@
-package net.alexblass.capstoneproject.data;
+package net.alexblass.capstoneproject.utils;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
@@ -90,7 +90,7 @@ public class UserDataUtils {
         return (int) Math.floor(currentAge);
     }
 
-    public static String getCityFromZip(String zipcode){
+    private static String getCityFromZip(String zipcode){
 
         String zipcodeUrl = ZIPCODE_REQUEST_BASE_URL + zipcode;
 

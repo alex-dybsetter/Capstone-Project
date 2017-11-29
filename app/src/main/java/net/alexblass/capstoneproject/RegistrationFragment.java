@@ -30,7 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import net.alexblass.capstoneproject.data.UserDataUtils;
+import net.alexblass.capstoneproject.utils.UserDataUtils;
 import net.alexblass.capstoneproject.models.User;
 
 import java.text.SimpleDateFormat;

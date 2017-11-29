@@ -28,7 +28,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.25"
-            android:contentDescription="@null"/>
+            android:contentDescription="@string/cd_user_profile_picture"/>
 
         <TextView
             android:id="@+id/user_profile_name"

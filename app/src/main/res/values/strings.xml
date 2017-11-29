@@ -38,7 +38,15 @@
     <string name="no_account_found">Account does not exist</string>
     <string name="reset_email_sent">A password reset email was sent to <xliff:g id="email">%1$s</xliff:g></string>
 
-    <string name="editor_instructions">Take a moment to tell us a little bit more about yourself.</string>
+    <string name="zipcode">Zipcode</string>
+    <string name="zipcode_helper">Find people near you</string>
+    <string name="invalid_zipcode">Please enter a valid zipcode.</string>
+    <string name="invalid_gender">Please select a gender.</string>
+    <string name="invalid_sexuality">Please select a sexuality.</string>
+    <string name="invalid_relationship">Please indicate your relationship status.</string>
+    <string name="description">Describe yourself!</string>
+
+    <string name="editor_instructions">Tell us a little bit more about yourself.</string>
     <string name="editor_title">Edit Profile</string>
 
     <string name="gender">I identify as&#8230;</string>
@@ -60,9 +68,6 @@
 
     <string name="default_selection_abbreviation">N/A</string>
 
-    <string name="zipcode">Zipcode</string>
-    <string name="description">Describe yourself!</string>
-
     <string name="sexuality">I like&#8230;</string>
     <string name="sexuality_men">Men</string>
     <string name="sexuality_women">Women</string>
@@ -81,12 +86,13 @@
 
     <string name="my_profile">My Profile</string>
     <string name="stats_format"><xliff:g id="age">%1$s</xliff:g> / <xliff:g id="gender">%2$s</xliff:g> / <xliff:g id="location">%3$s</xliff:g></string>
-    <string name="description_title">About Me</string>
+    <string name="description_title">About Me</string>s
     <string name="relationship_title">Relationship Status</string>
 
     <string name="cd_edit_description">Edit my profile description</string>
     <string name="cd_edit_relationship">Edit my relationship status</string>
-    <string name="cd_profile_picture"><xliff:g id="user_name">%1$s</xliff:g>\'s profile picture</string>
+    <string name="cd_user_profile_picture">My profile picture</string>
+    <string name="cd_view_profile_picture"><xliff:g id="user_name">%1$s</xliff:g>\'s profile picture</string>
 
     <string name="connect">Connect</string>
 </resources>

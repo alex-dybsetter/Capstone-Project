@@ -2,130 +2,183 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/edit_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/standard_margin"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="net.alexblass.capstoneproject.EditActivity">
 
     <TextView
         android:id="@+id/edit_instructions_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/editor_instructions"
-        android:layout_marginBottom="@dimen/standard_margin"/>
+        android:textSize="@dimen/title_size"
+        android:layout_marginBottom="@dimen/standard_margin"
+        android:text="@string/editor_instructions" />
 
-    <EditText
-        android:id="@+id/edit_name_et"
+    <LinearLayout
+        android:id="@+id/edit_fields_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="@string/name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_instructions_tv"
-        app:layout_constraintVertical_bias="0.0"
-        android:layout_marginBottom="@dimen/small_margin"/>
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginRight="@dimen/standard_margin"
+        android:layout_marginBottom="@dimen/standard_margin"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/edit_instructions_tv">
 
-    <EditText
-        android:id="@+id/edit_zipcode_et"
-        android:layout_width="wrap_content"
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/standard_margin"
+            app:hintTextAppearance="@style/FormLbl">
+
+            <EditText
+                android:id="@+id/edit_name_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/name"
+                android:inputType="textPersonName"
+                android:selectAllOnFocus="true"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/edit_name_helper"
+            style="@style/HelperText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/name_helper" />
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/standard_margin"
+            app:hintTextAppearance="@style/FormLbl">
+
+            <EditText
+                android:id="@+id/edit_zipcode_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/zipcode"
+                android:inputType="number"
+                android:maxLength="5"
+                android:selectAllOnFocus="true"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/edit_zipcode_helper"
+            style="@style/HelperText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/zipcode_helper" />
+
+        <Spinner
+            android:id="@+id/edit_gender_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/standard_margin"
+            android:entries="@array/gender_choices" />
+
+        <TextView
+            android:id="@+id/edit_gender_error"
+            style="@style/HelperText"
+            android:textColor="@color/validation_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/required_field" />
+
+        <Spinner
+            android:id="@+id/edit_sexuality_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/standard_margin"
+            android:entries="@array/sexuality_choices"/>
+
+        <TextView
+            android:id="@+id/edit_sexuality_error"
+            style="@style/HelperText"
+            android:textColor="@color/validation_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/required_field" />
+
+        <Spinner
+            android:id="@+id/edit_relationship_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/standard_margin"
+            android:entries="@array/relationship_choices" />
+
+        <TextView
+            android:id="@+id/edit_relationship_error"
+            style="@style/HelperText"
+            android:textColor="@color/validation_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/required_field" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/edit_add_img_btn"
+        android:layout_width="@dimen/profile_picture_size"
+        android:layout_height="@dimen/profile_picture_size"
+        android:layout_marginTop="@dimen/standard_margin"
+        android:background="@color/divider"
+        android:contentDescription="@string/upload"
+        android:padding="@dimen/small_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit_fields_container"
+        app:layout_constraintTop_toBottomOf="@+id/edit_instructions_tv"
+        app:srcCompat="@drawable/ic_person_white_48dp" />
+
+    <TextView
+        android:id="@+id/edit_add_img_txt"
+        style="@style/UploadImageText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/zipcode"
-        android:inputType="number"
-        android:maxLength="5"
-        app:layout_constraintEnd_toEndOf="@+id/edit_name_et"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/edit_name_et"
-        app:layout_constraintTop_toBottomOf="@+id/edit_name_et"
-        android:layout_marginBottom="@dimen/standard_margin"/>
+        android:text="@string/upload"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_add_img_btn"
+        app:layout_constraintEnd_toEndOf="@+id/edit_add_img_btn"
+        app:layout_constraintStart_toStartOf="@+id/edit_add_img_btn" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginRight="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/standard_margin"
+        app:hintTextAppearance="@style/FormLbl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_fields_container">
+
+        <EditText
+            android:id="@+id/edit_description_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/standard_margin"
+            android:ems="10"
+            android:hint="@string/description"
+            android:inputType="textMultiLine" />
+
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:id="@+id/edit_save_btn"
+        style="@style/LoginBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/edit_name_et"
-        app:layout_constraintTop_toBottomOf="@id/edit_instructions_tv"
-        app:layout_constraintVertical_bias="0.036"
-        app:srcCompat="@mipmap/ic_launcher"/>
-
-    <Button
-        android:id="@+id/edit_add_img_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/upload"
-        app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        android:layout_marginTop="@dimen/small_margin"/>
-
-    <Spinner
-        android:id="@+id/edit_gender_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:entries="@array/gender_choices"
-        app:layout_constraintEnd_toStartOf="@+id/edit_add_img_btn"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/edit_name_et"
-        app:layout_constraintTop_toBottomOf="@+id/edit_zipcode_et"
-        android:layout_marginTop="@dimen/small_margin"/>
-
-    <Spinner
-        android:id="@+id/edit_sexuality_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:entries="@array/sexuality_choices"
-        app:layout_constraintEnd_toStartOf="@+id/edit_add_img_btn"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/edit_name_et"
-        app:layout_constraintTop_toBottomOf="@+id/edit_gender_spinner"
-        android:layout_marginTop="@dimen/small_margin"/>
-
-    <Spinner
-        android:id="@+id/edit_relationship_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:entries="@array/relationship_choices"
-        app:layout_constraintEnd_toStartOf="@+id/edit_add_img_btn"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/edit_name_et"
-        app:layout_constraintTop_toBottomOf="@+id/edit_sexuality_spinner"
-        android:layout_marginTop="@dimen/small_margin"/>
-
-    <EditText
-        android:id="@+id/edit_description_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/description"
-        android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/edit_name_et"
-        app:layout_constraintTop_toBottomOf="@+id/edit_relationship_spinner"
-        android:layout_marginTop="@dimen/standard_margin"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
