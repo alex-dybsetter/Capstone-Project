@@ -12,7 +12,9 @@ import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -28,6 +30,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import net.alexblass.capstoneproject.models.User;
 import net.alexblass.capstoneproject.utils.UserDataUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindColor;
 import butterknife.BindString;
@@ -68,7 +74,6 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     private String mZipcode;
     private boolean mValidZipcode;
 
-    // TODO: Hide first item in spinners
     // TODO: If user is editing an existing profile, prepopulate fields
 
     @Override
@@ -103,63 +108,16 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        mParent.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                clearFocus();
-                return false;
-            }
-        });
+        List<String> gendersList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.gender_choices)));
+        mGenderSpinnner.setAdapter(getArrayAdapter(gendersList));
 
-        mNameEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (hasFocus){
-                    mNameHelperTv.setVisibility(View.VISIBLE);
-                    mNameHelperTv.setTextColor(mHelperColor);
-                    mNameHelperTv.setText(getString(R.string.name_helper));
-                } else {
-                    mNameHelperTv.setVisibility(View.GONE);
-                }
-            }
-        });
+        List<String> sexualitiesList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.sexuality_choices)));
+        mSexualitySpinner.setAdapter(getArrayAdapter(sexualitiesList));
 
-        mZipcodeEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (hasFocus){
-                    mZipcodeHelperTv.setVisibility(View.VISIBLE);
-                    mZipcodeHelperTv.setTextColor(mHelperColor);
-                    mZipcodeHelperTv.setText(getString(R.string.zipcode_helper));
-                } else {
-                    mZipcodeHelperTv.setVisibility(View.GONE);
-                }
-            }
-        });
+        List<String> relationshipsList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.relationship_choices)));
+        mRelationshipStatusSpinner.setAdapter(getArrayAdapter(relationshipsList));
 
-        mGenderSpinnner.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                mGenderErrorTv.setVisibility(View.GONE);
-                return false;
-            }
-        });
-
-        mSexualitySpinner.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                mSexualityErrorTv.setVisibility(View.GONE);
-                return false;
-            }
-        });
-
-        mRelationshipStatusSpinner.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                mRelationshipErrorTv.setVisibility(View.GONE);
-                return false;
-            }
-        });
+        setFocusListeners();
     }
 
     @OnClick(R.id.edit_save_btn)
@@ -249,6 +207,97 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             mNameHelperTv.setVisibility(View.GONE);
             mZipcodeHelperTv.setVisibility(View.GONE);
         }
+    }
+
+    private ArrayAdapter<String> getArrayAdapter(List<String> list){
+
+        final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                this, R.layout.item_edit_profile_hint, list){
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+                View v = null;
+
+                if (position == 0) {
+                    TextView tv = new TextView(getContext());
+                    tv.setHeight(0);
+                    tv.setVisibility(View.GONE);
+                    v = tv;
+                }
+                else {
+
+                    v = super.getDropDownView(position, null, parent);
+                }
+
+                parent.setVerticalScrollBarEnabled(false);
+                return v;
+            }
+        };
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.item_edit_profile_spinner);
+        return spinnerArrayAdapter;
+    }
+
+    private void setFocusListeners(){
+        mParent.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                clearFocus();
+                return false;
+            }
+        });
+
+        mNameEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus){
+                    mNameHelperTv.setVisibility(View.VISIBLE);
+                    mNameHelperTv.setTextColor(mHelperColor);
+                    mNameHelperTv.setText(getString(R.string.name_helper));
+                } else {
+                    mNameHelperTv.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        mZipcodeEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus){
+                    mZipcodeHelperTv.setVisibility(View.VISIBLE);
+                    mZipcodeHelperTv.setTextColor(mHelperColor);
+                    mZipcodeHelperTv.setText(getString(R.string.zipcode_helper));
+                } else {
+                    mZipcodeHelperTv.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        mGenderSpinnner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                mGenderErrorTv.setVisibility(View.GONE);
+                clearFocus();
+                return false;
+            }
+        });
+
+        mSexualitySpinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                mSexualityErrorTv.setVisibility(View.GONE);
+                clearFocus();
+                return false;
+            }
+        });
+
+        mRelationshipStatusSpinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                mRelationshipErrorTv.setVisibility(View.GONE);
+                clearFocus();
+                return false;
+            }
+        });
     }
 
     @Override
