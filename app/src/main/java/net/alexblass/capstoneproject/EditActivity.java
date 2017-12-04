@@ -1,5 +1,6 @@
 package net.alexblass.capstoneproject;
 
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.app.LoaderManager;
@@ -10,6 +11,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import net.alexblass.capstoneproject.models.User;
 import net.alexblass.capstoneproject.utils.UserDataUtils;
@@ -50,8 +54,9 @@ import static net.alexblass.capstoneproject.data.Keys.USER_NAME_KEY;
 
 public class EditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
 
-    private final int ACTION_SIGN_OUT = 0;
-    private final int ACTION_RETURN_TO_DASH = 1;
+    private static final int ACTION_SIGN_OUT = 0;
+    private static final int ACTION_RETURN_TO_DASH = 1;
+    private static final int SELECT_PICTURE = 100;
 
     @BindView(R.id.edit_name_et) EditText mNameEt;
     @BindView(R.id.edit_zipcode_et) EditText mZipcodeEt;
@@ -60,6 +65,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.edit_sexuality_spinner) Spinner mSexualitySpinner;
     @BindView(R.id.edit_relationship_spinner) Spinner mRelationshipStatusSpinner;
     @BindView(R.id.edit_parent) ConstraintLayout mParent;
+    @BindView(R.id.edit_add_img_btn) ImageButton mProfileImage;
 
     @BindView(R.id.edit_name_helper) TextView mNameHelperTv;
     @BindView(R.id.edit_zipcode_helper) TextView mZipcodeHelperTv;
@@ -79,9 +85,8 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     private String mName;
     private String mZipcode;
     private boolean mValidZipcode;
+    private String mImageUri;
     private boolean mFirstEdit;
-
-    // TODO: Handle image upload
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +96,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mAuth = FirebaseAuth.getInstance();
         mValidZipcode = false;
+        mImageUri = "";
 
         List<String> gendersList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.gender_choices)));
         mGenderSpinnner.setAdapter(getArrayAdapter(gendersList));
@@ -110,6 +116,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             mName = mUser.getName();
             mBirthday = mUser.getBirthday();
             mZipcode = mUser.getZipcode();
+            mImageUri = mUser.getProfilePicUri();
 
             mNameEt.setText(mName);
             mZipcodeEt.setText(mZipcode);
@@ -117,6 +124,17 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             mGenderSpinnner.setSelection((int)mUser.getGenderCode());
             mSexualitySpinner.setSelection(sexualitiesList.indexOf(mUser.getSexuality()));
             mRelationshipStatusSpinner.setSelection(relationshipsList.indexOf(mUser.getRelationshipStatus()));
+
+            if (!mImageUri.isEmpty()) {
+                // TODO: This only shows the placeholder image
+                Uri imageUri = Uri.parse(mImageUri);
+                Picasso.with(EditActivity.this)
+                        .load(imageUri)
+                        .placeholder(R.drawable.ic_person_white_48dp)
+                        .centerCrop()
+                        .fit()
+                        .into(mProfileImage);
+            }
         } else {
             mFirstEdit = true;
             getSupportActionBar().setDisplayHomeAsUpEnabled(!mFirstEdit);
@@ -146,6 +164,31 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         setFocusListeners();
+    }
+
+    @OnClick({R.id.edit_add_img_txt, R.id.edit_add_img_btn})
+    public void addImage(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+                if (null != selectedImageUri) {
+                    mImageUri = selectedImageUri.toString();
+                    Picasso.with(EditActivity.this)
+                            .load(selectedImageUri)
+                            .placeholder(R.drawable.ic_person_white_48dp)
+                            .centerCrop()
+                            .fit()
+                            .into(mProfileImage);
+                }
+            }
+        }
     }
 
     @OnClick(R.id.edit_save_btn)
@@ -197,7 +240,8 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
         String email = mAuth.getCurrentUser().getEmail();
 
-        mUser = new User(email, mName, mBirthday, mZipcode, gender, sexuality, relationshipStatus, description);
+        mUser = new User(email, mName, mBirthday, mZipcode, gender, sexuality, relationshipStatus,
+                description, mImageUri);
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(email.replace(".", "(dot)"));
         database.setValue(mUser);
@@ -399,6 +443,14 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.editor, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        if (mFirstEdit) {
+            menu.removeGroup(0);
+        }
         return true;
     }
 

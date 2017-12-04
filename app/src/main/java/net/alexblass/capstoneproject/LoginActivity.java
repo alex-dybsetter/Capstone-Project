@@ -20,6 +20,7 @@ import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_GENDER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_NAME_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_PROFILE_IMG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_RELATIONSHIP_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_SEXUALITY_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_ZIPCODE_KEY;
@@ -50,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        String name, zipcode, description, sexuality, relationshipStatus, email;
+                        String name, zipcode, description, sexuality, relationshipStatus, email, profilePicUri;
                         long gender;
 
                         name = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
@@ -63,10 +64,12 @@ public class LoginActivity extends AppCompatActivity {
                         gender = (long) dataSnapshot.child(USER_GENDER_KEY).getValue();
                         sexuality = (String) dataSnapshot.child(USER_SEXUALITY_KEY).getValue();
                         relationshipStatus = (String) dataSnapshot.child(USER_RELATIONSHIP_KEY).getValue();
+                        profilePicUri = (String) dataSnapshot.child(USER_PROFILE_IMG_KEY).getValue();
 
                         email = mAuth.getCurrentUser().getEmail();
 
-                        User user = new User(email, name, birthdayInMillis, zipcode, gender, sexuality, relationshipStatus, description);
+                        User user = new User(email, name, birthdayInMillis, zipcode, gender,
+                                sexuality, relationshipStatus, description, profilePicUri);
 
                         Intent dashboardActivity = new Intent(getApplicationContext(), DashboardActivity.class);
                         dashboardActivity.putExtra(USER_KEY, user);

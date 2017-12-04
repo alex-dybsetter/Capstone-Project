@@ -16,4 +16,5 @@ public class Keys {
     public static final String USER_SEXUALITY_KEY = "sexuality";
     public static final String USER_RELATIONSHIP_KEY = "relationshipStatus";
     public static final String USER_DESCRIPTION_KEY = "description";
+    public static final String USER_PROFILE_IMG_KEY = "profilePicUri";
 }

@@ -19,15 +19,17 @@ public class User implements Parcelable {
     private String mSexuality;
     private String mRelationshipStatus;
     private String mDescription;
+    private String mProfilePicUri;
 
     public User(String email, String name, long birthday){
         this.mEmail = email;
         this.mName = name;
         this.mBirthday = birthday;
+        this.mProfilePicUri = "";
     }
 
     public User(String email, String name, long birthday, String zipcode, long genderCode,
-                String sexuality, String relationshipStatus, String description){
+                String sexuality, String relationshipStatus, String description, String profilePicUri){
         this.mEmail = email;
         this.mName = name;
         this.mBirthday = birthday;
@@ -36,6 +38,7 @@ public class User implements Parcelable {
         this.mSexuality = sexuality;
         this.mRelationshipStatus = relationshipStatus;
         this.mDescription = description;
+        this.mProfilePicUri = profilePicUri;
     }
 
     protected User(Parcel in) {
@@ -47,6 +50,7 @@ public class User implements Parcelable {
         this.mSexuality = in.readString();
         this.mRelationshipStatus = in.readString();
         this.mDescription = in.readString();
+        this.mProfilePicUri = in.readString();
     }
 
     public String getEmail() {
@@ -109,6 +113,14 @@ public class User implements Parcelable {
         this.mDescription = description;
     }
 
+    public String getProfilePicUri() {
+        return mProfilePicUri;
+    }
+
+    public void setProfilePicUri(String pictureUri) {
+        this.mProfilePicUri = pictureUri;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -124,6 +136,7 @@ public class User implements Parcelable {
         parcel.writeString(mSexuality);
         parcel.writeString(mRelationshipStatus);
         parcel.writeString(mDescription);
+        parcel.writeString(mProfilePicUri);
     }
 
     // Creator for Parcelable implementation
