@@ -1,6 +1,7 @@
 package net.alexblass.capstoneproject;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.app.LoaderManager;
@@ -11,7 +12,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,6 +26,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,11 +35,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import net.alexblass.capstoneproject.models.User;
 import net.alexblass.capstoneproject.utils.UserDataUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,13 +87,15 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindColor(R.color.colorPrimary) int mHelperColor;
 
     private FirebaseAuth mAuth;
+    private StorageReference mStorageRef;
+    private StorageReference mUserProfilePic;
 
     private User mUser;
     private long mBirthday;
     private String mName;
     private String mZipcode;
     private boolean mValidZipcode;
-    private String mImageUri;
+    private String mImageUriString;
     private boolean mFirstEdit;
 
     @Override
@@ -95,8 +105,9 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         mValidZipcode = false;
-        mImageUri = "";
+        mImageUriString = "";
 
         List<String> gendersList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.gender_choices)));
         mGenderSpinnner.setAdapter(getArrayAdapter(gendersList));
@@ -116,7 +127,8 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             mName = mUser.getName();
             mBirthday = mUser.getBirthday();
             mZipcode = mUser.getZipcode();
-            mImageUri = mUser.getProfilePicUri();
+            mImageUriString = mUser.getProfilePicUri();
+            mUserProfilePic = mStorageRef.child(Uri.parse(mImageUriString).getPath());
 
             mNameEt.setText(mName);
             mZipcodeEt.setText(mZipcode);
@@ -125,15 +137,29 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             mSexualitySpinner.setSelection(sexualitiesList.indexOf(mUser.getSexuality()));
             mRelationshipStatusSpinner.setSelection(relationshipsList.indexOf(mUser.getRelationshipStatus()));
 
-            if (!mImageUri.isEmpty()) {
-                // TODO: This only shows the placeholder image
-                Uri imageUri = Uri.parse(mImageUri);
-                Picasso.with(EditActivity.this)
-                        .load(imageUri)
-                        .placeholder(R.drawable.ic_person_white_48dp)
-                        .centerCrop()
-                        .fit()
-                        .into(mProfileImage);
+            if (!mImageUriString.isEmpty()) {
+                try {
+                    final File localFile = File.createTempFile("images", "jpg");
+                    mUserProfilePic.getFile(localFile)
+                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                    Picasso.with(EditActivity.this)
+                                            .load(localFile)
+                                            .placeholder(R.drawable.ic_person_white_48dp)
+                                            .centerCrop()
+                                            .fit()
+                                            .into(mProfileImage);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            exception.printStackTrace();
+                        }
+                    });
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
             }
         } else {
             mFirstEdit = true;
@@ -179,7 +205,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
-                    mImageUri = selectedImageUri.toString();
+                    mImageUriString = selectedImageUri.toString();
                     Picasso.with(EditActivity.this)
                             .load(selectedImageUri)
                             .placeholder(R.drawable.ic_person_white_48dp)
@@ -241,10 +267,27 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         String email = mAuth.getCurrentUser().getEmail();
 
         mUser = new User(email, mName, mBirthday, mZipcode, gender, sexuality, relationshipStatus,
-                description, mImageUri);
+                description, mImageUriString);
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(email.replace(".", "(dot)"));
         database.setValue(mUser);
+
+        if (!mImageUriString.isEmpty()){
+            mUserProfilePic.putFile(Uri.parse(mImageUriString))
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            exception.printStackTrace();
+                            Toast.makeText(EditActivity.this, getString(R.string.upload_error), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
 
         Toast.makeText(this, getString(R.string.profile_saved), Toast.LENGTH_SHORT).show();
 
