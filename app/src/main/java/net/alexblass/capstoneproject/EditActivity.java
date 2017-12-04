@@ -10,6 +10,9 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +50,9 @@ import static net.alexblass.capstoneproject.data.Keys.USER_NAME_KEY;
 
 public class EditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
 
+    private final int ACTION_SIGN_OUT = 0;
+    private final int ACTION_RETURN_TO_DASH = 1;
+
     @BindView(R.id.edit_name_et) EditText mNameEt;
     @BindView(R.id.edit_zipcode_et) EditText mZipcodeEt;
     @BindView(R.id.edit_description_et) EditText mDescriptionEt;
@@ -73,8 +79,9 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     private String mName;
     private String mZipcode;
     private boolean mValidZipcode;
+    private boolean mFirstEdit;
 
-    // TODO: If user is editing an existing profile, prepopulate fields
+    // TODO: Handle image upload
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,30 +90,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
-
-        mName = null;
-        mBirthday = 0;
         mValidZipcode = false;
-
-        Query query = FirebaseDatabase.getInstance().getReference().child(
-                mAuth.getCurrentUser().getEmail().replace(".", "(dot)"));
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-
-                    mName = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
-                    mNameEt.setText(mName);
-
-                    mBirthday = (long) dataSnapshot.child(USER_BIRTHDAY_KEY).getValue();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.verification_error), Toast.LENGTH_SHORT).show();
-            }
-        });
 
         List<String> gendersList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.gender_choices)));
         mGenderSpinnner.setAdapter(getArrayAdapter(gendersList));
@@ -116,6 +100,50 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
         List<String> relationshipsList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.relationship_choices)));
         mRelationshipStatusSpinner.setAdapter(getArrayAdapter(relationshipsList));
+
+        Intent intentThatStartedThisActivity = getIntent();
+        if (intentThatStartedThisActivity.hasExtra(USER_KEY)){
+            mFirstEdit = false;
+            getSupportActionBar().setDisplayHomeAsUpEnabled(!mFirstEdit);
+
+            mUser = intentThatStartedThisActivity.getParcelableExtra(USER_KEY);
+            mName = mUser.getName();
+            mBirthday = mUser.getBirthday();
+            mZipcode = mUser.getZipcode();
+
+            mNameEt.setText(mName);
+            mZipcodeEt.setText(mZipcode);
+            mDescriptionEt.setText(mUser.getDescription());
+            mGenderSpinnner.setSelection((int)mUser.getGenderCode());
+            mSexualitySpinner.setSelection(sexualitiesList.indexOf(mUser.getSexuality()));
+            mRelationshipStatusSpinner.setSelection(relationshipsList.indexOf(mUser.getRelationshipStatus()));
+        } else {
+            mFirstEdit = true;
+            getSupportActionBar().setDisplayHomeAsUpEnabled(!mFirstEdit);
+
+            mName = null;
+            mBirthday = 0;
+
+            Query query = FirebaseDatabase.getInstance().getReference().child(
+                    mAuth.getCurrentUser().getEmail().replace(".", "(dot)"));
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+
+                        mName = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
+                        mNameEt.setText(mName);
+
+                        mBirthday = (long) dataSnapshot.child(USER_BIRTHDAY_KEY).getValue();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.verification_error), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
         setFocusListeners();
     }
@@ -173,6 +201,8 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(email.replace(".", "(dot)"));
         database.setValue(mUser);
+
+        Toast.makeText(this, getString(R.string.profile_saved), Toast.LENGTH_SHORT).show();
 
         Intent dashboardActivity = new Intent(getApplicationContext(), DashboardActivity.class);
         dashboardActivity.putExtra(USER_KEY, mUser);
@@ -318,5 +348,71 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<String> loader) {
+    }
+
+    private void handleAction(int actionId){
+        switch (actionId) {
+            case ACTION_RETURN_TO_DASH:
+                Intent dashboardActivity = new Intent(EditActivity.this, DashboardActivity.class);
+                dashboardActivity.putExtra(USER_KEY, mUser);
+                startActivity(dashboardActivity);
+                break;
+            case ACTION_SIGN_OUT:
+                FirebaseAuth.getInstance().signOut();
+                Intent loginActivity = new Intent(EditActivity.this, LoginActivity.class);
+                startActivity(loginActivity);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void unsavedEditsPrompt(final int actionId){
+        if (!mName.equals(mNameEt.getText().toString()) ||
+                !mZipcode.equals(mZipcodeEt.getText().toString()) ||
+                mGenderSpinnner.getSelectedItemId() != mUser.getGenderCode() ||
+                !mSexualitySpinner.getSelectedItem().equals(mUser.getSexuality()) ||
+                !mRelationshipStatusSpinner.getSelectedItem().equals(mUser.getRelationshipStatus())) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle(getString(R.string.unsaved_edits_title))
+                    .setMessage(getString(R.string.unsaved_edits_prompt))
+                    .setPositiveButton(getString(R.string.positive_btn), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            handleAction(actionId);
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.negative_btn), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            dialog.create().show();
+        } else {
+            handleAction(actionId);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.editor, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home){
+            unsavedEditsPrompt(ACTION_RETURN_TO_DASH);
+            return true;
+        }
+        if (id == R.id.action_sign_out){
+            unsavedEditsPrompt(ACTION_SIGN_OUT);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

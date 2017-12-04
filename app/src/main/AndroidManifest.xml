@@ -19,7 +19,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".DashboardActivity" />
-        <activity android:name=".EditActivity"></activity>
+        <activity android:name=".EditActivity"
+            android:parentActivityName=".DashboardActivity">
+            <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".DashboardActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -88,6 +88,11 @@
     <string name="stats_format"><xliff:g id="age">%1$s</xliff:g> / <xliff:g id="gender">%2$s</xliff:g> / <xliff:g id="location">%3$s</xliff:g></string>
     <string name="description_title">About Me</string>s
     <string name="relationship_title">Relationship Status</string>
+    <string name="unsaved_edits_prompt">Are you sure you want to discard all changes and return to your dashboard?</string>
+    <string name="unsaved_edits_title">Unsaved Changes</string>
+    <string name="positive_btn">Yes</string>
+    <string name="negative_btn">No</string>
+    <string name="profile_saved">Changes saved</string>
 
     <string name="cd_edit_description">Edit my profile description</string>
     <string name="cd_edit_relationship">Edit my relationship status</string>
@@ -95,4 +100,6 @@
     <string name="cd_view_profile_picture"><xliff:g id="user_name">%1$s</xliff:g>\'s profile picture</string>
 
     <string name="connect">Connect</string>
+
+    <string name="sign_out">Sign Out</string>
 </resources>
