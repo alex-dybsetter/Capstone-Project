@@ -12,6 +12,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -74,6 +75,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.edit_relationship_spinner) Spinner mRelationshipStatusSpinner;
     @BindView(R.id.edit_parent) ConstraintLayout mParent;
     @BindView(R.id.edit_add_img_btn) ImageButton mProfileImage;
+    @BindView(R.id.edit_remove_txt) TextView mRemoveImageTv;
 
     @BindView(R.id.edit_name_helper) TextView mNameHelperTv;
     @BindView(R.id.edit_zipcode_helper) TextView mZipcodeHelperTv;
@@ -128,7 +130,6 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             mBirthday = mUser.getBirthday();
             mZipcode = mUser.getZipcode();
             mImageUriString = mUser.getProfilePicUri();
-            mUserProfilePic = mStorageRef.child(Uri.parse(mImageUriString).getPath());
 
             mNameEt.setText(mName);
             mZipcodeEt.setText(mZipcode);
@@ -138,12 +139,14 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             mRelationshipStatusSpinner.setSelection(relationshipsList.indexOf(mUser.getRelationshipStatus()));
 
             if (!mImageUriString.isEmpty()) {
+                mUserProfilePic = mStorageRef.child(Uri.parse(mImageUriString).getPath());
                 try {
                     final File localFile = File.createTempFile("images", "jpg");
                     mUserProfilePic.getFile(localFile)
                             .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                    mRemoveImageTv.setVisibility(View.VISIBLE);
                                     Picasso.with(EditActivity.this)
                                             .load(localFile)
                                             .placeholder(R.drawable.ic_person_white_48dp)
@@ -200,9 +203,23 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
     }
 
+    @OnClick(R.id.edit_remove_txt)
+    public void removeImage(){
+        deleteImage(mImageUriString);
+        mImageUriString = "";
+        Picasso.with(EditActivity.this)
+                .load(R.drawable.ic_person_white_48dp)
+                .placeholder(R.drawable.ic_person_white_48dp)
+                .centerCrop()
+                .fit()
+                .into(mProfileImage);
+        mRemoveImageTv.setVisibility(View.GONE);
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
+                mRemoveImageTv.setVisibility(View.VISIBLE);
                 Uri selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
                     mImageUriString = selectedImageUri.toString();
@@ -266,6 +283,11 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
         String email = mAuth.getCurrentUser().getEmail();
 
+        String oldProfilePicUri = "";
+        if (!mUser.getProfilePicUri().isEmpty() && !mUser.getProfilePicUri().equals(mImageUriString)){
+            oldProfilePicUri = mUser.getProfilePicUri();
+        }
+
         mUser = new User(email, mName, mBirthday, mZipcode, gender, sexuality, relationshipStatus,
                 description, mImageUriString);
 
@@ -273,20 +295,11 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         database.setValue(mUser);
 
         if (!mImageUriString.isEmpty()){
-            mUserProfilePic.putFile(Uri.parse(mImageUriString))
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            exception.printStackTrace();
-                            Toast.makeText(EditActivity.this, getString(R.string.upload_error), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            uploadImage();
+
+            if (!oldProfilePicUri.isEmpty()) {
+                deleteImage(oldProfilePicUri);
+            }
         }
 
         Toast.makeText(this, getString(R.string.profile_saved), Toast.LENGTH_SHORT).show();
@@ -294,6 +307,39 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         Intent dashboardActivity = new Intent(getApplicationContext(), DashboardActivity.class);
         dashboardActivity.putExtra(USER_KEY, mUser);
         startActivity(dashboardActivity);
+    }
+
+    private void uploadImage(){
+        mUserProfilePic = mStorageRef.child(Uri.parse(mImageUriString).getPath());
+        mUserProfilePic.putFile(Uri.parse(mImageUriString))
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        exception.printStackTrace();
+                        Toast.makeText(EditActivity.this, getString(R.string.upload_error), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void deleteImage(String oldProfilePicUri){
+        StorageReference photoRef = mStorageRef.child(Uri.parse(oldProfilePicUri).getPath());
+        photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // Picture deleted from storage, take no action
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Picture is still in storage, take no action
+            }
+        });
     }
 
     private void showDialog(final String title, String body){
@@ -459,7 +505,8 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                 !mZipcode.equals(mZipcodeEt.getText().toString()) ||
                 mGenderSpinnner.getSelectedItemId() != mUser.getGenderCode() ||
                 !mSexualitySpinner.getSelectedItem().equals(mUser.getSexuality()) ||
-                !mRelationshipStatusSpinner.getSelectedItem().equals(mUser.getRelationshipStatus())) {
+                !mRelationshipStatusSpinner.getSelectedItem().equals(mUser.getRelationshipStatus()) ||
+                !mImageUriString.equals(mUser.getProfilePicUri())) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setTitle(getString(R.string.unsaved_edits_title))
                     .setMessage(getString(R.string.unsaved_edits_prompt))

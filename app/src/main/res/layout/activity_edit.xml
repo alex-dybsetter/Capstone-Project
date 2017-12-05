@@ -182,4 +182,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
+    <TextView
+        android:id="@+id/edit_remove_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/remove_image"
+        android:textColor="@color/accent_dark"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/edit_add_img_btn"
+        app:layout_constraintStart_toStartOf="@+id/edit_add_img_btn"
+        app:layout_constraintTop_toBottomOf="@+id/edit_add_img_txt" />
+
 </android.support.constraint.ConstraintLayout>
