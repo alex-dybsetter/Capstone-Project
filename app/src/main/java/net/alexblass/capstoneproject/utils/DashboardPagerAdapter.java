@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import net.alexblass.capstoneproject.AccountPromptFragment;
+import net.alexblass.capstoneproject.ConnectFragment;
 import net.alexblass.capstoneproject.MyProfileFragment;
 import net.alexblass.capstoneproject.R;
 
@@ -27,8 +28,7 @@ public class DashboardPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                // TODO: Replace with connect fragment
-                return new MyProfileFragment();
+                return new ConnectFragment();
             case 1:
                 return new MyProfileFragment();
             default:

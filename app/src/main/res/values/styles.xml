@@ -83,4 +83,13 @@
         <item name="android:alpha">.8</item>
     </style>
 
+    <style name="CardBtn">
+        <item name="android:tint">@color/colorAccent</item>
+        <item name="android:paddingStart">@dimen/standard_margin</item>
+        <item name="android:paddingLeft">@dimen/standard_margin</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:paddingBottom">@dimen/card_padding_vertical</item>
+        <item name="android:paddingTop">@dimen/small_margin</item>
+    </style>
+
 </resources>

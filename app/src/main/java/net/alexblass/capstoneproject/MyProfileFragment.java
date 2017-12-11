@@ -1,6 +1,8 @@
 package net.alexblass.capstoneproject;
 
 
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.content.Intent;
 import android.support.v4.content.Loader;
@@ -12,9 +14,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+
 import net.alexblass.capstoneproject.utils.UserDataUtils;
 import net.alexblass.capstoneproject.models.User;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -22,7 +33,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
-
 
 /**
  * A Fragment to display the current user's profile.
@@ -40,6 +50,8 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
     private String mLocation;
     private int mAge;
     private String mGender;
+
+    // TODO: Update background image
 
     public MyProfileFragment() {
         // Required empty public constructor
@@ -70,6 +82,33 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
             mGender = getActivity().getString(genderStringId);
 
             mZipcode = user.getZipcode();
+            
+            if (!user.getProfilePicUri().isEmpty()){
+                StorageReference profilePicFile = FirebaseStorage.getInstance().getReference()
+                        .child(Uri.parse(user.getProfilePicUri()).getPath());
+                try {
+                    final File localFile = File.createTempFile("images", "jpg");
+                    profilePicFile.getFile(localFile)
+                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                    Picasso.with(getContext())
+                                            .load(localFile)
+                                            .placeholder(R.drawable.ic_person_white_48dp)
+                                            .centerCrop()
+                                            .fit()
+                                            .into(mProfilePic);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            exception.printStackTrace();
+                        }
+                    });
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
 
             LoaderManager loaderManager = getLoaderManager();
             loaderManager.initLoader(0, null, this);

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/card_height"
+    android:layout_marginBottom="@dimen/standard_margin"
+    android:elevation="@dimen/card_elevation"
+    app:cardCornerRadius="@dimen/card_corner"
+    app:contentPaddingTop="@dimen/card_padding_vertical"
+    app:contentPaddingRight="@dimen/standard_margin"
+    app:contentPaddingLeft="@dimen/standard_margin">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/card_name_tv"
+            style="@style/ProfileNameDisplay"
+            android:textSize="@dimen/headline_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="Oliver"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/card_stats_tv"
+            style="@style/StatsSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="22 / M / San Fransisco"
+            android:paddingLeft="@dimen/standard_margin"
+            android:paddingStart="@dimen/standard_margin"
+            android:paddingRight="@dimen/standard_margin"
+            android:paddingEnd="@dimen/standard_margin"
+            app:layout_constraintBottom_toBottomOf="@+id/card_name_tv"
+            app:layout_constraintStart_toEndOf="@+id/card_name_tv"
+            app:layout_constraintTop_toTopOf="@+id/card_name_tv" />
+
+        <TextView
+            android:id="@+id/card_description_tv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@id/card_name_tv"
+            android:text="Hi, I'm Oli.  I like to build things. I'm a big nerd."
+            app:layout_constraintBottom_toTopOf="@+id/card_message_btn"
+            app:layout_constraintTop_toBottomOf="@+id/card_name_tv" />
+
+        <ImageButton
+            android:id="@+id/card_add_friend_btn"
+            style="@style/CardBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_person_add_white_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageButton
+            android:id="@+id/card_favorite_btn"
+            style="@style/CardBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_favorite_border_white_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/card_add_friend_btn" />
+
+        <ImageButton
+            android:id="@+id/card_message_btn"
+            style="@style/CardBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_email_white_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/card_favorite_btn" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>
