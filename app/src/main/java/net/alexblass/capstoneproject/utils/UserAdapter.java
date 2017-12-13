@@ -1,21 +1,38 @@
 package net.alexblass.capstoneproject.utils;
 
 import android.content.Context;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import net.alexblass.capstoneproject.R;
 import net.alexblass.capstoneproject.models.User;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * An adapter to display a list of users in the connect fragment.
  */
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private User[] mUserResults;
     private LayoutInflater mInflator;
@@ -54,11 +71,47 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(UserAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final UserAdapter.ViewHolder holder, int position) {
         User selectedUser = mUserResults[position];
 
         if (selectedUser != null){
-            // TODO
+
+            holder.userNameTv.setText(selectedUser.getName());
+
+            Calendar birthday = new GregorianCalendar();
+            birthday.setTimeInMillis(selectedUser.getBirthday());
+            int age = UserDataUtils.calculateAge(birthday);
+            int genderId = UserDataUtils.getGenderAbbreviationStringId(selectedUser.getGenderCode());
+            holder.userStatsTv.setText(mContext.getResources().getString(R.string.stats_format,
+                    age, mContext.getString(genderId),
+                    selectedUser.getZipcode()));
+
+            if (!selectedUser.getProfilePicUri().isEmpty()){
+                StorageReference profilePicFile = FirebaseStorage.getInstance().getReference()
+                        .child(Uri.parse(selectedUser.getProfilePicUri()).getPath());
+                try {
+                    final File localFile = File.createTempFile("images", "jpg");
+                    profilePicFile.getFile(localFile)
+                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                    Picasso.with(mContext)
+                                            .load(localFile)
+                                            .placeholder(R.drawable.ic_person_white_48dp)
+                                            .centerCrop()
+                                            .fit()
+                                            .into(holder.userProfilePic);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            exception.printStackTrace();
+                        }
+                    });
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -69,6 +122,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private User selectedUser;
+
+        @BindView(R.id.card_user_imageview) ImageView userProfilePic;
+        @BindView(R.id.card_name_tv) TextView userNameTv;
+        @BindView(R.id.card_stats_tv) TextView userStatsTv;
 
         public ViewHolder(View itemView){
             super(itemView);
