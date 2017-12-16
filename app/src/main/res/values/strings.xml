@@ -74,6 +74,7 @@
     <string name="sexuality_both">Men and Women</string>
     <string name="sexuality_any">Gender isn\'t important.</string>
     <string name="sexuality_none">I\'m not into that</string>
+    <string name="sexuality_questioning">I\'m not sure</string>
 
     <string name="relationship">Relationship status</string>
     <string name="relationship_single_searching">Single and searching</string>
@@ -94,9 +95,10 @@
     <string name="unsaved_edits_title">Unsaved Changes</string>
     <string name="positive_btn">Yes</string>
     <string name="negative_btn">No</string>
-    <string name="profile_saved">Changes saved</string>
+    <string name="change_saved">Changes saved</string>
 
     <string name="cd_edit_description">Edit my profile description</string>
+    <string name="cd_edit_sexuality">Edit my sexual preference</string>
     <string name="cd_edit_relationship">Edit my relationship status</string>
     <string name="cd_user_profile_picture">My profile picture</string>
     <string name="cd_view_profile_picture"><xliff:g id="user_name">%1$s</xliff:g>\'s profile picture</string>

@@ -12,7 +12,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -302,7 +301,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         }
 
-        Toast.makeText(this, getString(R.string.profile_saved), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.change_saved), Toast.LENGTH_SHORT).show();
 
         Intent dashboardActivity = new Intent(getApplicationContext(), DashboardActivity.class);
         dashboardActivity.putExtra(USER_KEY, mUser);

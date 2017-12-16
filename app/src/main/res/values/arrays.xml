@@ -18,6 +18,7 @@
         <item>@string/sexuality_both</item>
         <item>@string/sexuality_any</item>
         <item>@string/sexuality_none</item>
+        <item>@string/sexuality_questioning</item>
     </string-array>
 
     <string-array name="relationship_choices">

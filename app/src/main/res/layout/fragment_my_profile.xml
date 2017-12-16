@@ -6,6 +6,7 @@
     tools:context="net.alexblass.capstoneproject.MyProfileFragment">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/user_profile_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -13,22 +14,22 @@
             android:id="@+id/user_profile_banner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:contentDescription="@null"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background"
-            android:contentDescription="@null"/>
+            android:src="@drawable/ic_launcher_background" />
 
         <ImageView
             android:id="@+id/user_profile_image"
             android:layout_width="@dimen/profile_picture_size"
             android:layout_height="@dimen/profile_picture_size"
             android:background="@color/divider"
+            android:contentDescription="@string/cd_user_profile_picture"
             android:src="@drawable/ic_person_white_48dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.25"
-            android:contentDescription="@string/cd_user_profile_picture"/>
+            app:layout_constraintVertical_bias="0.25" />
 
         <TextView
             android:id="@+id/user_profile_name"
@@ -60,98 +61,159 @@
             style="@style/ProfileSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/description_title"
             android:layout_marginLeft="@dimen/standard_margin"
             android:layout_marginStart="@dimen/standard_margin"
+            android:text="@string/description_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_profile_name" />
 
-        <TextView
-            android:id="@+id/user_profile_description"
+        <LinearLayout
+            android:id="@+id/description_group"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/standard_margin"
-            android:layout_marginStart="@dimen/standard_margin"
-            android:layout_marginRight="@dimen/standard_margin"
-            android:layout_marginEnd="@dimen/standard_margin"
-            android:layout_marginTop="@dimen/small_margin"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/user_profile_description_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/user_profile_edit_description"
-            tools:text="Hi, I'm Alex and I'm an Android developer!" />
+            app:layout_constraintTop_toBottomOf="@+id/user_profile_edit_description_btn">
+
+            <TextView
+                android:id="@+id/user_profile_description_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/standard_margin"
+                android:layout_marginLeft="@dimen/standard_margin"
+                android:layout_marginRight="@dimen/standard_margin"
+                android:layout_marginStart="@dimen/standard_margin"
+                android:layout_marginTop="@dimen/small_margin"
+                tools:text="Hi, I'm Alex and I'm an Android developer!" />
+
+            <EditText
+                android:id="@+id/user_profile_description_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/standard_margin"
+                android:layout_marginLeft="@dimen/standard_margin"
+                android:layout_marginRight="@dimen/standard_margin"
+                android:layout_marginStart="@dimen/standard_margin"
+                android:layout_marginTop="@dimen/small_margin"
+                android:textSize="@dimen/text_size"
+                android:visibility="gone"
+                android:inputType="textMultiLine"
+                tools:text="Hi, I'm Alex and I'm an Android developer!" />
+
+        </LinearLayout>
 
         <ImageButton
-            android:id="@+id/user_profile_edit_description"
+            android:id="@+id/user_profile_edit_description_btn"
             style="@style/EditBtn"
             android:contentDescription="@string/cd_edit_description"
             android:src="@drawable/ic_edit_white_24dp"
             app:layout_constraintBottom_toBottomOf="@+id/user_profile_description_lbl"
-            app:layout_constraintTop_toTopOf="@+id/user_profile_description_lbl"
-            app:layout_constraintStart_toEndOf="@id/user_profile_description_lbl" />
+            app:layout_constraintStart_toEndOf="@id/user_profile_description_lbl"
+            app:layout_constraintTop_toTopOf="@+id/user_profile_description_lbl" />
 
         <TextView
             android:id="@+id/user_profile_sexuality_lbl"
             style="@style/ProfileSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
             android:text="@string/sexuality"
-            android:layout_marginLeft="@dimen/standard_margin"
-            android:layout_marginStart="@dimen/standard_margin"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_profile_description" />
+            app:layout_constraintTop_toBottomOf="@+id/description_group" />
 
-        <TextView
-            android:id="@+id/user_profile_sexuality"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/sexuality_group"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/standard_margin"
-            android:layout_marginStart="@dimen/standard_margin"
-            android:layout_marginTop="@dimen/small_margin"
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/user_profile_relationship_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/user_profile_edit_relationship"
-            tools:text="Relationship status: In a relationship" />
+            app:layout_constraintTop_toBottomOf="@+id/user_profile_edit_sexuality_btn">
+
+            <TextView
+                android:id="@+id/user_profile_sexuality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/standard_margin"
+                android:layout_marginStart="@dimen/standard_margin"
+                android:layout_marginTop="@dimen/small_margin"
+                app:layout_constraintLeft_toLeftOf="parent"
+                tools:text="Relationship status: In a relationship" />
+
+            <Spinner
+                android:id="@+id/user_profile_sexuality_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/standard_margin"
+                android:layout_marginLeft="@dimen/small_margin"
+                android:layout_marginRight="@dimen/standard_margin"
+                android:layout_marginStart="@dimen/small_margin"
+                android:entries="@array/sexuality_choices"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
         <ImageButton
-            android:id="@+id/user_profile_edit_sexuality"
+            android:id="@+id/user_profile_edit_sexuality_btn"
             style="@style/EditBtn"
-            android:contentDescription="@string/cd_edit_relationship"
+            android:contentDescription="@string/cd_edit_sexuality"
             android:src="@drawable/ic_edit_white_24dp"
-            app:layout_constraintBottom_toBottomOf="@+id/user_profile_relationship_lbl"
-            app:layout_constraintTop_toTopOf="@+id/user_profile_relationship_lbl"
-            app:layout_constraintStart_toEndOf="@id/user_profile_relationship_lbl"/>
+            app:layout_constraintBottom_toBottomOf="@+id/user_profile_sexuality_lbl"
+            app:layout_constraintStart_toEndOf="@id/user_profile_sexuality_lbl"
+            app:layout_constraintTop_toTopOf="@+id/user_profile_sexuality_lbl" />
 
         <TextView
             android:id="@+id/user_profile_relationship_lbl"
             style="@style/ProfileSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
             android:text="@string/relationship_title"
-            android:layout_marginLeft="@dimen/standard_margin"
-            android:layout_marginStart="@dimen/standard_margin"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_profile_sexuality" />
+            app:layout_constraintTop_toBottomOf="@+id/sexuality_group" />
 
-        <TextView
-            android:id="@+id/user_profile_relationship_status"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/relationship_group"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/standard_margin"
-            android:layout_marginStart="@dimen/standard_margin"
-            android:layout_marginTop="@dimen/small_margin"
+            android:orientation="vertical"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="@id/user_profile_sexuality_lbl"
-            app:layout_constraintTop_toBottomOf="@+id/user_profile_edit_sexuality"
-            tools:text="Relationship status: In a relationship" />
+            app:layout_constraintTop_toBottomOf="@+id/user_profile_edit_relationship_btn">
+
+            <TextView
+                android:id="@+id/user_profile_relationship_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/standard_margin"
+                android:layout_marginStart="@dimen/standard_margin"
+                android:layout_marginTop="@dimen/small_margin"
+                tools:text="Relationship status: In a relationship" />
+
+            <Spinner
+                android:id="@+id/user_profile_relationship_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/standard_margin"
+                android:layout_marginLeft="@dimen/small_margin"
+                android:layout_marginRight="@dimen/standard_margin"
+                android:layout_marginStart="@dimen/small_margin"
+                android:entries="@array/relationship_choices"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
         <ImageButton
-            android:id="@+id/user_profile_edit_relationship"
+            android:id="@+id/user_profile_edit_relationship_btn"
             style="@style/EditBtn"
             android:contentDescription="@string/cd_edit_relationship"
             android:src="@drawable/ic_edit_white_24dp"
-            app:layout_constraintBottom_toBottomOf="@+id/user_profile_sexuality_lbl"
-            app:layout_constraintTop_toTopOf="@+id/user_profile_sexuality_lbl"
-            app:layout_constraintStart_toEndOf="@id/user_profile_sexuality_lbl"/>
+            app:layout_constraintBottom_toBottomOf="@+id/user_profile_relationship_lbl"
+            app:layout_constraintStart_toEndOf="@id/user_profile_relationship_lbl"
+            app:layout_constraintTop_toTopOf="@+id/user_profile_relationship_lbl" />
 
     </android.support.constraint.ConstraintLayout>
 
