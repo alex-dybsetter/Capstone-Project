@@ -140,7 +140,7 @@
                 android:layout_marginStart="@dimen/standard_margin"
                 android:layout_marginTop="@dimen/small_margin"
                 app:layout_constraintLeft_toLeftOf="parent"
-                tools:text="Relationship status: In a relationship" />
+                tools:text="Men" />
 
             <Spinner
                 android:id="@+id/user_profile_sexuality_spinner"

@@ -1,0 +1,167 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="net.alexblass.capstoneproject.ViewProfileFragment">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/view_profile_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background" />
+
+        <ImageView
+            android:id="@+id/view_profile_image"
+            android:layout_width="@dimen/profile_picture_size"
+            android:layout_height="@dimen/profile_picture_size"
+            android:background="@color/divider"
+            android:contentDescription="@string/cd_view_profile_picture"
+            android:src="@drawable/ic_person_white_48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.25" />
+
+        <TextView
+            android:id="@+id/view_profile_name"
+            style="@style/ProfileNameDisplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_profile_image"
+            tools:text="Alex" />
+
+        <TextView
+            android:id="@+id/view_profile_stats"
+            style="@style/StatsSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            app:layout_constraintBottom_toBottomOf="@+id/view_profile_name"
+            app:layout_constraintEnd_toEndOf="@+id/view_profile_image"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/view_profile_name"
+            app:layout_constraintTop_toTopOf="@+id/view_profile_name"
+            tools:text="23 / F / CA" />
+
+        <TextView
+            android:id="@+id/view_profile_description_lbl"
+            style="@style/ProfileSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:text="@string/description_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_profile_name" />
+
+        <TextView
+            android:id="@+id/view_profile_description_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/standard_margin"
+            android:layout_marginRight="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/view_profile_description_lbl"
+            app:layout_constraintTop_toBottomOf="@+id/view_profile_description_lbl"
+            tools:text="Hi, I'm Alex and I'm an Android developer!" />
+
+        <TextView
+            android:id="@+id/view_profile_sexuality_lbl"
+            style="@style/ProfileSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:text="@string/sexuality"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_profile_description_tv" />
+
+        <TextView
+            android:id="@+id/view_profile_sexuality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/view_profile_sexuality_lbl"
+            app:layout_constraintTop_toBottomOf="@+id/view_profile_sexuality_lbl"
+            tools:text="Men" />
+
+        <TextView
+            android:id="@+id/view_profile_relationship_lbl"
+            style="@style/ProfileSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:text="@string/relationship_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_profile_sexuality" />
+
+        <TextView
+            android:id="@+id/view_profile_relationship_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/view_profile_relationship_lbl"
+            app:layout_constraintTop_toBottomOf="@+id/view_profile_relationship_lbl"
+            tools:text="Relationship status: In a relationship" />
+
+        <ImageButton
+            android:id="@+id/view_profile_message_btn"
+            style="@style/ProfileBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_send_message"
+            android:src="@drawable/ic_email_white_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/view_profile_image"
+            app:layout_constraintStart_toEndOf="@+id/view_profile_image"
+            app:layout_constraintTop_toBottomOf="@+id/view_profile_banner" />
+
+        <ImageButton
+            android:id="@+id/view_profile_favorite_btn"
+            style="@style/ProfileBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_add_favorite"
+            android:src="@drawable/ic_favorite_border_white_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/view_profile_message_btn"
+            app:layout_constraintStart_toEndOf="@+id/view_profile_message_btn"
+            app:layout_constraintTop_toTopOf="@+id/view_profile_message_btn" />
+
+        <ImageButton
+            android:id="@+id/view_profile_add_friend_btn"
+            style="@style/ProfileBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_add_friend"
+            android:paddingEnd="@dimen/standard_margin"
+            android:paddingRight="@dimen/standard_margin"
+            android:src="@drawable/ic_person_add_white_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/view_profile_favorite_btn"
+            app:layout_constraintStart_toEndOf="@+id/view_profile_favorite_btn"
+            app:layout_constraintTop_toTopOf="@+id/view_profile_favorite_btn" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

@@ -1,6 +1,7 @@
 package net.alexblass.capstoneproject;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +29,7 @@ import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_EMAIL_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_GENDER_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_NAME_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_PROFILE_IMG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_RELATIONSHIP_KEY;
@@ -37,7 +39,7 @@ import static net.alexblass.capstoneproject.data.Keys.USER_ZIPCODE_KEY;
 /**
  * A Fragment to display a list of other app users.
  */
-public class ConnectFragment extends Fragment {
+public class ConnectFragment extends Fragment implements UserAdapter.ItemClickListener {
 
     @BindView(R.id.connect_recyclerview) RecyclerView mRecyclerView;
 
@@ -61,6 +63,7 @@ public class ConnectFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         mAdapter = new UserAdapter(getActivity(), new User[0]);
+        mAdapter.setClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
         Query query = FirebaseDatabase.getInstance().getReference();
@@ -97,5 +100,13 @@ public class ConnectFragment extends Fragment {
         });
 
         return root;
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        User user = mAdapter.getItem(position);
+        Intent launchProfileViewer = new Intent(getContext(), ViewProfileActivity.class);
+        launchProfileViewer.putExtra(USER_KEY, user);
+        startActivity(launchProfileViewer);
     }
 }

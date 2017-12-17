@@ -73,6 +73,7 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
     private String mGender;
 
     // TODO: Update background image
+    // TODO: Retrieve user data when returning to parent dashboard activity
 
     public MyProfileFragment() {
         // Required empty public constructor

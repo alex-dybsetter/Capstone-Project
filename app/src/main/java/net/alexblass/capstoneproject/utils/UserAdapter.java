@@ -37,7 +37,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private User[] mUserResults;
     private LayoutInflater mInflator;
     private Context mContext;
-    //private ItemClickListener mClickListener;
+    private ItemClickListener mClickListener;
 
     public UserAdapter(Context context, User[] results){
         this.mInflator = LayoutInflater.from(context);
@@ -50,9 +50,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-//    public void setClickListener(ItemClickListener itemClickListener){
-//        mClickListener = itemClickListener;
-//    }
+    public void setClickListener(ItemClickListener itemClickListener){
+        mClickListener = itemClickListener;
+    }
 
     public User getItem(int index){
         return mUserResults[index];
@@ -115,9 +115,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         }
     }
 
-//    public interface ItemClickListener{
-//        void onItemClick(View view, int position);
-//    }
+    public interface ItemClickListener{
+        void onItemClick(View view, int position);
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -135,9 +135,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         @Override
         public void onClick(View v) {
-//            if (mClickListener != null){
-//                mClickListener.onItemClick(v, getAdapterPosition());
-//            }
+            if (mClickListener != null){
+                mClickListener.onItemClick(v, getAdapterPosition());
+            }
         }
     }
 }
