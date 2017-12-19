@@ -12,6 +12,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".messaging.MessagingInstanceIdService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".messaging.MeetMeMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,12 +42,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DashboardActivity" />
         </activity>
-        <activity android:name=".ViewProfileActivity"
+        <activity
+            android:name=".ViewProfileActivity"
             android:parentActivityName=".DashboardActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DashboardActivity" />
         </activity>
+        <activity
+            android:name=".MessagingActivity"
+            android:label="@string/inbox"
+            android:parentActivityName=".DashboardActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DashboardActivity" />
+        </activity>
+        <activity android:name=".NewMessageActivity"></activity>
     </application>
 
 </manifest>

@@ -8,4 +8,11 @@
         android:title="@string/sign_out"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_messages"
+        android:orderInCategory="99"
+        android:title="@string/messages"
+        android:icon="@drawable/ic_email_white_24dp"
+        app:showAsAction="ifRoom"/>
+
 </menu>

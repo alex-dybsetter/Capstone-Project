@@ -64,6 +64,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private static final int ACTION_SIGN_OUT = 0;
     private static final int ACTION_RETURN_TO_DASH = 1;
+    private static final int ACTION_TO_MESSAGES = 2;
     private static final int SELECT_PICTURE = 100;
 
     @BindView(R.id.edit_name_et) EditText mNameEt;
@@ -494,6 +495,10 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                 Intent loginActivity = new Intent(EditActivity.this, LoginActivity.class);
                 startActivity(loginActivity);
                 break;
+            case ACTION_TO_MESSAGES:
+                Intent messagingActivityIntent = new Intent(this, MessagingActivity.class);
+                startActivity(messagingActivityIntent);
+                break;
             default:
                 break;
         }
@@ -552,6 +557,10 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         }
         if (id == R.id.action_sign_out){
             unsavedEditsPrompt(ACTION_SIGN_OUT);
+            return true;
+        }
+        if (id == R.id.action_messages){
+            unsavedEditsPrompt(ACTION_TO_MESSAGES);
             return true;
         }
         return super.onOptionsItemSelected(item);

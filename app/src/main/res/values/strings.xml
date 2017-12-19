@@ -1,5 +1,6 @@
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">MeetMe!</string>
+    <string name="inbox">Inbox</string>
 
     <string name="intro">It\'s the friends we meet along the way that help us appreciate the journey.</string>
 
@@ -91,11 +92,18 @@
     <string name="stats_format"><xliff:g id="age">%1$s</xliff:g> / <xliff:g id="gender">%2$s</xliff:g> / <xliff:g id="location">%3$s</xliff:g></string>
     <string name="description_title">About Me</string>s
     <string name="relationship_title">Relationship Status</string>
-    <string name="unsaved_edits_prompt">Are you sure you want to discard all changes and return to your dashboard?</string>
+    <string name="unsaved_edits_prompt">Are you sure you want to discard all changes?</string>
     <string name="unsaved_edits_title">Unsaved Changes</string>
     <string name="positive_btn">Yes</string>
     <string name="negative_btn">No</string>
     <string name="change_saved">Changes saved</string>
+
+    <string name="messages_from">From</string>
+    <string name="message_date">Date</string>
+    <string name="message_no_results">No messages :(</string>
+    <string name="send_message">Send message</string>
+    <string name="message_notification_title">New Message</string>
+    <string name="message_notification_body">You have new messages! Read them now.</string>
 
     <string name="cd_edit_description">Edit my profile description</string>
     <string name="cd_edit_sexuality">Edit my sexual preference</string>
@@ -105,10 +113,12 @@
     <string name="cd_send_message">Send <xliff:g id="user_name">%1$s</xliff:g> a message</string>
     <string name="cd_add_favorite">Like <xliff:g id="user_name">%1$s</xliff:g>\'s profile? Add favorite</string>
     <string name="cd_add_friend">Add <xliff:g id="user_name">%1$s</xliff:g> to your friends list</string>
+    <string name="cd_delete_message">Delete message</string>
 
     <string name="connect">Connect</string>
     <string name="search_hint">Find by username</string>
 
+    <string name="messages">Messages</string>
     <string name="sign_out">Sign Out</string>
 
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>

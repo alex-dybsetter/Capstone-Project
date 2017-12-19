@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/standard_margin"
+    android:layout_marginStart="@dimen/standard_margin"
+    android:layout_marginRight="@dimen/standard_margin"
+    android:layout_marginEnd="@dimen/standard_margin"
+    android:layout_marginTop="@dimen/small_margin"
+    android:layout_marginBottom="@dimen/standard_margin"
+    android:orientation="vertical"
+    tools:context="net.alexblass.capstoneproject.InboxFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/ProfileSubtitle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="@string/messages_from" />
+
+        <TextView
+            style="@style/ProfileSubtitle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/message_date" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_height"
+        android:background="@color/accent_dark" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/inbox_messages_rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="@dimen/small_margin"
+        android:visibility="gone"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/message_no_results"/>
+
+</LinearLayout>

@@ -67,6 +67,11 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(editorActivity);
             return true;
         }
+        if (id == R.id.action_messages){
+            Intent messagingActivityIntent = new Intent(this, MessagingActivity.class);
+            startActivity(messagingActivityIntent);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 }

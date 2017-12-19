@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/action_sign_out"
         android:orderInCategory="100"
@@ -8,15 +9,10 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_messages"
+        android:id="@+id/action_send_new_message"
         android:orderInCategory="99"
-        android:title="@string/messages"
-        android:icon="@drawable/ic_email_white_24dp"
+        android:title="@string/send_message"
+        android:icon="@drawable/ic_edit_white_24dp"
         app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/action_edit_profile"
-        android:orderInCategory="98"
-        android:title="@string/editor_title"
-        app:showAsAction="never"/>
 </menu>
