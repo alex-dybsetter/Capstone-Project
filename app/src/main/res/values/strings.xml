@@ -1,6 +1,7 @@
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">MeetMe!</string>
     <string name="inbox">Inbox</string>
+    <string name="new_message_activity">New Message</string>
 
     <string name="intro">It\'s the friends we meet along the way that help us appreciate the journey.</string>
 
@@ -102,8 +103,14 @@
     <string name="message_date">Date</string>
     <string name="message_no_results">No messages :(</string>
     <string name="send_message">Send message</string>
+    <string name="send">Send</string>
+    <string name="message">Message</string>
+    <string name="send_to_hint">Recipient</string>
+    <string name="invalid_username">Invalid username</string>
     <string name="message_notification_title">New Message</string>
     <string name="message_notification_body">You have new messages! Read them now.</string>
+    <string name="message_sent">Message sent</string>
+    <string name="empty_message">Cannot send empty message</string>
 
     <string name="cd_edit_description">Edit my profile description</string>
     <string name="cd_edit_sexuality">Edit my sexual preference</string>
@@ -122,4 +129,7 @@
     <string name="sign_out">Sign Out</string>
 
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
