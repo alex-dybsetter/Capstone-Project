@@ -111,6 +111,7 @@
     <string name="message_notification_body">You have new messages! Read them now.</string>
     <string name="message_sent">Message sent</string>
     <string name="empty_message">Cannot send empty message</string>
+    <string name="message_error">Problem sending message</string>
 
     <string name="cd_edit_description">Edit my profile description</string>
     <string name="cd_edit_sexuality">Edit my sexual preference</string>
@@ -129,7 +130,4 @@
     <string name="sign_out">Sign Out</string>
 
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

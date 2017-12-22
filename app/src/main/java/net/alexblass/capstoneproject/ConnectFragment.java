@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,20 +75,22 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
                     List<User> users = new ArrayList<User>();
                     for (DataSnapshot result : dataSnapshot.getChildren()) {
 
-                        String email = (String) result.child(USER_EMAIL_KEY).getValue();
-                        String name = (String) result.child(USER_NAME_KEY).getValue();
-                        long birthday = (long) result.child(USER_BIRTHDAY_KEY).getValue();
-                        String zipcode = String.valueOf(result.child(USER_ZIPCODE_KEY).getValue());
-                        long genderCode = (long) result.child(USER_GENDER_KEY).getValue();
-                        String sexuality = (String) result.child(USER_SEXUALITY_KEY).getValue();
-                        String relationshipStatus = (String) result.child(USER_RELATIONSHIP_KEY).getValue();
-                        String description = (String) result.child(USER_DESCRIPTION_KEY).getValue();
-                        String profilePicUri = (String) result.child(USER_PROFILE_IMG_KEY).getValue();
+                        if (result.hasChild(USER_EMAIL_KEY)){
+                            String email = (String) result.child(USER_EMAIL_KEY).getValue();
+                            String name = (String) result.child(USER_NAME_KEY).getValue();
+                            long birthday = (long) result.child(USER_BIRTHDAY_KEY).getValue();
+                            String zipcode = String.valueOf(result.child(USER_ZIPCODE_KEY).getValue());
+                            long genderCode = (long) result.child(USER_GENDER_KEY).getValue();
+                            String sexuality = (String) result.child(USER_SEXUALITY_KEY).getValue();
+                            String relationshipStatus = (String) result.child(USER_RELATIONSHIP_KEY).getValue();
+                            String description = (String) result.child(USER_DESCRIPTION_KEY).getValue();
+                            String profilePicUri = (String) result.child(USER_PROFILE_IMG_KEY).getValue();
 
-                        User userResult = new User(email, name, birthday, zipcode, genderCode,
-                                sexuality, relationshipStatus, description, profilePicUri);
+                            User userResult = new User(email, name, birthday, zipcode, genderCode,
+                                    sexuality, relationshipStatus, description, profilePicUri);
 
-                        users.add(userResult);
+                            users.add(userResult);
+                        }
                     }
                     mAdapter.updateUserResults(users.toArray(new User[users.size()]));
                 }

@@ -3,6 +3,8 @@ package net.alexblass.capstoneproject.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.GregorianCalendar;
+
 /**
  * A Message class to store message data.
  */
@@ -13,11 +15,11 @@ public class Message implements Parcelable {
     private String mMessage;
     private String mDateTime;
 
-    public Message(String sender, String sentTo, String message, String dateTime){
+    public Message(String sender, String sentTo, String message){
         this.mSender = sender;
         this.mSentTo = sentTo;
         this.mMessage = message;
-        this.mDateTime = dateTime;
+        this.mDateTime = new GregorianCalendar().getTime().toString();
     }
 
     protected Message(Parcel in) {

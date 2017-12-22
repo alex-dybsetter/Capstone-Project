@@ -41,8 +41,8 @@ public class MessagingActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_send_new_message){
-            //todo
-            Toast.makeText(this, "new message", Toast.LENGTH_SHORT).show();
+            Intent newMessageActivity = new Intent(this, NewMessageActivity.class);
+            startActivity(newMessageActivity);
             return true;
         }
         return super.onOptionsItemSelected(item);

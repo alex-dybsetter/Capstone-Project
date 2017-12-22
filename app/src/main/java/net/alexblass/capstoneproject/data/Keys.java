@@ -17,4 +17,10 @@ public class Keys {
     public static final String USER_RELATIONSHIP_KEY = "relationshipStatus";
     public static final String USER_DESCRIPTION_KEY = "description";
     public static final String USER_PROFILE_IMG_KEY = "profilePicUri";
+
+    public static final String MSG_KEY = "messages";
+    public static final String MSG_SENDER_EMAIL_KEY = "sender";
+    public static final String MSG_SENT_TO_EMAIL_KEY = "sentTo";
+    public static final String MSG_DATA = "messageData";
+    public static final String MSG_DATE_TIME = "timestamp";
 }
