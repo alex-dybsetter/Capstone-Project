@@ -35,6 +35,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -57,6 +58,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_DEVICE_TOKEN;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_NAME_KEY;
 
@@ -190,6 +192,8 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.verification_error), Toast.LENGTH_SHORT).show();
                 }
             });
+
+            mAuth = FirebaseAuth.getInstance();
         }
 
         setFocusListeners();
@@ -284,7 +288,9 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         String email = mAuth.getCurrentUser().getEmail();
 
         String oldProfilePicUri = "";
-        if (!mUser.getProfilePicUri().isEmpty() && !mUser.getProfilePicUri().equals(mImageUriString)){
+        if (mUser != null &&
+                !mUser.getProfilePicUri().isEmpty() &&
+                !mUser.getProfilePicUri().equals(mImageUriString)){
             oldProfilePicUri = mUser.getProfilePicUri();
         }
 
@@ -293,6 +299,11 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(email.replace(".", "(dot)"));
         database.setValue(mUser);
+
+        database = FirebaseDatabase.getInstance().getReference(
+                mAuth.getCurrentUser().getEmail().replace(".", "(dot)"))
+                .child(USER_DEVICE_TOKEN);
+        database.setValue(FirebaseInstanceId.getInstance().getToken());
 
         if (!mImageUriString.isEmpty()){
             uploadImage();

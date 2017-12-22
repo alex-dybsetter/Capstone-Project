@@ -187,7 +187,8 @@ public class LoginFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(getContext(), getContext().getString(R.string.reset_email_sent),
+                            Toast.makeText(getContext(), getContext().getString(
+                                    R.string.reset_email_sent, mAuth.getCurrentUser().getEmail()),
                                     Toast.LENGTH_SHORT).show();
                         }else{
                             mErrorTv.setText(getContext().getString(R.string.no_account_found));
