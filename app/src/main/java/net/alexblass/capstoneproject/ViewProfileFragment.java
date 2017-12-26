@@ -40,6 +40,7 @@ import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
 public class ViewProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<String> {
 
     @BindView(R.id.view_profile_image) ImageView mProfilePic;
+    @BindView(R.id.view_profile_banner) ImageView mBannerIv;
     @BindView(R.id.view_profile_name) TextView mNameTv;
     @BindView(R.id.view_profile_stats) TextView mStats;
     @BindView(R.id.view_profile_description_tv) TextView mDescriptionTv;
@@ -95,6 +96,32 @@ public class ViewProfileFragment extends Fragment implements LoaderManager.Loade
                                             .centerCrop()
                                             .fit()
                                             .into(mProfilePic);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            exception.printStackTrace();
+                        }
+                    });
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+
+            if (!mUser.getBannerPicUri().isEmpty()){
+                StorageReference bannerPicFile = FirebaseStorage.getInstance().getReference()
+                        .child(Uri.parse(mUser.getBannerPicUri()).getPath());
+                try {
+                    final File localFile = File.createTempFile("images", "jpg");
+                    bannerPicFile.getFile(localFile)
+                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                    Picasso.with(getContext())
+                                            .load(localFile)
+                                            .centerCrop()
+                                            .fit()
+                                            .into(mBannerIv);
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override

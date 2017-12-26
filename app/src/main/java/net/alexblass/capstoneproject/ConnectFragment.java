@@ -25,6 +25,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static net.alexblass.capstoneproject.data.Keys.USER_BANNER_IMG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_EMAIL_KEY;
@@ -84,9 +85,10 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
                             String relationshipStatus = (String) result.child(USER_RELATIONSHIP_KEY).getValue();
                             String description = (String) result.child(USER_DESCRIPTION_KEY).getValue();
                             String profilePicUri = (String) result.child(USER_PROFILE_IMG_KEY).getValue();
+                            String bannerPicUri = (String) result.child(USER_BANNER_IMG_KEY).getValue();
 
                             User userResult = new User(email, name, birthday, zipcode, genderCode,
-                                    sexuality, relationshipStatus, description, profilePicUri);
+                                    sexuality, relationshipStatus, description, profilePicUri, bannerPicUri);
 
                             users.add(userResult);
                         }

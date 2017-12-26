@@ -17,6 +17,7 @@ public class Keys {
     public static final String USER_RELATIONSHIP_KEY = "relationshipStatus";
     public static final String USER_DESCRIPTION_KEY = "description";
     public static final String USER_PROFILE_IMG_KEY = "profilePicUri";
+    public static final String USER_BANNER_IMG_KEY = "bannerPicUri";
     public static final String USER_DEVICE_TOKEN = "deviceToken";
 
     public static final String MSG_KEY = "messages";

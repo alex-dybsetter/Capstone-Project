@@ -21,6 +21,7 @@
 
     <dimen name="profile_picture_size">92dp</dimen>
     <dimen name="profile_thumb_size">42dp</dimen>
+    <dimen name="banner_height">125dp</dimen>
     <dimen name="divider_height">1dp</dimen>
 
     <dimen name="card_height">150dp</dimen>

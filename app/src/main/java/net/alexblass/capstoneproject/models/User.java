@@ -8,7 +8,6 @@ import android.os.Parcelable;
  */
 
     // TODO: Add list of friends
-    // TODO: Add relationship user(s)
 
 public class User implements Parcelable {
     private String mEmail;
@@ -20,16 +19,19 @@ public class User implements Parcelable {
     private String mRelationshipStatus;
     private String mDescription;
     private String mProfilePicUri;
+    private String mBannerPicUri;
 
     public User(String email, String name, long birthday){
         this.mEmail = email;
         this.mName = name;
         this.mBirthday = birthday;
         this.mProfilePicUri = "";
+        this.mBannerPicUri = "";
     }
 
     public User(String email, String name, long birthday, String zipcode, long genderCode,
-                String sexuality, String relationshipStatus, String description, String profilePicUri){
+                String sexuality, String relationshipStatus, String description, String profilePicUri,
+                String bannerPicUri){
         this.mEmail = email;
         this.mName = name;
         this.mBirthday = birthday;
@@ -39,6 +41,7 @@ public class User implements Parcelable {
         this.mRelationshipStatus = relationshipStatus;
         this.mDescription = description;
         this.mProfilePicUri = profilePicUri;
+        this.mBannerPicUri = bannerPicUri;
     }
 
     protected User(Parcel in) {
@@ -51,6 +54,7 @@ public class User implements Parcelable {
         this.mRelationshipStatus = in.readString();
         this.mDescription = in.readString();
         this.mProfilePicUri = in.readString();
+        this.mBannerPicUri = in.readString();
     }
 
     public String getEmail() {
@@ -121,6 +125,14 @@ public class User implements Parcelable {
         this.mProfilePicUri = pictureUri;
     }
 
+    public String getBannerPicUri() {
+        return mBannerPicUri;
+    }
+
+    public void setBannerPicUri(String bannerPicUri) {
+        this.mBannerPicUri = bannerPicUri;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -137,9 +149,9 @@ public class User implements Parcelable {
         parcel.writeString(mRelationshipStatus);
         parcel.writeString(mDescription);
         parcel.writeString(mProfilePicUri);
+        parcel.writeString(mBannerPicUri);
     }
 
-    // Creator for Parcelable implementation
     public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
         public User createFromParcel(Parcel in) {

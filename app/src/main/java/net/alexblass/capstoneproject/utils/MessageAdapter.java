@@ -21,7 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Displays a list of messages.
+ * Displays the messages in a thread.
  */
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
@@ -98,10 +98,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        @BindView(R.id.message_user_img) ImageView userProfilePic;
         @BindView(R.id.message_user_name) TextView userNameTv;
         @BindView(R.id.message_time) TextView messageTimeTv;
-        @BindView(R.id.message_delete_btn) ImageButton messageDeleteBtn;
 
         public ViewHolder(View itemView){
             super(itemView);

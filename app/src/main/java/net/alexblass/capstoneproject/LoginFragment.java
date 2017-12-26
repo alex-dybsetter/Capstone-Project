@@ -37,6 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static net.alexblass.capstoneproject.data.Keys.USER_BANNER_IMG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_GENDER_KEY;
@@ -132,7 +133,7 @@ public class LoginFragment extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists() && dataSnapshot.child(USER_ZIPCODE_KEY).exists()){
-                        String name, zipcode, description, sexuality, relationshipStatus, email, profilePicUri;
+                        String name, zipcode, description, sexuality, relationshipStatus, email, profilePicUri, bannerPicUri;
                         long gender;
 
                         name = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
@@ -146,11 +147,12 @@ public class LoginFragment extends Fragment {
                         sexuality = (String) dataSnapshot.child(USER_SEXUALITY_KEY).getValue();
                         relationshipStatus = (String) dataSnapshot.child(USER_RELATIONSHIP_KEY).getValue();
                         profilePicUri = (String) dataSnapshot.child(USER_PROFILE_IMG_KEY).getValue();
+                        bannerPicUri = (String) dataSnapshot.child(USER_BANNER_IMG_KEY).getValue();
 
                         email = mAuth.getCurrentUser().getEmail();
 
                         User user = new User(email, name, birthdayInMillis,
-                                zipcode, gender, sexuality, relationshipStatus, description, profilePicUri);
+                                zipcode, gender, sexuality, relationshipStatus, description, profilePicUri, bannerPicUri);
 
                         Intent dashboardActivity = new Intent(getActivity(), DashboardActivity.class);
                         dashboardActivity.putExtra(USER_KEY, user);

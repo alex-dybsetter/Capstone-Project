@@ -23,11 +23,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import net.alexblass.capstoneproject.utils.UserDataUtils;
@@ -45,6 +47,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.app.Activity.RESULT_OK;
+import static net.alexblass.capstoneproject.data.Keys.USER_BANNER_IMG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
 
 /**
@@ -52,7 +56,10 @@ import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
  */
 public class MyProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<String> {
 
+    private static final int SELECT_PICTURE = 100;
+
     @BindView(R.id.user_profile_image) ImageView mProfilePic;
+    @BindView(R.id.user_profile_banner) ImageView mBannerIv;
     @BindView(R.id.user_profile_name) TextView mNameTv;
     @BindView(R.id.user_profile_stats) TextView mStats;
     @BindView(R.id.user_profile_description_tv) TextView mDescriptionTv;
@@ -72,7 +79,10 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
     private int mAge;
     private String mGender;
 
-    // TODO: Update background image
+    private FirebaseAuth mAuth;
+    private StorageReference mStorageRef;
+    private StorageReference mUserBannerPic;
+    private String mImageUriString;
     // TODO: Retrieve user data when returning to parent dashboard activity
 
     public MyProfileFragment() {
@@ -86,15 +96,28 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
         View root = inflater.inflate(R.layout.fragment_my_profile, container, false);
         ButterKnife.bind(this, root);
 
+        mAuth = FirebaseAuth.getInstance();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         mEditDescriptionBtn.setTag(R.drawable.ic_edit_white_24dp);
         mEditSexualityBtn.setTag(R.drawable.ic_edit_white_24dp);
         mEditRelationshipBtn.setTag(R.drawable.ic_edit_white_24dp);
+        mImageUriString = "";
 
         mParent.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 clearFocus();
                 return false;
+            }
+        });
+
+        mBannerIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
             }
         });
 
@@ -144,11 +167,76 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
                 }
             }
 
+            if (!mUser.getBannerPicUri().isEmpty()) {
+                StorageReference bannerPicFile = FirebaseStorage.getInstance().getReference()
+                        .child(Uri.parse(mUser.getBannerPicUri()).getPath());
+                try {
+                    final File localFile = File.createTempFile("images", "jpg");
+                    bannerPicFile.getFile(localFile)
+                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                    Picasso.with(getContext())
+                                            .load(localFile)
+                                            .centerCrop()
+                                            .fit()
+                                            .into(mBannerIv);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            exception.printStackTrace();
+                        }
+                    });
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+
             LoaderManager loaderManager = getLoaderManager();
             loaderManager.initLoader(0, null, this);
         }
 
         return root;
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+                if (null != selectedImageUri) {
+                    mImageUriString = selectedImageUri.toString();
+                    Picasso.with(getContext())
+                            .load(selectedImageUri)
+                            .centerCrop()
+                            .fit()
+                            .into(mBannerIv);
+                }
+                uploadImage();
+            }
+        }
+    }
+
+    private void uploadImage(){
+        mUserBannerPic = mStorageRef.child(Uri.parse(mImageUriString).getPath());
+        mUserBannerPic.putFile(Uri.parse(mImageUriString))
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        exception.printStackTrace();
+                        Toast.makeText(getContext(), getString(R.string.upload_error), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference(mUser.getEmail()
+                .replace(".", "(dot)")).child(USER_BANNER_IMG_KEY);
+        database.setValue(mImageUriString);
     }
 
     // TODO : When changes saved, return to same page/place -- savedinstancestate

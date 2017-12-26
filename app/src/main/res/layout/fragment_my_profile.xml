@@ -13,10 +13,10 @@
         <ImageView
             android:id="@+id/user_profile_banner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/banner_height"
             android:contentDescription="@null"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background" />
+            android:src="@color/accent_light" />
 
         <ImageView
             android:id="@+id/user_profile_image"

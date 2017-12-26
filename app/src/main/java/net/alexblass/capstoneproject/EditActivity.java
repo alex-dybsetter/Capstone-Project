@@ -295,7 +295,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         mUser = new User(email, mName, mBirthday, mZipcode, gender, sexuality, relationshipStatus,
-                description, mImageUriString);
+                description, mImageUriString, mUser.getBannerPicUri());
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(email.replace(".", "(dot)"));
         database.setValue(mUser);
