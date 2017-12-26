@@ -25,9 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import net.alexblass.capstoneproject.models.Message;
 
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -88,6 +86,8 @@ public class NewMessageActivity extends AppCompatActivity {
                     DatabaseReference database = FirebaseDatabase.getInstance().getReference(MSG_KEY).child(msgLbl)
                             .child(String.valueOf(new GregorianCalendar().getTimeInMillis()));
                     database.setValue(message);
+
+                    // todo send notification to recepient
 
                     Toast.makeText(getApplicationContext(), getString(R.string.message_sent), Toast.LENGTH_SHORT).show();
                     finish();

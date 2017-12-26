@@ -112,6 +112,7 @@
     <string name="message_sent">Message sent</string>
     <string name="empty_message">Cannot send empty message</string>
     <string name="message_error">Problem sending message</string>
+    <string name="message_retrieval_error">Problem loading messages</string>
 
     <string name="cd_edit_description">Edit my profile description</string>
     <string name="cd_edit_sexuality">Edit my sexual preference</string>
