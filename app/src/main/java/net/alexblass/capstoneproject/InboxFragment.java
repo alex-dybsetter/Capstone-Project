@@ -18,10 +18,13 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import net.alexblass.capstoneproject.models.Message;
+import net.alexblass.capstoneproject.utils.InboxAdapter;
 import net.alexblass.capstoneproject.utils.MessageAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,15 +37,15 @@ import static net.alexblass.capstoneproject.data.Keys.MSG_SENT_TO_EMAIL_KEY;
 /**
  * A Fragment to display the user's message inbox.
  */
-public class InboxFragment extends Fragment {
+public class InboxFragment extends Fragment implements InboxAdapter.ItemClickListener {
 
     @BindView(R.id.inbox_messages_rv) RecyclerView mRecyclerView;
     @BindView(R.id.inbox_empty_tv) TextView mEmptyInboxTv;
 
     private FirebaseAuth mAuth;
     private LinearLayoutManager mLinearLayoutManager;
-    private List<Message> mMessages;
-    private MessageAdapter mAdapter;
+    private Map<String, List<Message>> mMessages;
+    private InboxAdapter mAdapter;
 
     public InboxFragment() {
         // Required empty public constructor
@@ -57,7 +60,7 @@ public class InboxFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         final String email = mAuth.getCurrentUser().getEmail().replace(".", "(dot)");
-        mMessages = new ArrayList<>();
+        mMessages = new HashMap<>();
 
 
 
@@ -67,8 +70,8 @@ public class InboxFragment extends Fragment {
 
         mRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new MessageAdapter(getActivity(), new Message[0], email);
-        //mAdapter.setClickListener(this); todo: launch message on click 
+        mAdapter = new InboxAdapter(getActivity(), mMessages, mAuth.getCurrentUser().getEmail());
+        mAdapter.setClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
         Query query = FirebaseDatabase.getInstance().getReference().child(MSG_KEY);
@@ -81,15 +84,37 @@ public class InboxFragment extends Fragment {
                         if(messageThreadData.getKey().contains(email)){
 
                             for (DataSnapshot messageData : messageThreadData.getChildren()) {
-                                Message message = new Message(messageData.child(MSG_SENDER_EMAIL_KEY).getValue().toString(),
-                                        messageData.child(MSG_SENT_TO_EMAIL_KEY).getValue().toString(),
+                                String sender = messageData.child(MSG_SENDER_EMAIL_KEY).getValue().toString();
+                                String sentTo = messageData.child(MSG_SENT_TO_EMAIL_KEY).getValue().toString();
+                                Message message  = new Message(sender, sentTo,
                                         messageData.child(MSG_DATA).toString());
-                                mMessages.add(message);
+
+                                if (mMessages.containsKey(sender)){
+                                    List<Message> thread = mMessages.get(sender);
+                                    thread.add(message);
+                                    mMessages.remove(sender);
+                                    mMessages.put(sender, thread);
+                                } else if (mMessages.containsKey(sentTo)){
+                                    List<Message> thread = mMessages.get(sentTo);
+                                    thread.add(message);
+                                    mMessages.remove(sentTo);
+                                    mMessages.put(sentTo, thread);
+                                } else {
+                                    String recipient;
+                                    if(sender.equals(mAuth.getCurrentUser().getEmail())){
+                                        recipient = sentTo;
+                                    } else {
+                                        recipient = sender;
+                                    }
+                                    List<Message> newThread = new ArrayList<Message>();
+                                    newThread.add(message);
+                                    mMessages.put(recipient, newThread);
+                                }
                             }
                         }
                     }
 
-                    mAdapter.updateMessageResults(mMessages.toArray(new Message[mMessages.size()]));
+                    mAdapter.updateMessageResults(mMessages);
                     if (mMessages.size() > 0){
                         mRecyclerView.setVisibility(View.VISIBLE);
                         mEmptyInboxTv.setVisibility(View.GONE);
@@ -106,4 +131,8 @@ public class InboxFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onItemClick(View view, int position) {
+
+    }
 }
