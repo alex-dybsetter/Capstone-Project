@@ -5,10 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -53,6 +54,9 @@ import static net.alexblass.capstoneproject.data.Keys.USER_ZIPCODE_KEY;
  */
 public class LoginFragment extends Fragment {
 
+    private static final String EMAIL_KEY = "email";
+    private static final String PASSWORD_KEY = "password";
+
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
 
@@ -73,6 +77,8 @@ public class LoginFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mParent.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -252,5 +258,21 @@ public class LoginFragment extends Fragment {
     private void launchEditor(){
         Intent editorActivity = new Intent(getActivity(), EditActivity.class);
         startActivity(editorActivity);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(EMAIL_KEY, mEmailEt.getText().toString().trim());
+        outState.putString(PASSWORD_KEY, mPasswordEt.getText().toString().trim());
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            mEmailEt.setText(savedInstanceState.getString(EMAIL_KEY));
+            mPasswordEt.setText(savedInstanceState.getString(PASSWORD_KEY));
+        }
     }
 }

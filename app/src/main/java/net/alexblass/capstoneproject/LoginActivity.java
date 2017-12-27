@@ -28,6 +28,8 @@ import static net.alexblass.capstoneproject.data.Keys.USER_ZIPCODE_KEY;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String PROMPT_FRAG = "prompt_fragment";
+
     private FirebaseAuth mAuth;
 
     @Override
@@ -40,11 +42,19 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         if (mAuth.getCurrentUser() == null) {
-            AccountPromptFragment promptFragment = new AccountPromptFragment();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.login_fragment_container, promptFragment)
-                    .commit();
+
+            AccountPromptFragment promptFragment;
+            if (savedInstanceState == null) {
+                promptFragment = new AccountPromptFragment();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.login_fragment_container, promptFragment, PROMPT_FRAG)
+                        .commit();
+            } else {
+                promptFragment = (AccountPromptFragment) getSupportFragmentManager()
+                        .findFragmentByTag(PROMPT_FRAG);
+            }
+
         } else {
             Query query = FirebaseDatabase.getInstance().getReference().child(
                     mAuth.getCurrentUser().getEmail().replace(".", "(dot)"));
