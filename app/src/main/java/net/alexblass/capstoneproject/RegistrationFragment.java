@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -53,6 +54,10 @@ import static net.alexblass.capstoneproject.data.Constants.MIN_PASSWORD_LENGTH;
 public class RegistrationFragment extends Fragment {
 
     private static final String TAG = "RegistrationFragment";
+    private static final String NAME_KEY = "name";
+    private static final String BIRTHDAY_KEY = "birthday";
+    private static final String EMAIL_KEY = "email";
+    private static final String PASSWORD_KEY = "password";
 
     private FirebaseAuth mAuth;
 
@@ -86,7 +91,7 @@ public class RegistrationFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         mAuth = FirebaseAuth.getInstance();
-        mBdayCalendar = Calendar.getInstance();
+        mBdayCalendar = null;
 
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
@@ -127,6 +132,8 @@ public class RegistrationFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 clearFocus();
+
+                mBdayCalendar = Calendar.getInstance();
 
                 DatePickerDialog dialog = new DatePickerDialog(getContext(), date, mBdayCalendar
                         .get(Calendar.YEAR), mBdayCalendar.get(Calendar.MONTH),
@@ -298,10 +305,12 @@ public class RegistrationFragment extends Fragment {
     }
 
     private void setDate() {
-        String myFormat = "MM/dd/yyyy";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        if (mBdayCalendar != null) {
+            String myFormat = "MM/dd/yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-        mBirthdayEt.setText(sdf.format(mBdayCalendar.getTime()));
+            mBirthdayEt.setText(sdf.format(mBdayCalendar.getTime()));
+        }
     }
 
     private boolean isAdult(){
@@ -323,5 +332,28 @@ public class RegistrationFragment extends Fragment {
             }
         }
         return false;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(NAME_KEY, mNameEt.getText().toString().trim());
+        outState.putSerializable(BIRTHDAY_KEY, mBdayCalendar);
+        outState.putString(EMAIL_KEY, mEmailEt.getText().toString().trim());
+        outState.putString(PASSWORD_KEY, mPasswordEt.getText().toString().trim());
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            mNameEt.setText(savedInstanceState.getString(NAME_KEY));
+
+            mBdayCalendar = (Calendar) savedInstanceState.get(BIRTHDAY_KEY);
+            setDate();
+
+            mEmailEt.setText(savedInstanceState.getString(EMAIL_KEY));
+            mPasswordEt.setText(savedInstanceState.getString(PASSWORD_KEY));
+        }
     }
 }
