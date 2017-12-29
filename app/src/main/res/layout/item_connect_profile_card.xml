@@ -51,16 +51,6 @@
             tools:text="22 / M / San Fransisco" />
 
         <ImageButton
-            android:id="@+id/card_add_friend_btn"
-            style="@style/CardBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/cd_add_friend"
-            android:src="@drawable/ic_person_add_white_24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <ImageButton
             android:id="@+id/card_favorite_btn"
             style="@style/CardBtn"
             android:layout_width="wrap_content"
@@ -68,7 +58,7 @@
             android:contentDescription="@string/cd_add_favorite"
             android:src="@drawable/ic_favorite_border_white_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/card_add_friend_btn" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageButton
             android:id="@+id/card_message_btn"

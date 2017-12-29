@@ -284,6 +284,7 @@ public class RegistrationFragment extends Fragment {
                         dialog.dismiss();
                         if (!title.equals(mEntryErrorTitle)){
                             getFragmentManager().popBackStack();
+                            mAuth.signOut();
                         }
                     }
                 });
