@@ -151,22 +151,11 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/cd_add_favorite"
                 android:src="@drawable/ic_favorite_border_white_24dp"
+                android:paddingEnd="@dimen/standard_margin"
+                android:paddingRight="@dimen/standard_margin"
                 app:layout_constraintBottom_toBottomOf="@+id/view_profile_message_btn"
                 app:layout_constraintStart_toEndOf="@+id/view_profile_message_btn"
                 app:layout_constraintTop_toTopOf="@+id/view_profile_message_btn" />
-
-            <ImageButton
-                android:id="@+id/view_profile_add_friend_btn"
-                style="@style/ProfileBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/cd_add_friend"
-                android:paddingEnd="@dimen/standard_margin"
-                android:paddingRight="@dimen/standard_margin"
-                android:src="@drawable/ic_person_add_white_24dp"
-                app:layout_constraintBottom_toBottomOf="@+id/view_profile_favorite_btn"
-                app:layout_constraintStart_toEndOf="@+id/view_profile_favorite_btn"
-                app:layout_constraintTop_toTopOf="@+id/view_profile_favorite_btn" />
 
         </android.support.constraint.ConstraintLayout>
 

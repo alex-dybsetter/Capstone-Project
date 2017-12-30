@@ -1,6 +1,7 @@
 package net.alexblass.capstoneproject;
 
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import net.alexblass.capstoneproject.utils.DashboardPagerAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static net.alexblass.capstoneproject.data.Keys.DASH_PG_NUM_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -73,5 +75,21 @@ public class DashboardActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putInt(DASH_PG_NUM_KEY, mTabs.getSelectedTabPosition());
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            mPager.setCurrentItem(savedInstanceState.getInt(DASH_PG_NUM_KEY));
+
+        }
     }
 }

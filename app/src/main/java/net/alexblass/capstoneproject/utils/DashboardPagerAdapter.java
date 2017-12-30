@@ -5,10 +5,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import net.alexblass.capstoneproject.AccountPromptFragment;
 import net.alexblass.capstoneproject.ConnectFragment;
 import net.alexblass.capstoneproject.MyProfileFragment;
 import net.alexblass.capstoneproject.R;
+
+import static net.alexblass.capstoneproject.data.Constants.CONNECT_FRAG_INDEX;
+import static net.alexblass.capstoneproject.data.Constants.MY_PROFILE_FRAG_INDEX;
 
 /**
  * An adapter to display the pages in the dashboard activity.
@@ -27,9 +29,9 @@ public class DashboardPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case 0:
+            case CONNECT_FRAG_INDEX:
                 return new ConnectFragment();
-            case 1:
+            case MY_PROFILE_FRAG_INDEX:
                 return new MyProfileFragment();
             default:
                 return null;
@@ -44,9 +46,9 @@ public class DashboardPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {
-            case 0:
+            case CONNECT_FRAG_INDEX:
                 return mContext.getString(R.string.connect);
-            case 1:
+            case MY_PROFILE_FRAG_INDEX:
                 return mContext.getString(R.string.my_profile);
             default:
                 return "";

@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static net.alexblass.capstoneproject.data.Constants.CONNECT_FRAG_INDEX;
+import static net.alexblass.capstoneproject.data.Keys.DASH_PG_NUM_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_BANNER_IMG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
@@ -135,6 +137,9 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+
+        outState.putInt(DASH_PG_NUM_KEY, CONNECT_FRAG_INDEX);
+
         outState.putParcelableArrayList(LIST_KEY, mUsers);
 
         listState = mRecyclerView.getLayoutManager().onSaveInstanceState();

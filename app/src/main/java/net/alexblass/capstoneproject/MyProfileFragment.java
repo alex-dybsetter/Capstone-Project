@@ -3,6 +3,7 @@ package net.alexblass.capstoneproject;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.LoaderManager;
 import android.content.Intent;
@@ -48,8 +49,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
+import static net.alexblass.capstoneproject.data.Constants.MY_PROFILE_FRAG_INDEX;
+import static net.alexblass.capstoneproject.data.Keys.DASH_PG_NUM_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_BANNER_IMG_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_RELATIONSHIP_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_SEXUALITY_KEY;
 
 /**
  * A Fragment to display the current user's profile.
@@ -239,8 +245,6 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
         database.setValue(mImageUriString);
     }
 
-    // TODO : When changes saved, return to same page/place -- savedinstancestate
-
     @OnClick(R.id.user_profile_edit_description_btn)
     public void editMyDescription(){
         if (mEditDescriptionBtn.getTag().equals(R.drawable.ic_edit_white_24dp)) {
@@ -261,10 +265,10 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
 
             clearFocus();
 
-            mUser.setDescription(description);
             DatabaseReference database = FirebaseDatabase.getInstance().getReference(
-                    mUser.getEmail().replace(".", "(dot)"));
-            database.setValue(mUser);
+                    mUser.getEmail().replace(".", "(dot)"))
+                    .child(USER_DESCRIPTION_KEY);
+            database.setValue(description);
 
             Toast.makeText(getContext(), getString(R.string.change_saved), Toast.LENGTH_SHORT).show();
         }
@@ -295,10 +299,10 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
 
             clearFocus();
 
-            mUser.setSexuality(sexuality);
             DatabaseReference database = FirebaseDatabase.getInstance().getReference(
-                    mUser.getEmail().replace(".", "(dot)"));
-            database.setValue(mUser);
+                    mUser.getEmail().replace(".", "(dot)"))
+                    .child(USER_SEXUALITY_KEY);
+            database.setValue(sexuality);
 
             Toast.makeText(getContext(), getString(R.string.change_saved), Toast.LENGTH_SHORT).show();
         }
@@ -329,10 +333,10 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
 
             clearFocus();
 
-            mUser.setRelationshipStatus(relationship);
             DatabaseReference database = FirebaseDatabase.getInstance().getReference(
-                    mUser.getEmail().replace(".", "(dot)"));
-            database.setValue(mUser);
+                    mUser.getEmail().replace(".", "(dot)"))
+                    .child(USER_RELATIONSHIP_KEY);
+            database.setValue(relationship);
 
             Toast.makeText(getContext(), getString(R.string.change_saved), Toast.LENGTH_SHORT).show();
         }
@@ -417,5 +421,11 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onLoaderReset(Loader<String> loader) {
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(DASH_PG_NUM_KEY, MY_PROFILE_FRAG_INDEX);
     }
 }

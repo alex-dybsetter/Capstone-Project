@@ -12,4 +12,7 @@ public class Constants {
     public static final int LEGAL_ADULT_AGE = 18;
     public static final int MAX_AGE = 100;
     public static final int MIN_PASSWORD_LENGTH = 6;
+
+    public static final int CONNECT_FRAG_INDEX = 0;
+    public static final int MY_PROFILE_FRAG_INDEX = 1;
 }
