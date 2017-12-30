@@ -25,8 +25,12 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -52,10 +56,15 @@ import static android.app.Activity.RESULT_OK;
 import static net.alexblass.capstoneproject.data.Constants.MY_PROFILE_FRAG_INDEX;
 import static net.alexblass.capstoneproject.data.Keys.DASH_PG_NUM_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_BANNER_IMG_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_GENDER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_NAME_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_PROFILE_IMG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_RELATIONSHIP_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_SEXUALITY_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_ZIPCODE_KEY;
 
 /**
  * A Fragment to display the current user's profile.
@@ -131,79 +140,121 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
         if (intentThatStartedThis != null && intentThatStartedThis.hasExtra(USER_KEY)){
 
             mUser = intentThatStartedThis.getParcelableExtra(USER_KEY);
+            populateData();
 
-            mNameTv.setText(mUser.getName());
-            mDescriptionTv.setText(mUser.getDescription());
-            mSexuality.setText(mUser.getSexuality());
-            mRelationshipStatus.setText(mUser.getRelationshipStatus());
+        } else {
+            Query query = FirebaseDatabase.getInstance().getReference().child(
+                    mAuth.getCurrentUser().getEmail().replace(".", "(dot)"));
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        String name, zipcode, description, sexuality, relationshipStatus, email, profilePicUri, bannerPicUri;
+                        long gender;
 
-            Calendar birthday = new GregorianCalendar();
-            birthday.setTimeInMillis(mUser.getBirthday());
-            mAge = UserDataUtils.calculateAge(birthday);
+                        name = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
 
-            int genderStringId = UserDataUtils.getGenderAbbreviationStringId(mUser.getGenderCode());
-            mGender = getActivity().getString(genderStringId);
+                        long birthdayInMillis = (long) dataSnapshot.child(USER_BIRTHDAY_KEY).getValue();
 
-            mZipcode = mUser.getZipcode();
-            
-            if (!mUser.getProfilePicUri().isEmpty()){
-                StorageReference profilePicFile = FirebaseStorage.getInstance().getReference()
-                        .child(Uri.parse(mUser.getProfilePicUri()).getPath());
-                try {
-                    final File localFile = File.createTempFile("images", "jpg");
-                    profilePicFile.getFile(localFile)
-                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                    Picasso.with(getContext())
-                                            .load(localFile)
-                                            .placeholder(R.drawable.ic_person_white_48dp)
-                                            .centerCrop()
-                                            .fit()
-                                            .into(mProfilePic);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            exception.printStackTrace();
-                        }
-                    });
-                } catch (IOException e){
-                    e.printStackTrace();
+                        zipcode = (String) dataSnapshot.child(USER_ZIPCODE_KEY).getValue();
+                        description = (String) dataSnapshot.child(USER_DESCRIPTION_KEY).getValue();
+
+                        gender = (long) dataSnapshot.child(USER_GENDER_KEY).getValue();
+                        sexuality = (String) dataSnapshot.child(USER_SEXUALITY_KEY).getValue();
+                        relationshipStatus = (String) dataSnapshot.child(USER_RELATIONSHIP_KEY).getValue();
+                        profilePicUri = (String) dataSnapshot.child(USER_PROFILE_IMG_KEY).getValue();
+                        bannerPicUri = (String) dataSnapshot.child(USER_BANNER_IMG_KEY).getValue();
+
+                        email = mAuth.getCurrentUser().getEmail();
+
+                        mUser = new User(email, name, birthdayInMillis, zipcode, gender,
+                                sexuality, relationshipStatus, description, profilePicUri, bannerPicUri);
+                        populateData();
+
+
+                    }
                 }
-            }
 
-            if (!mUser.getBannerPicUri().isEmpty()) {
-                StorageReference bannerPicFile = FirebaseStorage.getInstance().getReference()
-                        .child(Uri.parse(mUser.getBannerPicUri()).getPath());
-                try {
-                    final File localFile = File.createTempFile("images", "jpg");
-                    bannerPicFile.getFile(localFile)
-                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                    Picasso.with(getContext())
-                                            .load(localFile)
-                                            .centerCrop()
-                                            .fit()
-                                            .into(mBannerIv);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            exception.printStackTrace();
-                        }
-                    });
-                } catch (IOException e){
-                    e.printStackTrace();
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
                 }
-            }
-
-            LoaderManager loaderManager = getLoaderManager();
-            loaderManager.initLoader(0, null, this);
+            });
         }
 
+
         return root;
+    }
+
+    private void populateData(){
+        mNameTv.setText(mUser.getName());
+        mDescriptionTv.setText(mUser.getDescription());
+        mSexuality.setText(mUser.getSexuality());
+        mRelationshipStatus.setText(mUser.getRelationshipStatus());
+
+        Calendar birthday = new GregorianCalendar();
+        birthday.setTimeInMillis(mUser.getBirthday());
+        mAge = UserDataUtils.calculateAge(birthday);
+
+        int genderStringId = UserDataUtils.getGenderAbbreviationStringId(mUser.getGenderCode());
+        mGender = getActivity().getString(genderStringId);
+
+        mZipcode = mUser.getZipcode();
+
+        if (!mUser.getProfilePicUri().isEmpty()){
+            StorageReference profilePicFile = FirebaseStorage.getInstance().getReference()
+                    .child(Uri.parse(mUser.getProfilePicUri()).getPath());
+            try {
+                final File localFile = File.createTempFile("images", "jpg");
+                profilePicFile.getFile(localFile)
+                        .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                Picasso.with(getContext())
+                                        .load(localFile)
+                                        .placeholder(R.drawable.ic_person_white_48dp)
+                                        .centerCrop()
+                                        .fit()
+                                        .into(mProfilePic);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        exception.printStackTrace();
+                    }
+                });
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        if (!mUser.getBannerPicUri().isEmpty()) {
+            StorageReference bannerPicFile = FirebaseStorage.getInstance().getReference()
+                    .child(Uri.parse(mUser.getBannerPicUri()).getPath());
+            try {
+                final File localFile = File.createTempFile("images", "jpg");
+                bannerPicFile.getFile(localFile)
+                        .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                Picasso.with(getContext())
+                                        .load(localFile)
+                                        .centerCrop()
+                                        .fit()
+                                        .into(mBannerIv);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        exception.printStackTrace();
+                    }
+                });
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        LoaderManager loaderManager = getLoaderManager();
+        loaderManager.initLoader(0, null, this);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
