@@ -57,8 +57,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DashboardActivity" />
         </activity>
-        <activity android:name=".NewMessageActivity"
+        <activity
+            android:name=".NewMessageActivity"
             android:label="@string/new_message_activity"
+            android:parentActivityName=".MessagingActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MessagingActivity" />
+        </activity>
+        <activity android:name=".ViewConversationActivity"
             android:parentActivityName=".MessagingActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

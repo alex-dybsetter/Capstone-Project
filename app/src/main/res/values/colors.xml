@@ -21,4 +21,6 @@
 
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
+    <color name="chat_bubble_other_user">#DEDEDE</color>
+    <color name="chat_bubble_active_user">@color/accent_light</color>
 </resources>

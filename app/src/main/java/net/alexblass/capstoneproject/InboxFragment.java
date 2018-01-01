@@ -1,5 +1,6 @@
 package net.alexblass.capstoneproject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,16 +20,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import net.alexblass.capstoneproject.models.Message;
 import net.alexblass.capstoneproject.utils.InboxAdapter;
-import net.alexblass.capstoneproject.utils.MessageAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static net.alexblass.capstoneproject.data.Keys.MSG_CONVERSATION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_DATA;
 import static net.alexblass.capstoneproject.data.Keys.MSG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_SENDER_EMAIL_KEY;
@@ -44,7 +44,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
 
     private FirebaseAuth mAuth;
     private LinearLayoutManager mLinearLayoutManager;
-    private Map<String, List<Message>> mMessages;
+    private Map<String, ArrayList<Message>> mMessages;
     private InboxAdapter mAdapter;
 
     public InboxFragment() {
@@ -61,8 +61,6 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
         mAuth = FirebaseAuth.getInstance();
         final String email = mAuth.getCurrentUser().getEmail().replace(".", "(dot)");
         mMessages = new HashMap<>();
-
-
 
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -86,16 +84,15 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
                             for (DataSnapshot messageData : messageThreadData.getChildren()) {
                                 String sender = messageData.child(MSG_SENDER_EMAIL_KEY).getValue().toString();
                                 String sentTo = messageData.child(MSG_SENT_TO_EMAIL_KEY).getValue().toString();
-                                Message message  = new Message(sender, sentTo,
-                                        messageData.child(MSG_DATA).toString());
+                                Message message = new Message(sender, sentTo, messageData.child(MSG_DATA).getValue().toString());
 
                                 if (mMessages.containsKey(sender)){
-                                    List<Message> thread = mMessages.get(sender);
+                                    ArrayList<Message> thread = mMessages.get(sender);
                                     thread.add(message);
                                     mMessages.remove(sender);
                                     mMessages.put(sender, thread);
                                 } else if (mMessages.containsKey(sentTo)){
-                                    List<Message> thread = mMessages.get(sentTo);
+                                    ArrayList<Message> thread = mMessages.get(sentTo);
                                     thread.add(message);
                                     mMessages.remove(sentTo);
                                     mMessages.put(sentTo, thread);
@@ -106,7 +103,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
                                     } else {
                                         recipient = sender;
                                     }
-                                    List<Message> newThread = new ArrayList<Message>();
+                                    ArrayList<Message> newThread = new ArrayList<Message>();
                                     newThread.add(message);
                                     mMessages.put(recipient, newThread);
                                 }
@@ -133,6 +130,8 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
 
     @Override
     public void onItemClick(View view, int position) {
-
+        Intent launchViewConversationActivity = new Intent(getContext(), ViewConversationActivity.class);
+        launchViewConversationActivity.putParcelableArrayListExtra(MSG_CONVERSATION_KEY, mAdapter.getItem(mAdapter.getKey(position)));
+        startActivity(launchViewConversationActivity);
     }
 }

@@ -1,22 +1,21 @@
 package net.alexblass.capstoneproject.utils;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.alexblass.capstoneproject.R;
 import net.alexblass.capstoneproject.models.Message;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -59,7 +58,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public MessageAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflator.inflate(R.layout.item_message, parent, false);
+        View view = mInflator.inflate(R.layout.item_chat_bubble, parent, false);
         MessageAdapter.ViewHolder viewHolder = new MessageAdapter.ViewHolder(view);
         return viewHolder;
     }
@@ -70,25 +69,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         if (selectedMessage != null){
 
-            String recipient;
             if(selectedMessage.getSender().equals(mEmail)){
-                recipient = selectedMessage.getSentTo();
+                holder.chatBg.setBackground(mContext.getDrawable(R.drawable.chat_bubble_active_user_bg));
+                ContextCompat.getDrawable(mContext, R.drawable.chat_bubble_active_user_bg);
             } else {
-                recipient = selectedMessage.getSender();
+                holder.chatBg.setBackground(mContext.getDrawable(R.drawable.chat_bubble_other_user_bg));
+                ContextCompat.getDrawable(mContext, R.drawable.chat_bubble_other_user_bg);
             }
-            holder.userNameTv.setText(recipient);
 
-            try {
-                String start_dt = selectedMessage.getDateTime();
-                DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-                Date date = (Date) formatter.parse(start_dt);
-                SimpleDateFormat newFormat = new SimpleDateFormat("MM/dd/yyyy");
-                String finalString = newFormat.format(date);
-                holder.messageTimeTv.setText(finalString);
-            } catch (ParseException e){
-                e.printStackTrace();
-                holder.messageTimeTv.setText(selectedMessage.getDateTime());
-            }
+            holder.chatSenderTv.setText(selectedMessage.getSender());
+            holder.chatContentTv.setText(selectedMessage.getMessage());
         }
     }
 
@@ -98,8 +88,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        @BindView(R.id.message_user_name) TextView userNameTv;
-        @BindView(R.id.message_time) TextView messageTimeTv;
+        @BindView(R.id.chat_bubble_sender) TextView chatSenderTv;
+        @BindView(R.id.chat_bubble_content) TextView chatContentTv;
+        @BindView(R.id.chat_bubble_parent) ConstraintLayout chatBg;
 
         public ViewHolder(View itemView){
             super(itemView);

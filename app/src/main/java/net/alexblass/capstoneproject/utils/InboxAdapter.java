@@ -15,6 +15,7 @@ import net.alexblass.capstoneproject.models.Message;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +29,14 @@ import butterknife.ButterKnife;
 
 public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> {
 
-    private Map<String, List<Message>> mMessageResults;
+    private Map<String, ArrayList<Message>> mMessageResults;
     private LayoutInflater mInflator;
     private Context mContext;
     private String mEmail;
     private Object[] mKeys;
     private InboxAdapter.ItemClickListener mClickListener;
 
-    public InboxAdapter(Context context, Map<String, List<Message>> messages, String email){
+    public InboxAdapter(Context context, Map<String, ArrayList<Message>> messages, String email){
         this.mInflator = LayoutInflater.from(context);
         this.mMessageResults = messages;
         this.mContext = context;
@@ -44,7 +45,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
         this.mKeys = messages.keySet().toArray();
     }
 
-    public void updateMessageResults(Map<String, List<Message>> messages){
+    public void updateMessageResults(Map<String, ArrayList<Message>> messages){
         this.mMessageResults = messages;
         this.mKeys = messages.keySet().toArray();
         notifyDataSetChanged();
@@ -54,7 +55,11 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
         mClickListener = itemClickListener;
     }
 
-    public List<Message> getItem(String key){
+    public Object getKey(int position){
+        return mKeys[position];
+    }
+
+    public ArrayList<Message> getItem(Object key){
         return mMessageResults.get(key);
     }
 
@@ -72,7 +77,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final InboxAdapter.ViewHolder holder, int position) {
-        List<Message> messageThread = mMessageResults.get(mKeys[position]);
+        ArrayList<Message> messageThread = mMessageResults.get(mKeys[position]);
 
         if (messageThread != null){
             Message mostRecentMsg = messageThread.get(messageThread.size() - 1);
