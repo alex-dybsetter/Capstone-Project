@@ -32,6 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static net.alexblass.capstoneproject.data.Keys.MSG_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_EMAIL_KEY;
 
 public class NewMessageActivity extends AppCompatActivity {
 
@@ -53,6 +54,11 @@ public class NewMessageActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        Intent intentThatStartedThis = getIntent();
+        if (intentThatStartedThis.hasExtra(USER_EMAIL_KEY)){
+            mRecipientEt.setText(intentThatStartedThis.getStringExtra(USER_EMAIL_KEY));
+        }
     }
 
     @OnClick(R.id.new_msg_send_btn)
@@ -71,7 +77,6 @@ public class NewMessageActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO : message data is stored by email but user will be sending message to display name
         Query query = FirebaseDatabase.getInstance().getReference().child(recipient.replace(".", "(dot)"));
         query.addValueEventListener(new ValueEventListener() {
             @Override

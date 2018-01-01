@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/send_to_hint"
+            android:singleLine="true"
             android:selectAllOnFocus="true" />
 
     </android.support.design.widget.TextInputLayout>

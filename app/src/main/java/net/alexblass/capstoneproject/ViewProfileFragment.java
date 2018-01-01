@@ -11,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ import java.util.GregorianCalendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static net.alexblass.capstoneproject.data.Keys.USER_EMAIL_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
 
 /**
@@ -46,6 +48,8 @@ public class ViewProfileFragment extends Fragment implements LoaderManager.Loade
     @BindView(R.id.view_profile_description_tv) TextView mDescriptionTv;
     @BindView(R.id.view_profile_sexuality) TextView mSexuality;
     @BindView(R.id.view_profile_relationship_status) TextView mRelationshipStatus;
+    @BindView(R.id.view_profile_message_btn) ImageButton mSendMessageBtn;
+    @BindView(R.id.view_profile_favorite_btn) ImageButton mFavoriteUserBtn;
 
     private User mUser;
     private String mZipcode;
@@ -133,6 +137,30 @@ public class ViewProfileFragment extends Fragment implements LoaderManager.Loade
                     e.printStackTrace();
                 }
             }
+
+            mSendMessageBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent newMessageIntent = new Intent(getContext(), NewMessageActivity.class);
+                    newMessageIntent.putExtra(USER_EMAIL_KEY, mUser.getEmail());
+                    getContext().startActivity(newMessageIntent);
+                }
+            });
+
+            mFavoriteUserBtn.setTag(R.drawable.ic_favorite_border_white_24dp);
+            mFavoriteUserBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // TODO: Add favorite logic
+                    if ((Integer) mFavoriteUserBtn.getTag() == R.drawable.ic_favorite_border_white_24dp){
+                        mFavoriteUserBtn.setImageResource(R.drawable.ic_favorite_white_24dp);
+                        mFavoriteUserBtn.setTag(R.drawable.ic_favorite_white_24dp);
+                    } else {
+                        mFavoriteUserBtn.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                        mFavoriteUserBtn.setTag(R.drawable.ic_favorite_border_white_24dp);
+                    }
+                }
+            });
         }
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(0, null, this);

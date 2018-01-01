@@ -8,10 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -88,7 +90,8 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
                         mUsers = new ArrayList<User>();
                         for (DataSnapshot result : dataSnapshot.getChildren()) {
 
-                            if (result.hasChild(USER_EMAIL_KEY)) {
+                            // Show only confirmed users and exclude the current user
+                            if (result.hasChild(USER_ZIPCODE_KEY)) {
                                 String email = (String) result.child(USER_EMAIL_KEY).getValue();
                                 String name = (String) result.child(USER_NAME_KEY).getValue();
                                 long birthday = (long) result.child(USER_BIRTHDAY_KEY).getValue();
@@ -100,10 +103,12 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
                                 String profilePicUri = (String) result.child(USER_PROFILE_IMG_KEY).getValue();
                                 String bannerPicUri = (String) result.child(USER_BANNER_IMG_KEY).getValue();
 
-                                User userResult = new User(email, name, birthday, zipcode, genderCode,
-                                        sexuality, relationshipStatus, description, profilePicUri, bannerPicUri);
+                                if (!email.equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+                                    User userResult = new User(email, name, birthday, zipcode, genderCode,
+                                            sexuality, relationshipStatus, description, profilePicUri, bannerPicUri);
 
-                                mUsers.add(userResult);
+                                    mUsers.add(userResult);
+                                }
                             }
                         }
                         mAdapter.updateUserResults(mUsers.toArray(new User[mUsers.size()]));

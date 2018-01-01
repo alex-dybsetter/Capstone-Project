@@ -1,12 +1,14 @@
 package net.alexblass.capstoneproject.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +19,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import net.alexblass.capstoneproject.NewMessageActivity;
 import net.alexblass.capstoneproject.R;
 import net.alexblass.capstoneproject.models.User;
 
@@ -27,6 +30,8 @@ import java.util.GregorianCalendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static net.alexblass.capstoneproject.data.Keys.USER_EMAIL_KEY;
 
 /**
  * An adapter to display a list of users in the connect fragment.
@@ -72,7 +77,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final UserAdapter.ViewHolder holder, int position) {
-        User selectedUser = mUserResults[position];
+        final User selectedUser = mUserResults[position];
 
         if (selectedUser != null){
 
@@ -112,6 +117,30 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     e.printStackTrace();
                 }
             }
+
+            holder.messageUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent newMessageIntent = new Intent(mContext, NewMessageActivity.class);
+                    newMessageIntent.putExtra(USER_EMAIL_KEY, selectedUser.getEmail());
+                    mContext.startActivity(newMessageIntent);
+                }
+            });
+
+            holder.favoriteUser.setTag(R.drawable.ic_favorite_border_white_24dp);
+            holder.favoriteUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // TODO: Add favorite logic
+                    if ((Integer) holder.favoriteUser.getTag() == R.drawable.ic_favorite_border_white_24dp){
+                        holder.favoriteUser.setImageResource(R.drawable.ic_favorite_white_24dp);
+                        holder.favoriteUser.setTag(R.drawable.ic_favorite_white_24dp);
+                    } else {
+                        holder.favoriteUser.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                        holder.favoriteUser.setTag(R.drawable.ic_favorite_border_white_24dp);
+                    }
+                }
+            });
         }
     }
 
@@ -126,6 +155,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         @BindView(R.id.card_user_imageview) ImageView userProfilePic;
         @BindView(R.id.card_name_tv) TextView userNameTv;
         @BindView(R.id.card_stats_tv) TextView userStatsTv;
+        @BindView(R.id.card_favorite_btn) ImageButton favoriteUser;
+        @BindView(R.id.card_message_btn) ImageButton messageUser;
 
         public ViewHolder(View itemView){
             super(itemView);

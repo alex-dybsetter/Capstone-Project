@@ -98,7 +98,6 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
     private StorageReference mStorageRef;
     private StorageReference mUserBannerPic;
     private String mImageUriString;
-    // TODO: Retrieve user data when returning to parent dashboard activity
 
     public MyProfileFragment() {
         // Required empty public constructor
