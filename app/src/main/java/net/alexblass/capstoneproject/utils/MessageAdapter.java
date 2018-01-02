@@ -29,13 +29,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private LayoutInflater mInflator;
     private Context mContext;
     private String mEmail;
-    private MessageAdapter.ItemClickListener mClickListener;
+    private String mRecipient;
 
     public MessageAdapter(Context context, Message[] results, String email){
         this.mInflator = LayoutInflater.from(context);
         this.mMessageResults = results;
         this.mContext = context;
         this.mEmail = email;
+
+        this.mRecipient = results[0].getSender().equals(email) ? results[0].getSentTo() : results[0].getSender();
     }
 
     public void updateMessageResults(Message[] results){
@@ -43,8 +45,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         notifyDataSetChanged();
     }
 
-    public void setClickListener(MessageAdapter.ItemClickListener itemClickListener){
-        mClickListener = itemClickListener;
+    public String getRecipient(){
+        return mRecipient;
     }
 
     public Message getItem(int index){
@@ -82,11 +84,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
     }
 
-    public interface ItemClickListener{
-        void onItemClick(View view, int position);
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.chat_bubble_sender) TextView chatSenderTv;
         @BindView(R.id.chat_bubble_content) TextView chatContentTv;
@@ -95,14 +93,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         public ViewHolder(View itemView){
             super(itemView);
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (mClickListener != null){
-                mClickListener.onItemClick(v, getAdapterPosition());
-            }
         }
     }
 }
