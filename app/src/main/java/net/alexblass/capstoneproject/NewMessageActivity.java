@@ -108,7 +108,7 @@ public class NewMessageActivity extends AppCompatActivity {
         });
     }
 
-    private String generateMessageLbl(String email1, String email2){
+    public static String generateMessageLbl(String email1, String email2){
 
         for (int i = 0; i < email1.length() && i < email2.length(); i++) {
             if (email1.charAt(i) < email2.charAt(i)) {
