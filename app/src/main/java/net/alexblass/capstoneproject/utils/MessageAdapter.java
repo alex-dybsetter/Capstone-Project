@@ -37,11 +37,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.mContext = context;
         this.mEmail = email;
 
-        this.mRecipient = results[0].getSender().equals(email) ? results[0].getSentTo() : results[0].getSender();
+        if (results.length > 0) {
+            this.mRecipient = results[0].getSender().equals(email) ? results[0].getSentTo() : results[0].getSender();
+        }
     }
 
     public void updateMessageResults(Message[] results){
         mMessageResults = results;
+        if (results.length > 0) {
+            this.mRecipient = results[0].getSender().equals(mEmail) ? results[0].getSentTo() : results[0].getSender();
+        }
         notifyDataSetChanged();
     }
 

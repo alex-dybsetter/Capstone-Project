@@ -24,6 +24,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import net.alexblass.capstoneproject.models.Message;
+import net.alexblass.capstoneproject.utils.UserDataUtils;
 
 import java.util.GregorianCalendar;
 
@@ -87,7 +88,7 @@ public class NewMessageActivity extends AppCompatActivity {
                             recipient,
                             msg);
 
-                    String msgLbl = generateMessageLbl(sender.toLowerCase(), recipient.toLowerCase()).replace(".", "(dot)");
+                    String msgLbl = UserDataUtils.generateMessageLbl(sender, recipient);
                     DatabaseReference database = FirebaseDatabase.getInstance().getReference(MSG_KEY).child(msgLbl)
                             .child(String.valueOf(new GregorianCalendar().getTimeInMillis()));
                     database.setValue(message);
@@ -106,21 +107,6 @@ public class NewMessageActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.message_error), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    public static String generateMessageLbl(String email1, String email2){
-
-        for (int i = 0; i < email1.length() && i < email2.length(); i++) {
-            if (email1.charAt(i) < email2.charAt(i)) {
-                return email1 + "-" + email2;
-            }
-            if (email2.charAt(i) < email1.charAt(i)) {
-                return email2 + "-" + email1;
-            }
-            // If the characters are the same, loop again
-        }
-        // return the shorter email first
-        return email1.length() < email2.length() ? email1 + "-" + email2 : email2 + "-" + email1;
     }
 
     private void clearFocus(){

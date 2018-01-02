@@ -131,7 +131,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
     @Override
     public void onItemClick(View view, int position) {
         Intent launchViewConversationActivity = new Intent(getContext(), ViewConversationActivity.class);
-        launchViewConversationActivity.putParcelableArrayListExtra(MSG_CONVERSATION_KEY, mAdapter.getItem(mAdapter.getKey(position)));
+        launchViewConversationActivity.putExtra(MSG_CONVERSATION_KEY, (String)mAdapter.getKey(position));
         startActivity(launchViewConversationActivity);
     }
 }

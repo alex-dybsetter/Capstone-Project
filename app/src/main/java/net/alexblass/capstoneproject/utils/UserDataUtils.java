@@ -182,6 +182,23 @@ public class UserDataUtils {
         return output.toString();
     }
 
+    public static String generateMessageLbl(String e1, String e2){
+        String email1 = e1.toLowerCase().replace(".", "(dot)");
+        String email2 = e2.toLowerCase().replace(".", "(dot)");
+
+        for (int i = 0; i < email1.length() && i < email2.length(); i++) {
+            if (email1.charAt(i) < email2.charAt(i)) {
+                return email1 + "-" + email2;
+            }
+            if (email2.charAt(i) < email1.charAt(i)) {
+                return email2 + "-" + email1;
+            }
+            // If the characters are the same, loop again
+        }
+        // return the shorter email first
+        return email1.length() < email2.length() ? email1 + "-" + email2 : email2 + "-" + email1;
+    }
+
     public static class CityLoader extends AsyncTaskLoader<String> {
 
         private String mZipcode;

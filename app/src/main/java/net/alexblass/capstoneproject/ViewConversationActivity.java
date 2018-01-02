@@ -28,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import net.alexblass.capstoneproject.models.Message;
 import net.alexblass.capstoneproject.utils.MessageAdapter;
+import net.alexblass.capstoneproject.utils.UserDataUtils;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -36,7 +37,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static net.alexblass.capstoneproject.data.Keys.MSG_CONVERSATION_KEY;
+import static net.alexblass.capstoneproject.data.Keys.MSG_DATA;
 import static net.alexblass.capstoneproject.data.Keys.MSG_KEY;
+import static net.alexblass.capstoneproject.data.Keys.MSG_SENDER_EMAIL_KEY;
+import static net.alexblass.capstoneproject.data.Keys.MSG_SENT_TO_EMAIL_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_EMAIL_KEY;
 
 public class ViewConversationActivity extends AppCompatActivity {
@@ -60,6 +64,8 @@ public class ViewConversationActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         final String email = mAuth.getCurrentUser().getEmail();
 
+        mMessageThread = new ArrayList<>();
+
         mParent.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -70,18 +76,45 @@ public class ViewConversationActivity extends AppCompatActivity {
 
         Intent intentThatStartedThis = getIntent();
         if (intentThatStartedThis.hasExtra(MSG_CONVERSATION_KEY)){
-            mMessageThread = intentThatStartedThis.getParcelableArrayListExtra(MSG_CONVERSATION_KEY);
 
-            mLinearLayoutManager = new LinearLayoutManager(this);
-            mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(mLinearLayoutManager);
+            // TODO: get the data fresh from firebase so it updates automatically
+            String conversationKey = UserDataUtils.generateMessageLbl(
+                    intentThatStartedThis.getStringExtra(MSG_CONVERSATION_KEY), email);
 
-            mRecyclerView.setHasFixedSize(true);
+            Query query = FirebaseDatabase.getInstance().getReference().child(MSG_KEY).child(conversationKey);
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    mMessageThread = new ArrayList<>();
+                    mLinearLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                    mRecyclerView.setLayoutManager(mLinearLayoutManager);
 
-            mAdapter = new MessageAdapter(this,
-                    mMessageThread.toArray(new Message[mMessageThread.size()]), email);
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+                    mRecyclerView.setHasFixedSize(true);
+                    mAdapter = new MessageAdapter(getApplicationContext(), new Message[0], email);
+                    mRecyclerView.setAdapter(mAdapter);
+
+                    if (dataSnapshot.exists()) {
+
+                        Iterable<DataSnapshot> results = dataSnapshot.getChildren();
+                        for (DataSnapshot messageData : results){
+
+                                    String sender = messageData.child(MSG_SENDER_EMAIL_KEY).getValue().toString();
+                                    String sentTo = messageData.child(MSG_SENT_TO_EMAIL_KEY).getValue().toString();
+                                    Message message = new Message(sender, sentTo, messageData.child(MSG_DATA).getValue().toString());
+
+                                    mMessageThread.add(message);
+                        }
+                        mAdapter.updateMessageResults(mMessageThread.toArray(new Message[mMessageThread.size()]));
+                        mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.message_retrieval_error), Toast.LENGTH_SHORT).show();
+                }
+            });
 
             mReplyBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -101,22 +134,18 @@ public class ViewConversationActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-
                                 Message message = new Message(email,
                                         recipient,
                                         msg);
 
-                                String msgLbl = NewMessageActivity.generateMessageLbl(email.toLowerCase(), recipient.toLowerCase()).replace(".", "(dot)");
+                                String msgLbl = UserDataUtils.generateMessageLbl(email, recipient);
                                 DatabaseReference database = FirebaseDatabase.getInstance().getReference(MSG_KEY).child(msgLbl)
                                         .child(String.valueOf(new GregorianCalendar().getTimeInMillis()));
                                 database.setValue(message);
 
                                 // todo send notification to recepient
 
-                                Toast.makeText(getApplicationContext(), getString(R.string.message_sent), Toast.LENGTH_SHORT).show();
                                 mReplyContentEt.setText("");
-                            } else {
-                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.invalid_username), Toast.LENGTH_SHORT).show();
                             }
                         }
 
