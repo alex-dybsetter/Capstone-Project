@@ -22,8 +22,6 @@ import net.alexblass.capstoneproject.models.Message;
 import net.alexblass.capstoneproject.utils.InboxAdapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,7 +42,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
 
     private FirebaseAuth mAuth;
     private LinearLayoutManager mLinearLayoutManager;
-    private Map<String, ArrayList<Message>> mMessages;
+    private ArrayList<String> mMessages;
     private InboxAdapter mAdapter;
 
     public InboxFragment() {
@@ -60,7 +58,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
 
         mAuth = FirebaseAuth.getInstance();
         final String email = mAuth.getCurrentUser().getEmail().replace(".", "(dot)");
-        mMessages = new HashMap<>();
+        mMessages = new ArrayList<>();
 
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -68,7 +66,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
 
         mRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new InboxAdapter(getActivity(), mMessages, mAuth.getCurrentUser().getEmail());
+        mAdapter = new InboxAdapter(getActivity(), mMessages, null, mAuth.getCurrentUser().getEmail());
         mAdapter.setClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -77,41 +75,25 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    Message lastMessage = null;
                     Iterable<DataSnapshot> results = dataSnapshot.getChildren();
                     for (DataSnapshot messageThreadData : results){
                         if(messageThreadData.getKey().contains(email)){
 
-                            for (DataSnapshot messageData : messageThreadData.getChildren()) {
-                                String sender = messageData.child(MSG_SENDER_EMAIL_KEY).getValue().toString();
-                                String sentTo = messageData.child(MSG_SENT_TO_EMAIL_KEY).getValue().toString();
-                                Message message = new Message(sender, sentTo, messageData.child(MSG_DATA).getValue().toString());
+                            mMessages.add(messageThreadData.getKey());
 
-                                if (mMessages.containsKey(sender)){
-                                    ArrayList<Message> thread = mMessages.get(sender);
-                                    thread.add(message);
-                                    mMessages.remove(sender);
-                                    mMessages.put(sender, thread);
-                                } else if (mMessages.containsKey(sentTo)){
-                                    ArrayList<Message> thread = mMessages.get(sentTo);
-                                    thread.add(message);
-                                    mMessages.remove(sentTo);
-                                    mMessages.put(sentTo, thread);
-                                } else {
-                                    String recipient;
-                                    if(sender.equals(mAuth.getCurrentUser().getEmail())){
-                                        recipient = sentTo;
-                                    } else {
-                                        recipient = sender;
-                                    }
-                                    ArrayList<Message> newThread = new ArrayList<Message>();
-                                    newThread.add(message);
-                                    mMessages.put(recipient, newThread);
+                            Iterable<DataSnapshot> messages = messageThreadData.getChildren();
+                            for (DataSnapshot messageData : messages) {
+                                if (!messages.iterator().hasNext()){
+                                    String sender = messageData.child(MSG_SENDER_EMAIL_KEY).getValue().toString();
+                                    String sentTo = messageData.child(MSG_SENT_TO_EMAIL_KEY).getValue().toString();
+                                    lastMessage = new Message(sender, sentTo, messageData.child(MSG_DATA).getValue().toString());
                                 }
                             }
                         }
                     }
 
-                    mAdapter.updateMessageResults(mMessages);
+                    mAdapter.updateMessageResults(mMessages, lastMessage);
                     if (mMessages.size() > 0){
                         mRecyclerView.setVisibility(View.VISIBLE);
                         mEmptyInboxTv.setVisibility(View.GONE);
@@ -131,7 +113,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
     @Override
     public void onItemClick(View view, int position) {
         Intent launchViewConversationActivity = new Intent(getContext(), ViewConversationActivity.class);
-        launchViewConversationActivity.putExtra(MSG_CONVERSATION_KEY, (String)mAdapter.getKey(position));
+        launchViewConversationActivity.putExtra(MSG_CONVERSATION_KEY, mAdapter.getItem(position));
         startActivity(launchViewConversationActivity);
     }
 }

@@ -5,8 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.alexblass.capstoneproject.R;
@@ -17,8 +15,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,25 +25,24 @@ import butterknife.ButterKnife;
 
 public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> {
 
-    private Map<String, ArrayList<Message>> mMessageResults;
+    private ArrayList<String> mMessageResults;
     private LayoutInflater mInflator;
     private Context mContext;
     private String mEmail;
-    private Object[] mKeys;
+    private Message mLastMessage;
     private InboxAdapter.ItemClickListener mClickListener;
 
-    public InboxAdapter(Context context, Map<String, ArrayList<Message>> messages, String email){
+    public InboxAdapter(Context context, ArrayList<String> messages, Message lastMessage, String email){
         this.mInflator = LayoutInflater.from(context);
         this.mMessageResults = messages;
         this.mContext = context;
         this.mEmail = email;
-
-        this.mKeys = messages.keySet().toArray();
+        this.mLastMessage = lastMessage;
     }
 
-    public void updateMessageResults(Map<String, ArrayList<Message>> messages){
+    public void updateMessageResults(ArrayList<String> messages, Message lastMessage){
         this.mMessageResults = messages;
-        this.mKeys = messages.keySet().toArray();
+        this.mLastMessage = lastMessage;
         notifyDataSetChanged();
     }
 
@@ -55,12 +50,8 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
         mClickListener = itemClickListener;
     }
 
-    public Object getKey(int position){
-        return mKeys[position];
-    }
-
-    public ArrayList<Message> getItem(Object key){
-        return mMessageResults.get(key);
+    public String getItem(int position){
+        return mMessageResults.get(position);
     }
 
     @Override
@@ -77,20 +68,17 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final InboxAdapter.ViewHolder holder, int position) {
-        ArrayList<Message> messageThread = mMessageResults.get(mKeys[position]);
-
-        if (messageThread != null){
-            Message mostRecentMsg = messageThread.get(messageThread.size() - 1);
+        if (mLastMessage != null){
             String recipient;
-            if(mostRecentMsg.getSender().equals(mEmail)){
-                recipient = mostRecentMsg.getSentTo();
+            if(mLastMessage.getSender().equals(mEmail)){
+                recipient = mLastMessage.getSentTo();
             } else {
-                recipient = mostRecentMsg.getSender();
+                recipient = mLastMessage.getSender();
             }
             holder.userNameTv.setText(recipient);
 
             try {
-                String unformattedTimeStamp = mostRecentMsg.getDateTime();
+                String unformattedTimeStamp = mLastMessage.getDateTime();
                 DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
                 Date date = (Date) formatter.parse(unformattedTimeStamp);
                 SimpleDateFormat newFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -98,7 +86,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
                 holder.messageTimeTv.setText(formattedTimeStamp);
             } catch (ParseException e){
                 e.printStackTrace();
-                holder.messageTimeTv.setText(mostRecentMsg.getDateTime());
+                holder.messageTimeTv.setText(mLastMessage.getDateTime());
             }
         }
     }

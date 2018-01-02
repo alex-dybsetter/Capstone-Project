@@ -76,10 +76,7 @@ public class ViewConversationActivity extends AppCompatActivity {
 
         Intent intentThatStartedThis = getIntent();
         if (intentThatStartedThis.hasExtra(MSG_CONVERSATION_KEY)){
-
-            // TODO: get the data fresh from firebase so it updates automatically
-            String conversationKey = UserDataUtils.generateMessageLbl(
-                    intentThatStartedThis.getStringExtra(MSG_CONVERSATION_KEY), email);
+            String conversationKey = intentThatStartedThis.getStringExtra(MSG_CONVERSATION_KEY);
 
             Query query = FirebaseDatabase.getInstance().getReference().child(MSG_KEY).child(conversationKey);
             query.addValueEventListener(new ValueEventListener() {
