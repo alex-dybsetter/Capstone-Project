@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,11 +36,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static net.alexblass.capstoneproject.data.Keys.MSG_CONVERSATION_KEY;
-import static net.alexblass.capstoneproject.data.Keys.MSG_DATA;
+import static net.alexblass.capstoneproject.data.Keys.MSG_DATA_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_KEY;
+import static net.alexblass.capstoneproject.data.Keys.MSG_READ_FLAG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_SENDER_EMAIL_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_SENT_TO_EMAIL_KEY;
-import static net.alexblass.capstoneproject.data.Keys.USER_EMAIL_KEY;
 
 public class ViewConversationActivity extends AppCompatActivity {
 
@@ -98,7 +97,9 @@ public class ViewConversationActivity extends AppCompatActivity {
 
                                     String sender = messageData.child(MSG_SENDER_EMAIL_KEY).getValue().toString();
                                     String sentTo = messageData.child(MSG_SENT_TO_EMAIL_KEY).getValue().toString();
-                                    Message message = new Message(sender, sentTo, messageData.child(MSG_DATA).getValue().toString());
+                                    Message message = new Message(sender, sentTo,
+                                            messageData.child(MSG_DATA_KEY).getValue().toString(),
+                                            (boolean)messageData.child(MSG_READ_FLAG_KEY).getValue());
 
                                     mMessageThread.add(message);
                         }
@@ -131,9 +132,7 @@ public class ViewConversationActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                Message message = new Message(email,
-                                        recipient,
-                                        msg);
+                                Message message = new Message(email, recipient, msg, false);
 
                                 String msgLbl = UserDataUtils.generateMessageLbl(email, recipient);
                                 DatabaseReference database = FirebaseDatabase.getInstance().getReference(MSG_KEY).child(msgLbl)

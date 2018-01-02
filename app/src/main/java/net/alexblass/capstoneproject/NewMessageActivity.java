@@ -84,9 +84,7 @@ public class NewMessageActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
 
-                    Message message = new Message(sender,
-                            recipient,
-                            msg);
+                    Message message = new Message(sender, recipient, msg, false);
 
                     String msgLbl = UserDataUtils.generateMessageLbl(sender, recipient);
                     DatabaseReference database = FirebaseDatabase.getInstance().getReference(MSG_KEY).child(msgLbl)

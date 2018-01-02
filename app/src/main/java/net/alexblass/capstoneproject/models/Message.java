@@ -14,12 +14,14 @@ public class Message implements Parcelable {
     private String mSentTo;
     private String mMessage;
     private String mDateTime;
+    private boolean mReadFlag;
 
-    public Message(String sender, String sentTo, String message){
+    public Message(String sender, String sentTo, String message, boolean isRead){
         this.mSender = sender;
         this.mSentTo = sentTo;
         this.mMessage = message;
         this.mDateTime = new GregorianCalendar().getTime().toString();
+        this.mReadFlag = isRead;
     }
 
     protected Message(Parcel in) {
@@ -27,6 +29,7 @@ public class Message implements Parcelable {
         this.mSentTo = in.readString();
         this.mMessage = in.readString();
         this.mDateTime = in.readString();
+        this.mReadFlag = in.readByte() != 0;
     }
 
     public String getSender() {
@@ -45,6 +48,14 @@ public class Message implements Parcelable {
         return mDateTime;
     }
 
+    public boolean isRead(){
+        return mReadFlag;
+    }
+
+    public void setIsRead(boolean isRead){
+        mReadFlag = isRead;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -56,6 +67,7 @@ public class Message implements Parcelable {
         parcel.writeString(mSentTo);
         parcel.writeString(mMessage);
         parcel.writeString(mDateTime);
+        parcel.writeByte((byte) (mReadFlag ? 1 : 0));
     }
 
     // Creator for Parcelable implementation

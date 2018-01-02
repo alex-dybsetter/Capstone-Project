@@ -9,22 +9,13 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import net.alexblass.capstoneproject.MessagingActivity;
 import net.alexblass.capstoneproject.R;
-import net.alexblass.capstoneproject.models.Message;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-
-import static net.alexblass.capstoneproject.data.Keys.MSG_DATA;
-import static net.alexblass.capstoneproject.data.Keys.MSG_DATE_TIME;
-import static net.alexblass.capstoneproject.data.Keys.MSG_SENDER_EMAIL_KEY;
-import static net.alexblass.capstoneproject.data.Keys.MSG_SENT_TO_EMAIL_KEY;
 
 /**
  * A service tht listens for messages between users.
