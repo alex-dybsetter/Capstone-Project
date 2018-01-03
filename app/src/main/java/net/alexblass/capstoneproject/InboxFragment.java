@@ -45,6 +45,8 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
     private LinearLayoutManager mLinearLayoutManager;
     private ArrayList<String> mMessages;
     private InboxAdapter mAdapter;
+    private Query mQuery;
+    private ValueEventListener mListener;
 
     public InboxFragment() {
         // Required empty public constructor
@@ -71,8 +73,9 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
         mAdapter.setClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
-        Query query = FirebaseDatabase.getInstance().getReference().child(MSG_KEY);
-        query.addValueEventListener(new ValueEventListener() {
+        mQuery = FirebaseDatabase.getInstance().getReference().child(MSG_KEY);
+
+        mListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -109,7 +112,9 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
             public void onCancelled(DatabaseError databaseError) {
                 Toast.makeText(getContext(), getResources().getString(R.string.message_retrieval_error), Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+
+        mQuery.addValueEventListener(mListener);
 
         return root;
     }
@@ -119,5 +124,13 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
         Intent launchViewConversationActivity = new Intent(getContext(), ViewConversationActivity.class);
         launchViewConversationActivity.putExtra(MSG_CONVERSATION_KEY, mAdapter.getItem(position));
         startActivity(launchViewConversationActivity);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mQuery != null) {
+            mQuery.removeEventListener(mListener);
+        }
     }
 }

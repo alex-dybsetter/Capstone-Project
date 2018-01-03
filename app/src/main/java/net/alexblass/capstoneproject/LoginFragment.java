@@ -59,6 +59,8 @@ public class LoginFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    private Query mQuery;
+    private ValueEventListener mListener;
 
     @BindView(R.id.login_email_et) EditText mEmailEt;
     @BindView(R.id.login_password_et) EditText mPasswordEt;
@@ -134,8 +136,9 @@ public class LoginFragment extends Fragment {
 
             String userEmail = mAuth.getCurrentUser().getEmail().replace(".", "(dot)");
 
-            Query query = mDatabase.child(userEmail);
-            query.addValueEventListener(new ValueEventListener() {
+            mQuery = mDatabase.child(userEmail);
+
+            mListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists() && dataSnapshot.child(USER_ZIPCODE_KEY).exists()){
@@ -172,7 +175,9 @@ public class LoginFragment extends Fragment {
                 public void onCancelled(DatabaseError databaseError) {
                     Toast.makeText(getContext(), getContext().getString(R.string.verification_error), Toast.LENGTH_SHORT).show();
                 }
-            });
+            };
+
+            mQuery.addValueEventListener(mListener);
 
         } else {
             mErrorTv.setText(getContext().getString(R.string.invalid_credentials));
@@ -273,6 +278,14 @@ public class LoginFragment extends Fragment {
         if (savedInstanceState != null) {
             mEmailEt.setText(savedInstanceState.getString(EMAIL_KEY));
             mPasswordEt.setText(savedInstanceState.getString(PASSWORD_KEY));
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mQuery != null) {
+            mQuery.removeEventListener(mListener);
         }
     }
 }

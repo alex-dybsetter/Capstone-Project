@@ -31,6 +31,8 @@ public class LoginActivity extends AppCompatActivity {
     private static final String PROMPT_FRAG = "prompt_fragment";
 
     private FirebaseAuth mAuth;
+    private Query mQuery;
+    private ValueEventListener mListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +58,10 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         } else {
-            Query query = FirebaseDatabase.getInstance().getReference().child(
+            mQuery = FirebaseDatabase.getInstance().getReference().child(
                     mAuth.getCurrentUser().getEmail().replace(".", "(dot)"));
-            query.addValueEventListener(new ValueEventListener() {
+
+            mListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
@@ -89,11 +92,13 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.verification_error), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.verification_error), Toast.LENGTH_SHORT).show();
+                }
+            };
+
+            mQuery.addValueEventListener(mListener);
         }
     }
 
@@ -109,5 +114,13 @@ public class LoginActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mQuery != null) {
+            mQuery.removeEventListener(mListener);
+        }
     }
 }

@@ -42,6 +42,9 @@ public class NewMessageActivity extends AppCompatActivity {
     @BindView(R.id.new_msg_recipient_helper) TextView mRecipientHelperTv;
     @BindView(R.id.new_msg_parent) LinearLayout mParent;
 
+    private Query mQuery;
+    private ValueEventListener mListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,8 +81,9 @@ public class NewMessageActivity extends AppCompatActivity {
             return;
         }
 
-        Query query = FirebaseDatabase.getInstance().getReference().child(recipient.replace(".", "(dot)"));
-        query.addValueEventListener(new ValueEventListener() {
+        mQuery = FirebaseDatabase.getInstance().getReference().child(recipient.replace(".", "(dot)"));
+
+        mListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -104,7 +108,9 @@ public class NewMessageActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.message_error), Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+
+        mQuery.addValueEventListener(mListener);
     }
 
     private void clearFocus(){
@@ -136,5 +142,13 @@ public class NewMessageActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mQuery != null) {
+            mQuery.removeEventListener(mListener);
+        }
     }
 }

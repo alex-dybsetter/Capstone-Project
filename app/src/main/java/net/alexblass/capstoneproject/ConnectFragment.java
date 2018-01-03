@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,12 +50,14 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
     private final String POSITION_KEY = "position";
     private final String LIST_KEY = "user_list";
 
-
     @BindView(R.id.connect_recyclerview) RecyclerView mRecyclerView;
 
     private LinearLayoutManager mLinearLayoutManager;
     private UserAdapter mAdapter;
     private ArrayList<User> mUsers;
+
+    private Query mQuery;
+    private ValueEventListener mListener;
 
     private Parcelable listState;
     private int mPosition = RecyclerView.NO_POSITION;
@@ -82,8 +83,9 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
         mRecyclerView.setAdapter(mAdapter);
 
         if (savedInstanceState == null) {
-            Query query = FirebaseDatabase.getInstance().getReference();
-            query.addValueEventListener(new ValueEventListener() {
+            mQuery = FirebaseDatabase.getInstance().getReference();
+
+            mListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
@@ -123,7 +125,9 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
                 public void onCancelled(DatabaseError databaseError) {
                     databaseError.toException().printStackTrace();
                 }
-            });
+            };
+
+            mQuery.addValueEventListener(mListener);
         } else {
             mUsers = savedInstanceState.getParcelableArrayList(LIST_KEY);
             mAdapter.updateUserResults(mUsers.toArray(new User[mUsers.size()]));
@@ -165,6 +169,14 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
             listState = savedInstanceState.getParcelable(LIST_STATE_KEY);
             mPosition = savedInstanceState.getInt(POSITION_KEY);
             mLinearLayoutManager.onRestoreInstanceState(listState);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mQuery != null) {
+            mQuery.removeEventListener(mListener);
         }
     }
 }
