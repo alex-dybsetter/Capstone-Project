@@ -19,6 +19,9 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.graphics.Typeface.BOLD;
+import static android.graphics.Typeface.NORMAL;
+
 /**
  * An adapter to display the message threads in a user's inbox.
  */
@@ -76,6 +79,14 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
                 recipient = mLastMessage.getSender();
             }
             holder.userNameTv.setText(recipient);
+
+            if (!mLastMessage.isRead() && mEmail.equals(mLastMessage.getSentTo())){
+                holder.userNameTv.setTypeface(holder.userNameTv.getTypeface(), BOLD);
+                holder.messageTimeTv.setTypeface(holder.messageTimeTv.getTypeface(), BOLD);
+            } else {
+                holder.userNameTv.setTypeface(holder.userNameTv.getTypeface(), NORMAL);
+                holder.messageTimeTv.setTypeface(holder.messageTimeTv.getTypeface(), NORMAL);
+            }
 
             try {
                 String unformattedTimeStamp = mLastMessage.getDateTime();

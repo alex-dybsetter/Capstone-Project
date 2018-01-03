@@ -54,6 +54,9 @@ public class ViewConversationActivity extends AppCompatActivity {
     private LinearLayoutManager mLinearLayoutManager;
     private MessageAdapter mAdapter;
 
+    private Query mQuery;
+    private ValueEventListener mListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,10 +78,11 @@ public class ViewConversationActivity extends AppCompatActivity {
 
         Intent intentThatStartedThis = getIntent();
         if (intentThatStartedThis.hasExtra(MSG_CONVERSATION_KEY)){
-            String conversationKey = intentThatStartedThis.getStringExtra(MSG_CONVERSATION_KEY);
+            final String conversationKey = intentThatStartedThis.getStringExtra(MSG_CONVERSATION_KEY);
 
-            Query query = FirebaseDatabase.getInstance().getReference().child(MSG_KEY).child(conversationKey);
-            query.addValueEventListener(new ValueEventListener() {
+            mQuery = FirebaseDatabase.getInstance().getReference().child(MSG_KEY).child(conversationKey);
+
+            mListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     mMessageThread = new ArrayList<>();
@@ -95,13 +99,21 @@ public class ViewConversationActivity extends AppCompatActivity {
                         Iterable<DataSnapshot> results = dataSnapshot.getChildren();
                         for (DataSnapshot messageData : results){
 
-                                    String sender = messageData.child(MSG_SENDER_EMAIL_KEY).getValue().toString();
-                                    String sentTo = messageData.child(MSG_SENT_TO_EMAIL_KEY).getValue().toString();
-                                    Message message = new Message(sender, sentTo,
-                                            messageData.child(MSG_DATA_KEY).getValue().toString(),
-                                            (boolean)messageData.child(MSG_READ_FLAG_KEY).getValue());
+                            String sender = messageData.child(MSG_SENDER_EMAIL_KEY).getValue().toString();
+                            String sentTo = messageData.child(MSG_SENT_TO_EMAIL_KEY).getValue().toString();
 
-                                    mMessageThread.add(message);
+                            boolean isRead = (boolean)messageData.child(MSG_READ_FLAG_KEY).getValue();
+                            if (!isRead){
+                                isRead = email.equals(sentTo);
+                                DatabaseReference database = FirebaseDatabase.getInstance().getReference(MSG_KEY)
+                                        .child(conversationKey).child(messageData.getKey()).child(MSG_READ_FLAG_KEY);
+                                database.setValue(isRead);
+                            }
+
+                            Message message = new Message(sender, sentTo,
+                                    messageData.child(MSG_DATA_KEY).getValue().toString(), isRead);
+
+                            mMessageThread.add(message);
                         }
                         mAdapter.updateMessageResults(mMessageThread.toArray(new Message[mMessageThread.size()]));
                         mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
@@ -112,7 +124,9 @@ public class ViewConversationActivity extends AppCompatActivity {
                 public void onCancelled(DatabaseError databaseError) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.message_retrieval_error), Toast.LENGTH_SHORT).show();
                 }
-            });
+            };
+
+            mQuery.addValueEventListener(mListener);
 
             mReplyBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -186,5 +200,11 @@ public class ViewConversationActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mQuery.removeEventListener(mListener);
     }
 }

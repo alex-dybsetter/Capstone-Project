@@ -76,6 +76,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    mMessages = new ArrayList<>();
                     Message lastMessage = null;
                     Iterable<DataSnapshot> results = dataSnapshot.getChildren();
                     for (DataSnapshot messageThreadData : results){
