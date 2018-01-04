@@ -1,10 +1,15 @@
 package net.alexblass.capstoneproject.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.content.AsyncTaskLoader;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
+import net.alexblass.capstoneproject.LoginActivity;
 import net.alexblass.capstoneproject.R;
 
 import org.json.JSONException;
@@ -117,6 +122,21 @@ public class UserDataUtils {
         }
 
         return null;
+    }
+
+    public static boolean checkNetworkConnectivity(Context context){
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnected();
+    }
+
+    public static void resetApp(Context context){
+        if (!UserDataUtils.checkNetworkConnectivity(context)) {
+            // No internet connection: kill the current activity or fragment and display
+            // the login activity to handle the offline state of the app.
+            Intent loginActivity = new Intent (context, LoginActivity.class);
+            context.startActivity(loginActivity);
+        }
     }
 
     private static URL createUrl(String stringUrl){

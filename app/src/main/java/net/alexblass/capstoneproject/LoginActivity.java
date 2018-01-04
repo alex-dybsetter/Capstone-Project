@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,6 +17,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import net.alexblass.capstoneproject.models.User;
+import net.alexblass.capstoneproject.utils.UserDataUtils;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static net.alexblass.capstoneproject.data.Keys.USER_BANNER_IMG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
@@ -30,6 +37,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String PROMPT_FRAG = "prompt_fragment";
 
+    @BindView(R.id.login_no_connection_tv) TextView mConnectivityTv;
+    @BindView(R.id.login_progressbar) ProgressBar mProgress;
+
     private FirebaseAuth mAuth;
     private Query mQuery;
     private ValueEventListener mListener;
@@ -37,16 +47,57 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
+
+        loadActivity(savedInstanceState);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case android.R.id.home:
+                getSupportFragmentManager().popBackStack();
+                if (getSupportFragmentManager().getBackStackEntryCount() == 1){
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mQuery != null) {
+            mQuery.removeEventListener(mListener);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadActivity(null);
+    }
+
+    private void loadActivity(Bundle savedInstanceState){
+        if (!UserDataUtils.checkNetworkConnectivity(this)) {
+            mProgress.setVisibility(View.GONE);
+            mConnectivityTv.setVisibility(View.VISIBLE);
+            return;
+        } else {
+            mConnectivityTv.setVisibility(View.GONE);
+        }
 
         mAuth = FirebaseAuth.getInstance();
 
-        // TODO: Add animation to the fragments/back button
-        setContentView(R.layout.activity_login);
-
         if (mAuth.getCurrentUser() == null) {
+            mProgress.setVisibility(View.GONE);
 
             AccountPromptFragment promptFragment;
             if (savedInstanceState == null) {
+                mProgress.setVisibility(View.GONE);
                 promptFragment = new AccountPromptFragment();
                 getSupportFragmentManager()
                         .beginTransaction()
@@ -99,28 +150,6 @@ public class LoginActivity extends AppCompatActivity {
             };
 
             mQuery.addValueEventListener(mListener);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id){
-            case android.R.id.home:
-                getSupportFragmentManager().popBackStack();
-                if (getSupportFragmentManager().getBackStackEntryCount() == 1){
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                }
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mQuery != null) {
-            mQuery.removeEventListener(mListener);
         }
     }
 }

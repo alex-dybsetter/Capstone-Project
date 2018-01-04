@@ -58,9 +58,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_DEVICE_TOKEN;
+import static net.alexblass.capstoneproject.data.Keys.USER_GENDER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_NAME_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_PROFILE_IMG_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_RELATIONSHIP_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_SEXUALITY_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_ZIPCODE_KEY;
 
 public class EditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
 
@@ -68,6 +74,10 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int ACTION_RETURN_TO_DASH = 1;
     private static final int ACTION_TO_MESSAGES = 2;
     private static final int SELECT_PICTURE = 100;
+
+    private static final String GENDERS_LIST_KEY = "genders_list";
+    private static final String SEXUALITIESS_LIST_KEY = "sexualities_list";
+    private static final String RELATIONSHIPS_LIST_KEY = "relationships_list";
 
     @BindView(R.id.edit_name_et) EditText mNameEt;
     @BindView(R.id.edit_zipcode_et) EditText mZipcodeEt;
@@ -102,101 +112,22 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     private String mImageUriString;
     private boolean mFirstEdit;
 
+    private ArrayList<String> mGendersList;
+    private ArrayList<String> mSexualitiesList;
+    private ArrayList<String> mRelationshipsList;
+
+    private AlertDialog mOfflineDialog;
+
+    private Bundle mSavedInstanceState;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         ButterKnife.bind(this);
 
-        mAuth = FirebaseAuth.getInstance();
-        mStorageRef = FirebaseStorage.getInstance().getReference();
-        mValidZipcode = false;
-        mImageUriString = "";
-
-        List<String> gendersList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.gender_choices)));
-        mGenderSpinnner.setAdapter(getArrayAdapter(gendersList));
-
-        List<String> sexualitiesList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.sexuality_choices)));
-        mSexualitySpinner.setAdapter(getArrayAdapter(sexualitiesList));
-
-        List<String> relationshipsList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.relationship_choices)));
-        mRelationshipStatusSpinner.setAdapter(getArrayAdapter(relationshipsList));
-
-        Intent intentThatStartedThisActivity = getIntent();
-        if (intentThatStartedThisActivity.hasExtra(USER_KEY)){
-            mFirstEdit = false;
-            getSupportActionBar().setDisplayHomeAsUpEnabled(!mFirstEdit);
-
-            mUser = intentThatStartedThisActivity.getParcelableExtra(USER_KEY);
-            mName = mUser.getName();
-            mBirthday = mUser.getBirthday();
-            mZipcode = mUser.getZipcode();
-            mImageUriString = mUser.getProfilePicUri();
-
-            mNameEt.setText(mName);
-            mZipcodeEt.setText(mZipcode);
-            mDescriptionEt.setText(mUser.getDescription());
-            mGenderSpinnner.setSelection((int)mUser.getGenderCode());
-            mSexualitySpinner.setSelection(sexualitiesList.indexOf(mUser.getSexuality()));
-            mRelationshipStatusSpinner.setSelection(relationshipsList.indexOf(mUser.getRelationshipStatus()));
-
-            if (!mImageUriString.isEmpty()) {
-                mUserProfilePic = mStorageRef.child(Uri.parse(mImageUriString).getPath());
-                try {
-                    final File localFile = File.createTempFile("images", "jpg");
-                    mUserProfilePic.getFile(localFile)
-                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                    mRemoveImageTv.setVisibility(View.VISIBLE);
-                                    Picasso.with(EditActivity.this)
-                                            .load(localFile)
-                                            .placeholder(R.drawable.ic_person_white_48dp)
-                                            .centerCrop()
-                                            .fit()
-                                            .into(mProfileImage);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            exception.printStackTrace();
-                        }
-                    });
-                } catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            mFirstEdit = true;
-            getSupportActionBar().setDisplayHomeAsUpEnabled(!mFirstEdit);
-
-            mName = null;
-            mBirthday = 0;
-
-            Query query = FirebaseDatabase.getInstance().getReference().child(
-                    mAuth.getCurrentUser().getEmail().replace(".", "(dot)"));
-            query.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-
-                        mName = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
-                        mNameEt.setText(mName);
-
-                        mBirthday = (long) dataSnapshot.child(USER_BIRTHDAY_KEY).getValue();
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.verification_error), Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            mAuth = FirebaseAuth.getInstance();
-        }
-
-        setFocusListeners();
+        mSavedInstanceState = savedInstanceState;
+        loadActivity(savedInstanceState);
     }
 
     @OnClick({R.id.edit_add_img_txt, R.id.edit_add_img_btn})
@@ -380,6 +311,187 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
             mNameHelperTv.setVisibility(View.GONE);
             mZipcodeHelperTv.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadActivity(mSavedInstanceState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mOfflineDialog != null){
+            mOfflineDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(USER_KEY, mUser);
+
+        outState.putString(USER_NAME_KEY, mNameEt.getText().toString().trim());
+        outState.putString(USER_ZIPCODE_KEY, mZipcodeEt.getText().toString().trim());
+        outState.putString(USER_GENDER_KEY, mGenderSpinnner.getSelectedItem().toString());
+        outState.putString(USER_SEXUALITY_KEY, mSexualitySpinner.getSelectedItem().toString());
+        outState.putString(USER_RELATIONSHIP_KEY, mRelationshipStatusSpinner.getSelectedItem().toString());
+        outState.putString(USER_DESCRIPTION_KEY, mDescriptionEt.getText().toString().trim());
+        outState.putString(USER_PROFILE_IMG_KEY, mImageUriString);
+
+        outState.putStringArrayList(GENDERS_LIST_KEY, mGendersList);
+        outState.putStringArrayList(SEXUALITIESS_LIST_KEY, mSexualitiesList);
+        outState.putStringArrayList(RELATIONSHIPS_LIST_KEY, mRelationshipsList);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mSavedInstanceState = savedInstanceState;
+
+        if (savedInstanceState != null) {
+            mUser = savedInstanceState.getParcelable(USER_KEY);
+
+            mGendersList = savedInstanceState.getStringArrayList(GENDERS_LIST_KEY);
+            mSexualitiesList = savedInstanceState.getStringArrayList(SEXUALITIESS_LIST_KEY);
+            mRelationshipsList = savedInstanceState.getStringArrayList(RELATIONSHIPS_LIST_KEY);
+
+            mName = savedInstanceState.getString(USER_NAME_KEY);
+            mZipcode = savedInstanceState.getString(USER_ZIPCODE_KEY);
+
+            mNameEt.setText(mName);
+            mZipcodeEt.setText(mZipcode);
+            mGenderSpinnner.setSelection(mGendersList.indexOf(savedInstanceState.getString(USER_GENDER_KEY)));
+            mSexualitySpinner.setSelection(mSexualitiesList.indexOf(savedInstanceState.getString(USER_SEXUALITY_KEY)));
+            mRelationshipStatusSpinner.setSelection(mRelationshipsList.indexOf(savedInstanceState.getString(USER_RELATIONSHIP_KEY)));
+            mDescriptionEt.setText(savedInstanceState.getString(USER_DESCRIPTION_KEY));
+
+            mImageUriString = savedInstanceState.getString(USER_PROFILE_IMG_KEY);
+            loadImage();
+        }
+    }
+
+    private void loadActivity(Bundle savedInstanceState) {
+        AlertDialog.Builder offlineDialog = new AlertDialog.Builder(this);
+        offlineDialog.setTitle(getString(R.string.offline_edits_dialog_title))
+                .setMessage(getString(R.string.offline_edits_prompt))
+                .setPositiveButton(getString(R.string.okay), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                });
+        mOfflineDialog = offlineDialog.create();
+
+        if (!UserDataUtils.checkNetworkConnectivity(this)) {
+            mOfflineDialog.show();
+        }
+
+        mAuth = FirebaseAuth.getInstance();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        mValidZipcode = false;
+
+        if (savedInstanceState == null) {
+            mImageUriString = "";
+
+            mGendersList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.gender_choices)));
+            mGenderSpinnner.setAdapter(getArrayAdapter(mGendersList));
+
+            mSexualitiesList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.sexuality_choices)));
+            mSexualitySpinner.setAdapter(getArrayAdapter(mSexualitiesList));
+
+            mRelationshipsList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.relationship_choices)));
+            mRelationshipStatusSpinner.setAdapter(getArrayAdapter(mRelationshipsList));
+
+            Intent intentThatStartedThisActivity = getIntent();
+            if (intentThatStartedThisActivity.hasExtra(USER_KEY)) {
+                mFirstEdit = false;
+                getSupportActionBar().setDisplayHomeAsUpEnabled(!mFirstEdit);
+
+                mUser = intentThatStartedThisActivity.getParcelableExtra(USER_KEY);
+                mName = mUser.getName();
+                mBirthday = mUser.getBirthday();
+                mZipcode = mUser.getZipcode();
+                mImageUriString = mUser.getProfilePicUri();
+
+                mNameEt.setText(mName);
+                mZipcodeEt.setText(mZipcode);
+                mDescriptionEt.setText(mUser.getDescription());
+                mGenderSpinnner.setSelection((int) mUser.getGenderCode());
+                mSexualitySpinner.setSelection(mSexualitiesList.indexOf(mUser.getSexuality()));
+                mRelationshipStatusSpinner.setSelection(mRelationshipsList.indexOf(mUser.getRelationshipStatus()));
+
+                loadImage();
+            } else {
+                mFirstEdit = true;
+                getSupportActionBar().setDisplayHomeAsUpEnabled(!mFirstEdit);
+
+                mName = null;
+                mBirthday = 0;
+
+                Query query = FirebaseDatabase.getInstance().getReference().child(
+                        mAuth.getCurrentUser().getEmail().replace(".", "(dot)"));
+                query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+
+                            mName = (String) dataSnapshot.child(USER_NAME_KEY).getValue();
+                            mNameEt.setText(mName);
+
+                            mBirthday = (long) dataSnapshot.child(USER_BIRTHDAY_KEY).getValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.verification_error), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                mAuth = FirebaseAuth.getInstance();
+            }
+        }
+
+        setFocusListeners();
+    }
+
+    private void loadImage(){
+        if (!mImageUriString.isEmpty()) {
+            mUserProfilePic = mStorageRef.child(Uri.parse(mImageUriString).getPath());
+            try {
+                final File localFile = File.createTempFile("images", "jpg");
+                mUserProfilePic.getFile(localFile)
+                        .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                mRemoveImageTv.setVisibility(View.VISIBLE);
+                                Picasso.with(EditActivity.this)
+                                        .load(localFile)
+                                        .placeholder(R.drawable.ic_person_white_48dp)
+                                        .centerCrop()
+                                        .fit()
+                                        .into(mProfileImage);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        exception.printStackTrace();
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

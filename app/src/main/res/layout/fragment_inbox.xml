@@ -51,6 +51,13 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
+        android:visibility="gone"
         android:text="@string/message_no_results"/>
+
+    <ProgressBar
+        android:id="@+id/inbox_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"/>
 
 </LinearLayout>

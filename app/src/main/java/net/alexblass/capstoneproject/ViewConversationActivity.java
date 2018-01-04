@@ -1,7 +1,10 @@
 package net.alexblass.capstoneproject;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -57,11 +60,39 @@ public class ViewConversationActivity extends AppCompatActivity {
     private Query mQuery;
     private ValueEventListener mListener;
 
+    private AlertDialog mOfflineDialog;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_conversation);
         ButterKnife.bind(this);
+
+        AlertDialog.Builder offlineDialog = new AlertDialog.Builder(this);
+        offlineDialog.setTitle(getString(R.string.offline_edits_dialog_title))
+                .setMessage(getString(R.string.offline_messages_prompt))
+                .setPositiveButton(getString(R.string.okay), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                });
+        mOfflineDialog = offlineDialog.create();
+
+        if (!UserDataUtils.checkNetworkConnectivity(this)) {
+            mOfflineDialog.show();
+            mReplyBtn.setEnabled(false);
+            mReplyBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.button_inactive_bg));
+        } else {
+            mReplyBtn.setEnabled(true);
+            mReplyBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.button_bg));
+        }
 
         mAuth = FirebaseAuth.getInstance();
         final String email = mAuth.getCurrentUser().getEmail();
@@ -94,7 +125,7 @@ public class ViewConversationActivity extends AppCompatActivity {
                     mAdapter = new MessageAdapter(getApplicationContext(), new Message[0], email);
                     mRecyclerView.setAdapter(mAdapter);
 
-                    if (dataSnapshot.exists()) {
+                    if (dataSnapshot.exists() && savedInstanceState == null) {
 
                         Iterable<DataSnapshot> results = dataSnapshot.getChildren();
                         for (DataSnapshot messageData : results){
@@ -132,6 +163,17 @@ public class ViewConversationActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     clearFocus();
+                    if (!UserDataUtils.checkNetworkConnectivity(getApplicationContext())) {
+                        if (!mOfflineDialog.isShowing()){
+                            mOfflineDialog.show();
+                        }
+                        mReplyBtn.setEnabled(false);
+                        mReplyBtn.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_inactive_bg));
+                        return;
+                    } else {
+                        mReplyBtn.setEnabled(true);
+                        mReplyBtn.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.button_bg));
+                    }
 
                     final String recipient = mAdapter.getRecipient();
 
@@ -153,8 +195,6 @@ public class ViewConversationActivity extends AppCompatActivity {
                                         .child(String.valueOf(new GregorianCalendar().getTimeInMillis()));
                                 database.setValue(message);
 
-                                // todo send notification to recepient
-
                                 mReplyContentEt.setText("");
                             }
                         }
@@ -166,6 +206,53 @@ public class ViewConversationActivity extends AppCompatActivity {
                     });
                 }
             });
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mOfflineDialog != null){
+            mOfflineDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!UserDataUtils.checkNetworkConnectivity(this)) {
+            if (!mOfflineDialog.isShowing()){
+                mOfflineDialog.show();
+            }
+            mReplyBtn.setEnabled(false);
+            mReplyBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.button_inactive_bg));
+        } else {
+            mReplyBtn.setEnabled(true);
+            mReplyBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.button_bg));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(MSG_CONVERSATION_KEY, mMessageThread);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            mMessageThread = savedInstanceState.getParcelableArrayList(MSG_CONVERSATION_KEY);
+
+            mLinearLayoutManager = new LinearLayoutManager(getApplicationContext());
+            mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(mLinearLayoutManager);
+
+            mAdapter = new MessageAdapter(getApplicationContext(), new Message[0], FirebaseAuth.getInstance().getCurrentUser().getEmail());
+            mRecyclerView.setAdapter(mAdapter);
+
+            mAdapter.updateMessageResults(mMessageThread.toArray(new Message[mMessageThread.size()]));
+            mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
         }
     }
 
@@ -198,6 +285,14 @@ public class ViewConversationActivity extends AppCompatActivity {
             Intent newMessageActivity = new Intent(this, NewMessageActivity.class);
             startActivity(newMessageActivity);
             return true;
+        }
+        if (id == android.R.id.home){
+            if (!UserDataUtils.checkNetworkConnectivity(this)) {
+                UserDataUtils.resetApp(this);
+                return true;
+            } else {
+                return super.onOptionsItemSelected(item);
+            }
         }
         return super.onOptionsItemSelected(item);
     }

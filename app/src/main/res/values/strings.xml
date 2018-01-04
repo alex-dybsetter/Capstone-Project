@@ -5,6 +5,12 @@
 
     <string name="intro">It\'s the friends we meet along the way that help us appreciate the journey.</string>
 
+    <string name="no_internet">No internet connection found. X-P</string>
+    <string name="offline_edits_dialog_title">No connection</string>
+    <string name="offline_edits_prompt">You are offline. Any edits will not be saved until you are online again.</string>
+    <string name="offline_messages_prompt">You are offline. New messages will not be received or delivered until you are online again.</string>
+    <string name="cancel">Cancel</string>
+
     <string name="sign_up">Sign Up</string>
     <string name="login">Login</string>
     <string name="name">Name</string>

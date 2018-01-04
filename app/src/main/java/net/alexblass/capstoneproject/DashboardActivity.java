@@ -1,7 +1,6 @@
 package net.alexblass.capstoneproject;
 
 import android.content.Intent;
-import android.os.PersistableBundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,11 +13,11 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import net.alexblass.capstoneproject.models.User;
 import net.alexblass.capstoneproject.utils.DashboardPagerAdapter;
+import net.alexblass.capstoneproject.utils.UserDataUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static net.alexblass.capstoneproject.data.Keys.DASH_PG_NUM_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -26,19 +25,18 @@ public class DashboardActivity extends AppCompatActivity {
     @BindView(R.id.dashboard_viewpager) ViewPager mPager;
     @BindView(R.id.dashboard_tabs) TabLayout mTabs;
 
-    private FirebaseAuth mAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         ButterKnife.bind(this);
-
-        mAuth = FirebaseAuth.getInstance();
+        if (!UserDataUtils.checkNetworkConnectivity(this)) {
+            this.finish();
+            return;
+        }
 
         DashboardPagerAdapter adapter = new DashboardPagerAdapter(this, getSupportFragmentManager());
         mPager.setAdapter(adapter);
-
         mTabs.setupWithViewPager(mPager);
     }
 
@@ -78,18 +76,10 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        outState.putInt(DASH_PG_NUM_KEY, mTabs.getSelectedTabPosition());
-
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null) {
-            mPager.setCurrentItem(savedInstanceState.getInt(DASH_PG_NUM_KEY));
-
+    protected void onResume() {
+        super.onResume();
+        if (!UserDataUtils.checkNetworkConnectivity(this)) {
+            this.finish();
         }
     }
 }

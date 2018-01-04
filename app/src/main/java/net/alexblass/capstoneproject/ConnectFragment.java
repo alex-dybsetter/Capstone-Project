@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -51,6 +52,7 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
     private final String LIST_KEY = "user_list";
 
     @BindView(R.id.connect_recyclerview) RecyclerView mRecyclerView;
+    @BindView(R.id.connect_progressbar) ProgressBar mProgress;
 
     private LinearLayoutManager mLinearLayoutManager;
     private UserAdapter mAdapter;
@@ -113,6 +115,8 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
                                 }
                             }
                         }
+                        mProgress.setVisibility(View.GONE);
+                        mRecyclerView.setVisibility(View.VISIBLE);
                         mAdapter.updateUserResults(mUsers.toArray(new User[mUsers.size()]));
 
                         if (mPosition == RecyclerView.NO_POSITION) {
@@ -169,6 +173,10 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
             listState = savedInstanceState.getParcelable(LIST_STATE_KEY);
             mPosition = savedInstanceState.getInt(POSITION_KEY);
             mLinearLayoutManager.onRestoreInstanceState(listState);
+
+            mProgress.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mAdapter.updateUserResults(mUsers.toArray(new User[mUsers.size()]));
         }
     }
 

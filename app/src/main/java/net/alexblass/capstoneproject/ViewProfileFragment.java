@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -50,6 +52,9 @@ public class ViewProfileFragment extends Fragment implements LoaderManager.Loade
     @BindView(R.id.view_profile_relationship_status) TextView mRelationshipStatus;
     @BindView(R.id.view_profile_message_btn) ImageButton mSendMessageBtn;
     @BindView(R.id.view_profile_favorite_btn) ImageButton mFavoriteUserBtn;
+    @BindView(R.id.view_profile_no_connection_tv) TextView mConnectivityTv;
+    @BindView(R.id.view_profile_progressbar) ProgressBar mProgress;
+    @BindView(R.id.view_profile_scrollview) ScrollView mScroll;
 
     private User mUser;
     private String mZipcode;
@@ -66,6 +71,19 @@ public class ViewProfileFragment extends Fragment implements LoaderManager.Loade
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_view_profile, container, false);
         ButterKnife.bind(this, root);
+
+        loadFragment();
+        return root;
+    }
+
+    private void loadFragment(){
+        if (!UserDataUtils.checkNetworkConnectivity(getContext())) {
+            mProgress.setVisibility(View.GONE);
+            mConnectivityTv.setVisibility(View.VISIBLE);
+            return;
+        } else {
+            mConnectivityTv.setVisibility(View.GONE);
+        }
 
         Intent intentThatStartedThisActivity = getActivity().getIntent();
         if (intentThatStartedThisActivity.hasExtra(USER_KEY)) {
@@ -138,6 +156,9 @@ public class ViewProfileFragment extends Fragment implements LoaderManager.Loade
                 }
             }
 
+            mProgress.setVisibility(View.GONE);
+            mScroll.setVisibility(View.VISIBLE);
+
             mSendMessageBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -164,7 +185,12 @@ public class ViewProfileFragment extends Fragment implements LoaderManager.Loade
         }
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(0, null, this);
-        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadFragment();
     }
 
     @Override

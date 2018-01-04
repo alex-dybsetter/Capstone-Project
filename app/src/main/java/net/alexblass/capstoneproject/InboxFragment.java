@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
 
     @BindView(R.id.inbox_messages_rv) RecyclerView mRecyclerView;
     @BindView(R.id.inbox_empty_tv) TextView mEmptyInboxTv;
+    @BindView(R.id.inbox_progressbar) ProgressBar mProgress;
 
     private FirebaseAuth mAuth;
     private LinearLayoutManager mLinearLayoutManager;
@@ -101,9 +103,13 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
                     }
 
                     mAdapter.updateMessageResults(mMessages, lastMessage);
+                    mProgress.setVisibility(View.GONE);
                     if (mMessages.size() > 0){
-                        mRecyclerView.setVisibility(View.VISIBLE);
                         mEmptyInboxTv.setVisibility(View.GONE);
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                    } else {
+                        mRecyclerView.setVisibility(View.GONE);
+                        mEmptyInboxTv.setVisibility(View.VISIBLE);
                     }
                 }
             }

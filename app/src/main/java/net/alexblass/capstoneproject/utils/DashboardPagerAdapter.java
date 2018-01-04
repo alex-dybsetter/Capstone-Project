@@ -3,7 +3,7 @@ package net.alexblass.capstoneproject.utils;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import net.alexblass.capstoneproject.ConnectFragment;
 import net.alexblass.capstoneproject.MyProfileFragment;
@@ -16,7 +16,7 @@ import static net.alexblass.capstoneproject.data.Constants.MY_PROFILE_FRAG_INDEX
  * An adapter to display the pages in the dashboard activity.
  */
 
-public class DashboardPagerAdapter extends FragmentPagerAdapter {
+public class DashboardPagerAdapter extends FragmentStatePagerAdapter {
 
     Context mContext;
     private static final int PAGE_COUNT = 2;

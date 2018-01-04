@@ -18,6 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,6 +89,8 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
     @BindView(R.id.user_profile_relationship_spinner) Spinner mRelationshipSpinner;
     @BindView(R.id.user_profile_edit_relationship_btn) ImageButton mEditRelationshipBtn;
     @BindView(R.id.user_profile_parent) ConstraintLayout mParent;
+    @BindView(R.id.user_profile_no_connection_tv) TextView mConnectivityTv;
+    @BindView(R.id.user_profile_progressbar) ProgressBar mProgress;
 
     private User mUser;
     private String mZipcode;
@@ -109,6 +113,20 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_my_profile, container, false);
         ButterKnife.bind(this, root);
+
+        loadFragment();
+
+        return root;
+    }
+
+    private void loadFragment() {
+        if (!UserDataUtils.checkNetworkConnectivity(getContext())) {
+            mProgress.setVisibility(View.GONE);
+            mConnectivityTv.setVisibility(View.VISIBLE);
+            return;
+        } else {
+            mConnectivityTv.setVisibility(View.INVISIBLE);
+        }
 
         mAuth = FirebaseAuth.getInstance();
         mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -179,9 +197,6 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
                 }
             });
         }
-
-
-        return root;
     }
 
     private void populateData(){
@@ -251,6 +266,9 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
                 e.printStackTrace();
             }
         }
+
+        mProgress.setVisibility(View.GONE);
+        mParent.setVisibility(View.VISIBLE);
 
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(0, null, this);
@@ -477,5 +495,11 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(DASH_PG_NUM_KEY, MY_PROFILE_FRAG_INDEX);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadFragment();
     }
 }

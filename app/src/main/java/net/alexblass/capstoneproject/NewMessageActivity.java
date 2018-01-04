@@ -1,7 +1,10 @@
 package net.alexblass.capstoneproject;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +13,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,16 +44,45 @@ public class NewMessageActivity extends AppCompatActivity {
     @BindView(R.id.new_msg_recipient) EditText mRecipientEt;
     @BindView(R.id.new_msg_data) EditText mMsgDataEt;
     @BindView(R.id.new_msg_recipient_helper) TextView mRecipientHelperTv;
+    @BindView(R.id.new_msg_send_btn) Button mSendBtn;
     @BindView(R.id.new_msg_parent) LinearLayout mParent;
 
     private Query mQuery;
     private ValueEventListener mListener;
+
+    private AlertDialog mOfflineDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_message);
         ButterKnife.bind(this);
+
+        AlertDialog.Builder offlineDialog = new AlertDialog.Builder(this);
+        offlineDialog.setTitle(getString(R.string.offline_edits_dialog_title))
+                .setMessage(getString(R.string.offline_messages_prompt))
+                .setPositiveButton(getString(R.string.okay), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                });
+        mOfflineDialog = offlineDialog.create();
+
+        if (!UserDataUtils.checkNetworkConnectivity(this)) {
+            mOfflineDialog.show();
+            mSendBtn.setEnabled(false);
+            mSendBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.button_inactive_bg));
+        } else {
+            mSendBtn.setEnabled(true);
+            mSendBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.button_bg));
+        }
 
         mParent.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -67,6 +100,18 @@ public class NewMessageActivity extends AppCompatActivity {
 
     @OnClick(R.id.new_msg_send_btn)
     public void sendMessage(){
+        if (!UserDataUtils.checkNetworkConnectivity(this)) {
+            if (!mOfflineDialog.isShowing()) {
+                mOfflineDialog.show();
+            }
+            mSendBtn.setEnabled(false);
+            mSendBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.button_inactive_bg));
+            return;
+        } else {
+            mSendBtn.setEnabled(true);
+            mSendBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.button_bg));
+        }
+
         final String sender = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         final String recipient = mRecipientEt.getText().toString();
         if (recipient.isEmpty()){
@@ -94,8 +139,6 @@ public class NewMessageActivity extends AppCompatActivity {
                     DatabaseReference database = FirebaseDatabase.getInstance().getReference(MSG_KEY).child(msgLbl)
                             .child(String.valueOf(new GregorianCalendar().getTimeInMillis()));
                     database.setValue(message);
-
-                    // todo send notification to recepient
 
                     Toast.makeText(getApplicationContext(), getString(R.string.message_sent), Toast.LENGTH_SHORT).show();
                     finish();
@@ -141,6 +184,15 @@ public class NewMessageActivity extends AppCompatActivity {
             startActivity(loginActivity);
             return true;
         }
+        if (id == android.R.id.home){
+            if (!UserDataUtils.checkNetworkConnectivity(this)) {
+                UserDataUtils.resetApp(this);
+                return true;
+            } else {
+                return super.onOptionsItemSelected(item);
+            }
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -149,6 +201,29 @@ public class NewMessageActivity extends AppCompatActivity {
         super.onStop();
         if (mQuery != null) {
             mQuery.removeEventListener(mListener);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mOfflineDialog != null){
+            mOfflineDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!UserDataUtils.checkNetworkConnectivity(this)) {
+            if (!mOfflineDialog.isShowing()) {
+                mOfflineDialog.show();
+            }
+            mSendBtn.setEnabled(false);
+            mSendBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.button_inactive_bg));
+        } else {
+            mSendBtn.setEnabled(true);
+            mSendBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.button_bg));
         }
     }
 }

@@ -6,10 +6,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ProgressBar
+        android:id="@+id/view_profile_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/view_profile_no_connection_tv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_internet"
+        android:visibility="gone" />
+
     <ScrollView
+        android:id="@+id/view_profile_scrollview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:visibility="gone"
         tools:context="net.alexblass.capstoneproject.ViewProfileFragment">
 
         <android.support.constraint.ConstraintLayout
@@ -150,9 +167,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/cd_add_favorite"
-                android:src="@drawable/ic_favorite_border_white_24dp"
                 android:paddingEnd="@dimen/standard_margin"
                 android:paddingRight="@dimen/standard_margin"
+                android:src="@drawable/ic_favorite_border_white_24dp"
                 app:layout_constraintBottom_toBottomOf="@+id/view_profile_message_btn"
                 app:layout_constraintStart_toEndOf="@+id/view_profile_message_btn"
                 app:layout_constraintTop_toTopOf="@+id/view_profile_message_btn" />
@@ -165,8 +182,8 @@
         android:id="@+id/view_profile_ad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id"
-        android:layout_gravity="center_horizontal"/>
+        ads:adUnitId="@string/banner_ad_unit_id" />
 
 </LinearLayout>

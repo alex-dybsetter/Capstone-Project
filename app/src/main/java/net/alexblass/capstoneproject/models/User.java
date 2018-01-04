@@ -7,8 +7,6 @@ import android.os.Parcelable;
  * A model to store a user's data.
  */
 
-    // TODO: Add list of friends
-
 public class User implements Parcelable {
     private String mEmail;
     private String mName;

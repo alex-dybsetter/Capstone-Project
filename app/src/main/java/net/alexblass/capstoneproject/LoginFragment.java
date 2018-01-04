@@ -33,6 +33,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import net.alexblass.capstoneproject.models.User;
+import net.alexblass.capstoneproject.utils.UserDataUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -76,6 +77,8 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.bind(this, rootView);
+
+        UserDataUtils.resetApp(getContext());
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -287,5 +290,11 @@ public class LoginFragment extends Fragment {
         if (mQuery != null) {
             mQuery.removeEventListener(mListener);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        UserDataUtils.resetApp(getContext());
     }
 }

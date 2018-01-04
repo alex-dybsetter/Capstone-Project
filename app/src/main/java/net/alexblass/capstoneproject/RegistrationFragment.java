@@ -91,6 +91,8 @@ public class RegistrationFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_registration, container, false);
         ButterKnife.bind(this, rootView);
 
+        UserDataUtils.resetApp(getContext());
+
         mAuth = FirebaseAuth.getInstance();
         mBdayCalendar = null;
 
@@ -359,5 +361,11 @@ public class RegistrationFragment extends Fragment {
             mEmailEt.setText(savedInstanceState.getString(EMAIL_KEY));
             mPasswordEt.setText(savedInstanceState.getString(PASSWORD_KEY));
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        UserDataUtils.resetApp(getContext());
     }
 }
