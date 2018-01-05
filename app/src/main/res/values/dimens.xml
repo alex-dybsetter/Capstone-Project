@@ -32,4 +32,9 @@
     <dimen name="card_corner">2dp</dimen>
     <dimen name="card_elevation">2dp</dimen>
 
+    <!--One row-->
+    <dimen name="widget_min_height">80dp</dimen>
+    <!--3 columns-->
+    <dimen name="widget_min_width">180dp</dimen>
+
 </resources>
