@@ -12,14 +12,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import net.alexblass.capstoneproject.MessagingActivity;
 import net.alexblass.capstoneproject.R;
+import net.alexblass.capstoneproject.ViewConversationActivity;
 import net.alexblass.capstoneproject.models.Message;
 import net.alexblass.capstoneproject.models.WidgetMessage;
 import net.alexblass.capstoneproject.utils.UserDataUtils;
 
 import java.util.ArrayList;
 
+import static net.alexblass.capstoneproject.data.Keys.MSG_CONVERSATION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_DATA_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_DATE_TIME_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_KEY;
@@ -67,7 +68,7 @@ public class InboxViewsFactory implements RemoteViewsService.RemoteViewsFactory 
                         lastMessage.setDateTime(message.child(MSG_DATE_TIME_KEY).getValue().toString());
 
                         String messageSender = email.replace("(dot)", ".").equals(sender) ? sentTo : sender;
-                        mMessages.add(new WidgetMessage(messageSender, UserDataUtils.formatDate(lastMessage), lastMessage.isRead()));
+                        mMessages.add(new WidgetMessage(messageThreadData.getKey().toString(), messageSender, UserDataUtils.formatDate(lastMessage), lastMessage.isRead()));
                     }
                 }
                 AppWidgetManager.getInstance(mContext).notifyAppWidgetViewDataChanged(mAppWidgetId, R.id.widget_messages_list);
@@ -138,9 +139,9 @@ public class InboxViewsFactory implements RemoteViewsService.RemoteViewsFactory 
 
             id = R.id.row_unread;
         }
-
-        Intent inboxIntent = new Intent(mContext, MessagingActivity.class);
-        messageRow.setOnClickFillInIntent(id, inboxIntent);
+        Intent viewConversationIntent = new Intent(mContext, ViewConversationActivity.class);
+        viewConversationIntent.putExtra(MSG_CONVERSATION_KEY, mMessages.get(position).getKey());
+        messageRow.setOnClickFillInIntent(id, viewConversationIntent);
 
         return messageRow;
     }

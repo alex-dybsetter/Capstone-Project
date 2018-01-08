@@ -5,14 +5,20 @@ package net.alexblass.capstoneproject.models;
  */
 
 public class WidgetMessage {
+    private String mKey;
     private String mSender;
     private String mDate;
     private boolean mIsRead;
 
-    public WidgetMessage(String sender, String date, boolean isRead){
+    public WidgetMessage(String key, String sender, String date, boolean isRead){
+        this.mKey = key;
         this.mSender = sender;
         this.mDate = date;
         this.mIsRead = isRead;
+    }
+
+    public String getKey() {
+        return mKey;
     }
 
     public String getSender() {

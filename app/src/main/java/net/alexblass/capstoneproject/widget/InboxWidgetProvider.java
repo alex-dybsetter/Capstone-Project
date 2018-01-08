@@ -11,6 +11,7 @@ import android.widget.RemoteViews;
 
 import net.alexblass.capstoneproject.MessagingActivity;
 import net.alexblass.capstoneproject.R;
+import net.alexblass.capstoneproject.ViewConversationActivity;
 
 /**
  * A WidgetProvider to display a custom widget on the home screen.
@@ -48,9 +49,9 @@ public class InboxWidgetProvider extends AppWidgetProvider {
 
             widget.setRemoteAdapter(widgetId, R.id.widget_messages_list, intent);
 
-            Intent inboxIntent = new Intent(context, MessagingActivity.class);
-            PendingIntent inboxPI = PendingIntent.getActivity(context, widgetId, inboxIntent, 0);
-            widget.setPendingIntentTemplate(R.id.widget_messages_list, inboxPI);
+            Intent viewConversationIntent = new Intent(context, ViewConversationActivity.class);
+            PendingIntent conversationPI = PendingIntent.getActivity(context, widgetId, viewConversationIntent, 0);
+            widget.setPendingIntentTemplate(R.id.widget_messages_list, conversationPI);
 
             appWidgetManager.updateAppWidget(widgetId, widget);
         }
