@@ -88,17 +88,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
                 holder.messageTimeTv.setTypeface(holder.messageTimeTv.getTypeface(), NORMAL);
             }
 
-            try {
-                String unformattedTimeStamp = mLastMessage.getDateTime();
-                DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-                Date date = (Date) formatter.parse(unformattedTimeStamp);
-                SimpleDateFormat newFormat = new SimpleDateFormat("MM/dd/yyyy");
-                String formattedTimeStamp = newFormat.format(date);
-                holder.messageTimeTv.setText(formattedTimeStamp);
-            } catch (ParseException e){
-                e.printStackTrace();
-                holder.messageTimeTv.setText(mLastMessage.getDateTime());
-            }
+            holder.messageTimeTv.setText(UserDataUtils.formatDate(mLastMessage));
         }
     }
 

@@ -7,10 +7,10 @@ import android.net.NetworkInfo;
 import android.support.v4.content.AsyncTaskLoader;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 
 import net.alexblass.capstoneproject.LoginActivity;
 import net.alexblass.capstoneproject.R;
+import net.alexblass.capstoneproject.models.Message;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +23,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import static net.alexblass.capstoneproject.data.Constants.ZIPCODE_REQUEST_BASE_URL;
 
@@ -217,6 +221,19 @@ public class UserDataUtils {
         }
         // return the shorter email first
         return email1.length() < email2.length() ? email1 + "-" + email2 : email2 + "-" + email1;
+    }
+
+    public static String formatDate(Message message) {
+        String unformattedTimeStamp = message.getDateTime();
+        DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+        try {
+            Date date = (Date) formatter.parse(unformattedTimeStamp);
+            SimpleDateFormat newFormat = new SimpleDateFormat("MM/dd/yy");
+            return newFormat.format(date);
+        } catch (ParseException e){
+            e.printStackTrace();
+            return message.getDateTime();
+        }
     }
 
     public static class CityLoader extends AsyncTaskLoader<String> {
