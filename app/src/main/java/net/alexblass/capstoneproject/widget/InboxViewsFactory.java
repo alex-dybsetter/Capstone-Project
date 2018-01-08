@@ -3,7 +3,6 @@ package net.alexblass.capstoneproject.widget;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -22,6 +21,7 @@ import net.alexblass.capstoneproject.utils.UserDataUtils;
 import java.util.ArrayList;
 
 import static net.alexblass.capstoneproject.data.Keys.MSG_DATA_KEY;
+import static net.alexblass.capstoneproject.data.Keys.MSG_DATE_TIME_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_READ_FLAG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_SENDER_EMAIL_KEY;
@@ -64,7 +64,7 @@ public class InboxViewsFactory implements RemoteViewsService.RemoteViewsFactory 
                         lastMessage = new Message(sender, sentTo,
                                 message.child(MSG_DATA_KEY).getValue().toString(),
                                 (boolean)message.child(MSG_READ_FLAG_KEY).getValue());
-                        Log.e("collected data", lastMessage.getDateTime());
+                        lastMessage.setDateTime(message.child(MSG_DATE_TIME_KEY).getValue().toString());
 
                         String messageSender = email.replace("(dot)", ".").equals(sender) ? sentTo : sender;
                         mMessages.add(new WidgetMessage(messageSender, UserDataUtils.formatDate(lastMessage), lastMessage.isRead()));

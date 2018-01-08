@@ -32,20 +32,20 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
     private LayoutInflater mInflator;
     private Context mContext;
     private String mEmail;
-    private Message mLastMessage;
+    private ArrayList<Message> mLastMessages;
     private InboxAdapter.ItemClickListener mClickListener;
 
-    public InboxAdapter(Context context, ArrayList<String> messages, Message lastMessage, String email){
+    public InboxAdapter(Context context, ArrayList<String> messages, ArrayList<Message> lastMessages, String email){
         this.mInflator = LayoutInflater.from(context);
         this.mMessageResults = messages;
         this.mContext = context;
         this.mEmail = email;
-        this.mLastMessage = lastMessage;
+        this.mLastMessages = lastMessages;
     }
 
-    public void updateMessageResults(ArrayList<String> messages, Message lastMessage){
+    public void updateMessageResults(ArrayList<String> messages, ArrayList<Message> lastMessages){
         this.mMessageResults = messages;
-        this.mLastMessage = lastMessage;
+        this.mLastMessages = lastMessages;
         notifyDataSetChanged();
     }
 
@@ -71,16 +71,17 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final InboxAdapter.ViewHolder holder, int position) {
-        if (mLastMessage != null){
+        Message lastMessageInThread = mLastMessages.get(position);
+        if (lastMessageInThread != null){
             String recipient;
-            if(mLastMessage.getSender().equals(mEmail)){
-                recipient = mLastMessage.getSentTo();
+            if(lastMessageInThread.getSender().equals(mEmail)){
+                recipient = lastMessageInThread.getSentTo();
             } else {
-                recipient = mLastMessage.getSender();
+                recipient = lastMessageInThread.getSender();
             }
             holder.userNameTv.setText(recipient);
 
-            if (!mLastMessage.isRead() && mEmail.equals(mLastMessage.getSentTo())){
+            if (!lastMessageInThread.isRead() && mEmail.equals(lastMessageInThread.getSentTo())){
                 holder.userNameTv.setTypeface(holder.userNameTv.getTypeface(), BOLD);
                 holder.messageTimeTv.setTypeface(holder.messageTimeTv.getTypeface(), BOLD);
             } else {
@@ -88,7 +89,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
                 holder.messageTimeTv.setTypeface(holder.messageTimeTv.getTypeface(), NORMAL);
             }
 
-            holder.messageTimeTv.setText(UserDataUtils.formatDate(mLastMessage));
+            holder.messageTimeTv.setText(UserDataUtils.formatDate(lastMessageInThread));
         }
     }
 

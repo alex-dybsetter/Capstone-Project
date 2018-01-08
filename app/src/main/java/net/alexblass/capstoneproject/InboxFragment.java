@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 
 import static net.alexblass.capstoneproject.data.Keys.MSG_CONVERSATION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_DATA_KEY;
+import static net.alexblass.capstoneproject.data.Keys.MSG_DATE_TIME_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_READ_FLAG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.MSG_SENDER_EMAIL_KEY;
@@ -46,6 +47,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
     private FirebaseAuth mAuth;
     private LinearLayoutManager mLinearLayoutManager;
     private ArrayList<String> mMessages;
+    private ArrayList<Message> mLastMessages;
     private InboxAdapter mAdapter;
     private Query mQuery;
     private ValueEventListener mListener;
@@ -64,6 +66,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
         mAuth = FirebaseAuth.getInstance();
         final String email = mAuth.getCurrentUser().getEmail().replace(".", "(dot)");
         mMessages = new ArrayList<>();
+        mLastMessages = new ArrayList<>();
 
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -71,7 +74,7 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
 
         mRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new InboxAdapter(getActivity(), mMessages, null, mAuth.getCurrentUser().getEmail());
+        mAdapter = new InboxAdapter(getActivity(), mMessages, mLastMessages, mAuth.getCurrentUser().getEmail());
         mAdapter.setClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -97,12 +100,14 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
                                     lastMessage = new Message(sender, sentTo,
                                             messageData.child(MSG_DATA_KEY).getValue().toString(),
                                             (boolean)messageData.child(MSG_READ_FLAG_KEY).getValue());
+                                    lastMessage.setDateTime(messageData.child(MSG_DATE_TIME_KEY).getValue().toString());
+                                    mLastMessages.add(lastMessage);
                                 }
                             }
                         }
                     }
 
-                    mAdapter.updateMessageResults(mMessages, lastMessage);
+                    mAdapter.updateMessageResults(mMessages, mLastMessages);
                     mProgress.setVisibility(View.GONE);
                     if (mMessages.size() > 0){
                         mEmptyInboxTv.setVisibility(View.GONE);

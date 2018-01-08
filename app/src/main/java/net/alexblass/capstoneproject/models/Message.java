@@ -48,6 +48,10 @@ public class Message implements Parcelable {
         return mDateTime;
     }
 
+    public void setDateTime(String dateTime) {
+        this.mDateTime = dateTime;
+    }
+
     public boolean isRead(){
         return mReadFlag;
     }

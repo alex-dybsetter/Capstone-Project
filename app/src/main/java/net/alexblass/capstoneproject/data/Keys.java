@@ -24,7 +24,7 @@ public class Keys {
     public static final String MSG_SENDER_EMAIL_KEY = "sender";
     public static final String MSG_SENT_TO_EMAIL_KEY = "sentTo";
     public static final String MSG_DATA_KEY = "message";
-    public static final String MSG_DATE_TIME_KEY = "timestamp";
+    public static final String MSG_DATE_TIME_KEY = "dateTime";
     public static final String MSG_READ_FLAG_KEY = "read";
 
     public static final String DASH_PG_NUM_KEY = "dash_page";
