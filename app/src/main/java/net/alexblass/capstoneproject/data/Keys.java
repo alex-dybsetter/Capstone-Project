@@ -30,4 +30,5 @@ public class Keys {
     public static final String DASH_PG_NUM_KEY = "dash_page";
 
     public static final String MSG_CONVERSATION_KEY = "messageThread";
+    public static final String USER_FAVORITES_KEY = "favoriteUsers";
 }

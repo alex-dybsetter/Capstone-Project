@@ -132,7 +132,8 @@
     <string name="cd_delete_message">Delete message</string>
 
     <string name="connect">Connect</string>
-    <string name="search_hint">Find by username</string>
+    <string name="add_favorite">User favorited</string>
+    <string name="remove_favorite">Favorite removed</string>
 
     <string name="messages">Messages</string>
     <string name="sign_out">Sign Out</string>

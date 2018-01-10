@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -127,17 +129,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 }
             });
 
+            // todo: set the tag and image resource based on whether or not the user is favorited
             holder.favoriteUser.setTag(R.drawable.ic_favorite_border_white_24dp);
             holder.favoriteUser.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO: Add favorite logic
                     if ((Integer) holder.favoriteUser.getTag() == R.drawable.ic_favorite_border_white_24dp){
                         holder.favoriteUser.setImageResource(R.drawable.ic_favorite_white_24dp);
                         holder.favoriteUser.setTag(R.drawable.ic_favorite_white_24dp);
+                        UserDataUtils.addFavorite(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                                selectedUser.getEmail());
+                        Toast.makeText(mContext, mContext.getString(R.string.add_favorite), Toast.LENGTH_SHORT).show();
                     } else {
                         holder.favoriteUser.setImageResource(R.drawable.ic_favorite_border_white_24dp);
                         holder.favoriteUser.setTag(R.drawable.ic_favorite_border_white_24dp);
+                        UserDataUtils.removeFavorite(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                                selectedUser.getEmail());
+                        Toast.makeText(mContext, mContext.getString(R.string.remove_favorite), Toast.LENGTH_SHORT).show();
                     }
                 }
             });

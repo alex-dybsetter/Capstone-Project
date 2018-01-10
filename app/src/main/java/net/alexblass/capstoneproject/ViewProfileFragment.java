@@ -16,9 +16,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -172,13 +174,18 @@ public class ViewProfileFragment extends Fragment implements LoaderManager.Loade
             mFavoriteUserBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO: Add favorite logic
                     if ((Integer) mFavoriteUserBtn.getTag() == R.drawable.ic_favorite_border_white_24dp){
                         mFavoriteUserBtn.setImageResource(R.drawable.ic_favorite_white_24dp);
                         mFavoriteUserBtn.setTag(R.drawable.ic_favorite_white_24dp);
+                        UserDataUtils.addFavorite(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                                mUser.getEmail());
+                        Toast.makeText(getContext(), getString(R.string.add_favorite), Toast.LENGTH_SHORT).show();
                     } else {
                         mFavoriteUserBtn.setImageResource(R.drawable.ic_favorite_border_white_24dp);
                         mFavoriteUserBtn.setTag(R.drawable.ic_favorite_border_white_24dp);
+                        UserDataUtils.removeFavorite(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                                mUser.getEmail());
+                        Toast.makeText(getContext(), getString(R.string.remove_favorite), Toast.LENGTH_SHORT).show();
                     }
                 }
             });

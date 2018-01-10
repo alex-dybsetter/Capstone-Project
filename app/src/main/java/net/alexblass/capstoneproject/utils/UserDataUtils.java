@@ -7,6 +7,14 @@ import android.net.NetworkInfo;
 import android.support.v4.content.AsyncTaskLoader;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import net.alexblass.capstoneproject.LoginActivity;
 import net.alexblass.capstoneproject.R;
@@ -26,10 +34,14 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import static net.alexblass.capstoneproject.data.Constants.ZIPCODE_REQUEST_BASE_URL;
+import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_FAVORITES_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_NAME_KEY;
 
 /**
  * A class of helper methods to manipulate or evaluate user data.
@@ -234,6 +246,66 @@ public class UserDataUtils {
             e.printStackTrace();
             return message.getDateTime();
         }
+    }
+
+    public static void addFavorite(final String email, final String favoritedEmail){
+        final DatabaseReference database = FirebaseDatabase.getInstance()
+                .getReference(email.replace(".", "(dot)"))
+                .child(USER_FAVORITES_KEY);
+        final ArrayList<String> favorites = new ArrayList<>();
+
+        final Query query = FirebaseDatabase.getInstance()
+                .getReference(email.replace(".", "(dot)"));
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    dataSnapshot = dataSnapshot.child(USER_FAVORITES_KEY);
+
+                    for (DataSnapshot child : dataSnapshot.getChildren()){
+                        favorites.add(child.getValue().toString());
+                    }
+
+                    favorites.add(favoritedEmail);
+                    query.removeEventListener(this);
+                    database.setValue(favorites);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public static void removeFavorite(final String email, final String favoritedEmail){
+        final DatabaseReference database = FirebaseDatabase.getInstance()
+                .getReference(email.replace(".", "(dot)"))
+                .child(USER_FAVORITES_KEY);
+        final ArrayList<String> favorites = new ArrayList<>();
+
+        final Query query = FirebaseDatabase.getInstance()
+                .getReference(email.replace(".", "(dot)"));
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    dataSnapshot = dataSnapshot.child(USER_FAVORITES_KEY);
+
+                    for (DataSnapshot child : dataSnapshot.getChildren()){
+                        if (!child.getValue().toString().equals(favoritedEmail)) {
+                            favorites.add(child.getValue().toString());
+                        }
+                    }
+                    query.removeEventListener(this);
+                    database.setValue(favorites);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     public static class CityLoader extends AsyncTaskLoader<String> {
