@@ -16,6 +16,11 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -27,6 +32,7 @@ import net.alexblass.capstoneproject.models.User;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -34,6 +40,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static net.alexblass.capstoneproject.data.Keys.USER_EMAIL_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_FAVORITES_KEY;
 
 /**
  * An adapter to display a list of users in the connect fragment.
@@ -45,11 +52,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private LayoutInflater mInflator;
     private Context mContext;
     private ItemClickListener mClickListener;
+    private ArrayList<String> mFavorites;
 
     public UserAdapter(Context context, User[] results){
         this.mInflator = LayoutInflater.from(context);
         this.mUserResults = results;
         this.mContext = context;
+
+        getFavorites();
     }
 
     public void updateUserResults(User[] results){
@@ -68,6 +78,32 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return mUserResults.length;
+    }
+
+    private void getFavorites(){
+        final ArrayList<String> favorites = new ArrayList<>();
+
+        final Query query = FirebaseDatabase.getInstance()
+                .getReference(FirebaseAuth.getInstance().getCurrentUser().getEmail()
+                        .replace(".", "(dot)"));
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    dataSnapshot = dataSnapshot.child(USER_FAVORITES_KEY);
+
+                    for (DataSnapshot child : dataSnapshot.getChildren()){
+                        favorites.add(child.getValue().toString());
+                    }
+                    query.removeEventListener(this);
+                    mFavorites = favorites;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     @Override
@@ -129,8 +165,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 }
             });
 
-            // todo: set the tag and image resource based on whether or not the user is favorited
-            holder.favoriteUser.setTag(R.drawable.ic_favorite_border_white_24dp);
+            if (!mFavorites.contains(selectedUser.getEmail())) {
+                holder.favoriteUser.setTag(R.drawable.ic_favorite_border_white_24dp);
+                holder.favoriteUser.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+            } else {
+                holder.favoriteUser.setTag(R.drawable.ic_favorite_white_24dp);
+                holder.favoriteUser.setImageResource(R.drawable.ic_favorite_white_24dp);
+            }
             holder.favoriteUser.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
