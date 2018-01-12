@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.support.v4.content.Loader;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -88,7 +89,6 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
     @BindView(R.id.user_profile_relationship_status) TextView mRelationshipStatus;
     @BindView(R.id.user_profile_relationship_spinner) Spinner mRelationshipSpinner;
     @BindView(R.id.user_profile_edit_relationship_btn) ImageButton mEditRelationshipBtn;
-    @BindView(R.id.user_profile_parent) ConstraintLayout mParent;
     @BindView(R.id.user_profile_no_connection_tv) TextView mConnectivityTv;
     @BindView(R.id.user_profile_progressbar) ProgressBar mProgress;
 
@@ -97,6 +97,7 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
     private String mLocation;
     private int mAge;
     private String mGender;
+    private View mParent;
 
     private FirebaseAuth mAuth;
     private StorageReference mStorageRef;
@@ -114,6 +115,26 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
         View root = inflater.inflate(R.layout.fragment_my_profile, container, false);
         ButterKnife.bind(this, root);
 
+        if (getContext().getResources().getBoolean(R.bool.isTablet)){
+            mParent = (CardView) root.findViewById(R.id.user_profile_parent);
+            mParent.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    clearFocus();
+                    return false;
+                }
+            });
+        } else {
+            mParent = (ConstraintLayout) root.findViewById(R.id.user_profile_parent);
+            mParent.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    clearFocus();
+                    return false;
+                }
+            });
+        }
+
         loadFragment();
 
         return root;
@@ -125,7 +146,7 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
             mConnectivityTv.setVisibility(View.VISIBLE);
             return;
         } else {
-            mConnectivityTv.setVisibility(View.INVISIBLE);
+            mConnectivityTv.setVisibility(View.GONE);
         }
 
         mAuth = FirebaseAuth.getInstance();
@@ -134,14 +155,6 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
         mEditSexualityBtn.setTag(R.drawable.ic_edit_white_24dp);
         mEditRelationshipBtn.setTag(R.drawable.ic_edit_white_24dp);
         mImageUriString = "";
-
-        mParent.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                clearFocus();
-                return false;
-            }
-        });
 
         mBannerIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -269,6 +282,8 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
 
         mProgress.setVisibility(View.GONE);
         mParent.setVisibility(View.VISIBLE);
+        mBannerIv.setVisibility(View.VISIBLE);
+        mProfilePic.setVisibility(View.VISIBLE);
 
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(0, null, this);

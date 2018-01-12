@@ -2,7 +2,6 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/standard_margin">
@@ -32,14 +31,14 @@
             android:id="@+id/sign_up_btn"
             style="@style/LoginBtn"
             android:layout_width="@dimen/credentials_btn_width"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/sign_up" />
 
         <Button
             android:id="@+id/login_btn"
             style="@style/LoginBtn"
             android:layout_width="@dimen/credentials_btn_width"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/login" />
 
     </LinearLayout>

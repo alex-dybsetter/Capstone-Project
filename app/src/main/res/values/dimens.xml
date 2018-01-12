@@ -4,9 +4,11 @@
     <dimen name="zero">0dp</dimen>
     <dimen name="standard_margin">16dp</dimen>
     <dimen name="small_margin">8dp</dimen>
+    <dimen name="recyclerview_margin">8dp</dimen>
 
     <dimen name="credentials_txt_width">250dp</dimen>
     <dimen name="credentials_btn_width">250dp</dimen>
+    <dimen name="headline_margin">@dimen/zero</dimen>
 
     <dimen name="edit_btn_size">16dp</dimen>
     <dimen name="corner_radius">4dp</dimen>
@@ -31,6 +33,7 @@
     <dimen name="card_padding_vertical">24dp</dimen>
     <dimen name="card_corner">2dp</dimen>
     <dimen name="card_elevation">2dp</dimen>
+    <dimen name="card_end_margin">@dimen/standard_margin</dimen>
 
     <!--One row-->
     <dimen name="widget_min_height">80dp</dimen>

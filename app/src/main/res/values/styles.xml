@@ -10,6 +10,7 @@
         <item name="android:background">@drawable/button_bg</item>
         <item name="android:textColor">@color/light_text</item>
         <item name="android:layout_margin">@dimen/small_margin</item>
+        <item name="android:textSize">@dimen/text_size</item>
     </style>
 
     <style name="Headline">
@@ -18,6 +19,8 @@
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">sans-serif-condensed</item>
         <item name="android:fontFeatureSettings">smcp</item>
+        <item name="android:layout_marginLeft">@dimen/headline_margin</item>
+        <item name="android:layout_marginRight">@dimen/headline_margin</item>
     </style>
 
     <style name="Title" parent="Headline">

@@ -58,8 +58,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         this.mInflator = LayoutInflater.from(context);
         this.mUserResults = results;
         this.mContext = context;
-
-        getFavorites();
     }
 
     public void updateUserResults(User[] results){
@@ -80,30 +78,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         return mUserResults.length;
     }
 
-    private void getFavorites(){
-        final ArrayList<String> favorites = new ArrayList<>();
-
-        final Query query = FirebaseDatabase.getInstance()
-                .getReference(FirebaseAuth.getInstance().getCurrentUser().getEmail()
-                        .replace(".", "(dot)"));
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    dataSnapshot = dataSnapshot.child(USER_FAVORITES_KEY);
-
-                    for (DataSnapshot child : dataSnapshot.getChildren()){
-                        favorites.add(child.getValue().toString());
-                    }
-                    query.removeEventListener(this);
-                    mFavorites = favorites;
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+    public void setFavorites(ArrayList<String> favorites){
+        this.mFavorites = favorites;
     }
 
     @Override

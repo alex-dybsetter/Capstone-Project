@@ -106,16 +106,16 @@ public class InboxFragment extends Fragment implements InboxAdapter.ItemClickLis
                             }
                         }
                     }
+                }
 
-                    mAdapter.updateMessageResults(mMessages, mLastMessages);
-                    mProgress.setVisibility(View.GONE);
-                    if (mMessages.size() > 0){
-                        mEmptyInboxTv.setVisibility(View.GONE);
-                        mRecyclerView.setVisibility(View.VISIBLE);
-                    } else {
-                        mRecyclerView.setVisibility(View.GONE);
-                        mEmptyInboxTv.setVisibility(View.VISIBLE);
-                    }
+                mAdapter.updateMessageResults(mMessages, mLastMessages);
+                mProgress.setVisibility(View.GONE);
+                if (mMessages.size() > 0){
+                    mEmptyInboxTv.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    mRecyclerView.setVisibility(View.GONE);
+                    mEmptyInboxTv.setVisibility(View.VISIBLE);
                 }
             }
 

@@ -48,36 +48,38 @@ public class InboxViewsFactory implements RemoteViewsService.RemoteViewsFactory 
 
     @Override
     public void onCreate() {
-        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", "(dot)");
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", "(dot)");
 
-        FirebaseDatabase.getInstance().getReference().child(MSG_KEY).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mMessages = new ArrayList<>();
-                Message lastMessage = null;
-                Iterable<DataSnapshot> results = dataSnapshot.getChildren();
-                for (DataSnapshot messageThreadData : results){
-                    if(messageThreadData.getKey().contains(email)){
-                        Iterable<DataSnapshot> messages = messageThreadData.getChildren();
-                        DataSnapshot message = messages.iterator().next();
-                        String sender = message.child(MSG_SENDER_EMAIL_KEY).getValue().toString();
-                        String sentTo = message.child(MSG_SENT_TO_EMAIL_KEY).getValue().toString();
-                        lastMessage = new Message(sender, sentTo,
-                                message.child(MSG_DATA_KEY).getValue().toString(),
-                                (boolean)message.child(MSG_READ_FLAG_KEY).getValue());
-                        lastMessage.setDateTime(message.child(MSG_DATE_TIME_KEY).getValue().toString());
+            FirebaseDatabase.getInstance().getReference().child(MSG_KEY).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    mMessages = new ArrayList<>();
+                    Message lastMessage = null;
+                    Iterable<DataSnapshot> results = dataSnapshot.getChildren();
+                    for (DataSnapshot messageThreadData : results) {
+                        if (messageThreadData.getKey().contains(email)) {
+                            Iterable<DataSnapshot> messages = messageThreadData.getChildren();
+                            DataSnapshot message = messages.iterator().next();
+                            String sender = message.child(MSG_SENDER_EMAIL_KEY).getValue().toString();
+                            String sentTo = message.child(MSG_SENT_TO_EMAIL_KEY).getValue().toString();
+                            lastMessage = new Message(sender, sentTo,
+                                    message.child(MSG_DATA_KEY).getValue().toString(),
+                                    (boolean) message.child(MSG_READ_FLAG_KEY).getValue());
+                            lastMessage.setDateTime(message.child(MSG_DATE_TIME_KEY).getValue().toString());
 
-                        String messageSender = email.replace("(dot)", ".").equals(sender) ? sentTo : sender;
-                        mMessages.add(new WidgetMessage(messageThreadData.getKey().toString(), messageSender, UserDataUtils.formatDate(lastMessage), lastMessage.isRead()));
+                            String messageSender = email.replace("(dot)", ".").equals(sender) ? sentTo : sender;
+                            mMessages.add(new WidgetMessage(messageThreadData.getKey().toString(), messageSender, UserDataUtils.formatDate(lastMessage), lastMessage.isRead()));
+                        }
                     }
+                    AppWidgetManager.getInstance(mContext).notifyAppWidgetViewDataChanged(mAppWidgetId, R.id.widget_messages_list);
                 }
-                AppWidgetManager.getInstance(mContext).notifyAppWidgetViewDataChanged(mAppWidgetId, R.id.widget_messages_list);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
     }
 
     // Required override method

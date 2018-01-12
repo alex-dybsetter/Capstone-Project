@@ -2,10 +2,12 @@ package net.alexblass.capstoneproject;
 
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,6 +36,7 @@ import static net.alexblass.capstoneproject.data.Keys.USER_BANNER_IMG_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_BIRTHDAY_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_DESCRIPTION_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_EMAIL_KEY;
+import static net.alexblass.capstoneproject.data.Keys.USER_FAVORITES_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_GENDER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_NAME_KEY;
@@ -55,8 +58,10 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
     @BindView(R.id.connect_progressbar) ProgressBar mProgress;
 
     private LinearLayoutManager mLinearLayoutManager;
+    private GridLayoutManager mGridLayoutManager;
     private UserAdapter mAdapter;
     private ArrayList<User> mUsers;
+    private ArrayList<String> mFavorites;
 
     private Query mQuery;
     private ValueEventListener mListener;
@@ -74,13 +79,45 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
         View root = inflater.inflate(R.layout.fragment_connect, container, false);
         ButterKnife.bind(this, root);
 
-        mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        if (getContext().getResources().getBoolean(R.bool.isTablet)){
+            int numberOfCols = 2;
+            mGridLayoutManager = new GridLayoutManager(getActivity(), numberOfCols);
+            mRecyclerView.setLayoutManager(mGridLayoutManager);
+        } else {
+            mLinearLayoutManager = new LinearLayoutManager(getActivity());
+            mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        }
 
         mRecyclerView.setHasFixedSize(true);
 
         mAdapter = new UserAdapter(getActivity(), new User[0]);
+
+        final ArrayList<String> favorites = new ArrayList<>();
+
+        final Query query = FirebaseDatabase.getInstance()
+                .getReference(FirebaseAuth.getInstance().getCurrentUser().getEmail()
+                        .replace(".", "(dot)"));
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    dataSnapshot = dataSnapshot.child(USER_FAVORITES_KEY);
+
+                    for (DataSnapshot child : dataSnapshot.getChildren()){
+                        favorites.add(child.getValue().toString());
+                    }
+                    query.removeEventListener(this);
+                    mFavorites = favorites;
+                    mAdapter.setFavorites(favorites);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
         mAdapter.setClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -154,11 +191,16 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
         outState.putInt(DASH_PG_NUM_KEY, CONNECT_FRAG_INDEX);
 
         outState.putParcelableArrayList(LIST_KEY, mUsers);
+        outState.putStringArrayList(USER_FAVORITES_KEY, mFavorites);
 
         listState = mRecyclerView.getLayoutManager().onSaveInstanceState();
         outState.putParcelable(LIST_STATE_KEY, listState);
 
-        mPosition = mLinearLayoutManager.findFirstVisibleItemPosition();
+        if (mLinearLayoutManager != null) {
+            mPosition = mLinearLayoutManager.findFirstVisibleItemPosition();
+        } else {
+            mPosition = mGridLayoutManager.findFirstVisibleItemPosition();
+        }
         outState.putInt(POSITION_KEY, mPosition);
 
         super.onSaveInstanceState(outState);
@@ -170,12 +212,19 @@ public class ConnectFragment extends Fragment implements UserAdapter.ItemClickLi
 
         if (savedInstanceState != null) {
             mUsers = savedInstanceState.getParcelableArrayList(LIST_KEY);
+            mFavorites = savedInstanceState.getStringArrayList(USER_FAVORITES_KEY);
             listState = savedInstanceState.getParcelable(LIST_STATE_KEY);
             mPosition = savedInstanceState.getInt(POSITION_KEY);
-            mLinearLayoutManager.onRestoreInstanceState(listState);
+
+            if (mLinearLayoutManager != null) {
+                mLinearLayoutManager.onRestoreInstanceState(listState);
+            } else {
+                mGridLayoutManager.onRestoreInstanceState(listState);
+            }
 
             mProgress.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
+            mAdapter.setFavorites(mFavorites);
             mAdapter.updateUserResults(mUsers.toArray(new User[mUsers.size()]));
         }
     }

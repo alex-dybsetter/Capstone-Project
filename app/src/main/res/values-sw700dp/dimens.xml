@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="standard_margin">24dp</dimen>
+    <dimen name="small_margin">16dp</dimen>
+
+    <dimen name="credentials_txt_width">300dp</dimen>
+    <dimen name="credentials_btn_width">300dp</dimen>
+    <dimen name="headline_margin">@dimen/small_margin</dimen>
+
+    <dimen name="edit_btn_size">24dp</dimen>
+    <dimen name="corner_radius">4dp</dimen>
+
+    <dimen name="headline_size">32sp</dimen>
+    <dimen name="headline_gutter">32dp</dimen>
+
+    <dimen name="name_display_size">42sp</dimen>
+
+    <dimen name="title_size">22sp</dimen>
+    <dimen name="text_size">16sp</dimen>
+
+    <dimen name="profile_picture_size">150dp</dimen>
+    <dimen name="profile_thumb_size">42dp</dimen>
+    <dimen name="banner_height">250dp</dimen>
+    <dimen name="profile_width">500dp</dimen>
+    <dimen name="pic_frame">4dp</dimen>
+
+    <dimen name="card_end_margin">@dimen/small_margin</dimen>
+</resources>

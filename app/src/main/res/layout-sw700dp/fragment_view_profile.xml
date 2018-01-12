@@ -1,0 +1,208 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="net.alexblass.capstoneproject.MyProfileFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/view_profile_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/standard_margin" />
+
+    <TextView
+        android:id="@+id/view_profile_no_connection_tv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/standard_margin"
+        android:gravity="center"
+        android:text="@string/no_internet"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/view_profile_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/view_profile_banner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/banner_height"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:src="@color/accent_light" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/view_profile_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/view_profile_banner"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/standard_margin">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="@dimen/profile_width"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/card_padding"
+                    android:paddingBottom="@dimen/card_padding_vertical"
+                    android:paddingTop="@dimen/card_padding_vertical">
+
+                    <TextView
+                        android:id="@+id/view_profile_name"
+                        style="@style/ProfileNameDisplay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/standard_margin"
+                        android:layout_marginStart="@dimen/standard_margin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/view_profile_image"
+                        tools:text="Alex" />
+
+                    <TextView
+                        android:id="@+id/view_profile_stats"
+                        style="@style/StatsSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/standard_margin"
+                        android:layout_marginStart="@dimen/standard_margin"
+                        app:layout_constraintBottom_toBottomOf="@+id/view_profile_name"
+                        app:layout_constraintEnd_toEndOf="@+id/view_profile_image"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/view_profile_name"
+                        app:layout_constraintTop_toTopOf="@+id/view_profile_name"
+                        tools:text="23 / F / CA" />
+
+                    <TextView
+                        android:id="@+id/view_profile_description_lbl"
+                        style="@style/ProfileSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/standard_margin"
+                        android:layout_marginStart="@dimen/standard_margin"
+                        android:text="@string/description_title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/view_profile_name" />
+
+                    <TextView
+                        android:id="@+id/view_profile_description_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/standard_margin"
+                        android:layout_marginLeft="@dimen/standard_margin"
+                        android:layout_marginRight="@dimen/standard_margin"
+                        android:layout_marginStart="@dimen/standard_margin"
+                        android:layout_marginTop="@dimen/small_margin"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/view_profile_description_lbl"
+                        app:layout_constraintTop_toBottomOf="@+id/view_profile_description_lbl"
+                        tools:text="Hi, I'm Alex and I'm an Android developer!" />
+
+                    <TextView
+                        android:id="@+id/view_profile_sexuality_lbl"
+                        style="@style/ProfileSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/standard_margin"
+                        android:layout_marginStart="@dimen/standard_margin"
+                        android:text="@string/sexuality"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/view_profile_description_tv" />
+
+                    <TextView
+                        android:id="@+id/view_profile_sexuality"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/standard_margin"
+                        android:layout_marginStart="@dimen/standard_margin"
+                        android:layout_marginTop="@dimen/small_margin"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/view_profile_sexuality_lbl"
+                        app:layout_constraintTop_toBottomOf="@+id/view_profile_sexuality_lbl"
+                        tools:text="Men" />
+
+                    <TextView
+                        android:id="@+id/view_profile_relationship_lbl"
+                        style="@style/ProfileSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/standard_margin"
+                        android:layout_marginStart="@dimen/standard_margin"
+                        android:text="@string/relationship_title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/view_profile_sexuality" />
+
+                    <TextView
+                        android:id="@+id/view_profile_relationship_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/standard_margin"
+                        android:layout_marginStart="@dimen/standard_margin"
+                        android:layout_marginTop="@dimen/small_margin"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/view_profile_relationship_lbl"
+                        app:layout_constraintTop_toBottomOf="@+id/view_profile_relationship_lbl"
+                        tools:text="Relationship status: In a relationship" />
+
+                    <ImageButton
+                        android:id="@+id/view_profile_message_btn"
+                        style="@style/ProfileBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/cd_send_message"
+                        android:src="@drawable/ic_email_white_24dp"
+                        app:layout_constraintEnd_toStartOf="@id/view_profile_favorite_btn"
+                        app:layout_constraintTop_toTopOf="@id/view_profile_favorite_btn"
+                        app:layout_constraintBottom_toBottomOf="@id/view_profile_favorite_btn"/>
+
+                    <ImageButton
+                        android:id="@+id/view_profile_favorite_btn"
+                        style="@style/ProfileBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/cd_add_favorite"
+                        android:paddingEnd="@dimen/standard_margin"
+                        android:paddingRight="@dimen/standard_margin"
+                        android:src="@drawable/ic_favorite_border_white_24dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </android.support.constraint.ConstraintLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <ImageView
+                android:id="@+id/view_profile_image"
+                android:layout_width="@dimen/profile_picture_size"
+                android:layout_height="@dimen/profile_picture_size"
+                android:layout_alignBottom="@id/view_profile_banner"
+                android:layout_centerHorizontal="true"
+                android:background="@color/primary_dark"
+                android:contentDescription="@string/cd_view_profile_picture"
+                android:elevation="@dimen/card_elevation"
+                android:padding="@dimen/pic_frame"
+                android:src="@drawable/ic_person_white_48dp" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/view_profile_ad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id" />
+
+</LinearLayout>

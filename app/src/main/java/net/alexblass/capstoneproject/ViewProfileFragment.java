@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -43,6 +44,8 @@ import java.util.GregorianCalendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static net.alexblass.capstoneproject.data.Constants.CONNECT_FRAG_INDEX;
+import static net.alexblass.capstoneproject.data.Keys.DASH_PG_NUM_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_EMAIL_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_FAVORITES_KEY;
 import static net.alexblass.capstoneproject.data.Keys.USER_KEY;
@@ -233,6 +236,21 @@ public class ViewProfileFragment extends Fragment implements LoaderManager.Loade
     public void onResume() {
         super.onResume();
         loadFragment();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putStringArrayList(USER_FAVORITES_KEY, mFavorites);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mFavorites = savedInstanceState.getStringArrayList(USER_FAVORITES_KEY);
+        }
     }
 
     @Override
