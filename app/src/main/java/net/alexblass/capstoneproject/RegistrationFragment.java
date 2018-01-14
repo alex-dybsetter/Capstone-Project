@@ -248,6 +248,7 @@ public class RegistrationFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
+                                        mAuth.signOut();
                                         showDialog(getContext().getString(R.string.registration_complete),
                                                 getContext().getString(R.string.verification_email, email));
 
@@ -286,7 +287,6 @@ public class RegistrationFragment extends Fragment {
                         dialog.dismiss();
                         if (!title.equals(mEntryErrorTitle)){
                             getFragmentManager().popBackStack();
-                            mAuth.signOut();
                         }
                     }
                 });
@@ -366,6 +366,8 @@ public class RegistrationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        UserDataUtils.resetApp(getContext());
+        if (!UserDataUtils.checkNetworkConnectivity(getContext())) {
+            UserDataUtils.resetApp(getContext());
+        }
     }
 }

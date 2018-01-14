@@ -156,7 +156,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             if (requestCode == SELECT_PICTURE) {
                 mRemoveImageTv.setVisibility(View.VISIBLE);
                 Uri selectedImageUri = data.getData();
-                if (null != selectedImageUri) {
+                if (selectedImageUri != null) {
                     mImageUriString = selectedImageUri.toString();
                     Picasso.with(EditActivity.this)
                             .load(selectedImageUri)
@@ -225,8 +225,14 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             oldProfilePicUri = mUser.getProfilePicUri();
         }
 
+        String bannerPicUri = "";
+        if (mUser != null &&
+                !mUser.getBannerPicUri().isEmpty()){
+            bannerPicUri = mUser.getBannerPicUri();
+        }
+
         mUser = new User(email, mName, mBirthday, mZipcode, gender, sexuality, relationshipStatus,
-                description, mImageUriString, mUser.getBannerPicUri());
+                description, mImageUriString, bannerPicUri);
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(email.replace(".", "(dot)"));
         database.setValue(mUser);
@@ -317,7 +323,26 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onResume() {
         super.onResume();
-        loadActivity(mSavedInstanceState);
+        AlertDialog.Builder offlineDialog = new AlertDialog.Builder(this);
+        offlineDialog.setTitle(getString(R.string.offline_edits_dialog_title))
+                .setMessage(getString(R.string.offline_edits_prompt))
+                .setPositiveButton(getString(R.string.okay), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                });
+        mOfflineDialog = offlineDialog.create();
+
+        if (!UserDataUtils.checkNetworkConnectivity(this)) {
+            mOfflineDialog.show();
+        }
     }
 
     @Override
