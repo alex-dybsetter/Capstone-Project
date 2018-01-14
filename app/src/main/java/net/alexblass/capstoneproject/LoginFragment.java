@@ -101,8 +101,6 @@ public class LoginFragment extends Fragment {
 
         clearFocus();
 
-        mAuth = FirebaseAuth.getInstance();
-
         String email = mEmailEt.getText().toString().trim();
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             mErrorTv.setText(getContext().getString(R.string.invalid_email));
